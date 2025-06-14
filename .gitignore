@@ -34,4 +34,5 @@ coverage/
 # 기타
 *.swp
 
-Ravo_/
+__pycache__/
+*.pyc
