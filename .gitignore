@@ -1,0 +1,37 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# dotenv 환경 변수
+.env
+
+# OS별 불필요 파일
+.DS_Store
+Thumbs.db
+
+# IDE/Editor 설정 파일
+.vscode/
+.idea/
+
+# Dependency lock files (선택적으로 제외)
+package.json
+package-lock.json
+yarn.lock
+
+# Build 결과물
+dist/
+build/
+
+# 테스트 커버리지
+coverage/
+
+# 기타
+*.swp
+
+Ravo_/
