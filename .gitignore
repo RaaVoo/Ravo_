@@ -1,0 +1,9 @@
+# Node modules
+node_modules/
+
+# dotenv 환경 변수
+.env
+
+# Dependency lock files (선택적으로 제외)
+package.json
+package-lock.json
