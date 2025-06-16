@@ -33,24 +33,24 @@ export const saveMessage = async (messageDTO) => {
   };
 };
 
-//메시지 조회
 export const findAllMessages = async () => {
-    const query = `
-      SELECT 
-        createdDate,
-        m_content,
-        m_mode,
-        m_read,
-        m_del,
-        m_summary,
-        user_no
-      FROM chat
-      ORDER BY createdDate ASC
-    `;
-  
-    const [rows] = await pool.execute(query);
-    return rows;
-  };
+  const query = `
+    SELECT 
+      id,
+      createdDate,
+      m_content,
+      m_mode,
+      m_read,
+      m_del,
+      m_summary,
+      user_no
+    FROM chat
+    ORDER BY id ASC
+  `;
+  const [rows] = await pool.execute(query);
+  return rows;
+};
+
   
 
 // 메시지 읽음 처리
