@@ -12,8 +12,18 @@ export const sendMessageController = async (req, res) => {
   try {
     const { content, mode, summary, userNo, chatNo } = req.body;
 
-    if (!content || !mode || !userNo || !chatNo) {
-      return res.status(400).json({ success: false, message: '필수 항목이 누락되었습니다.' });
+    // 누락된 필드 체크
+    const missingFields = [];
+    if (!content) missingFields.push("content");
+    if (!mode) missingFields.push("mode");
+    if (!userNo) missingFields.push("userNo");
+    if (!chatNo) missingFields.push("chatNo");
+
+    if (missingFields.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `필수 항목 누락: ${missingFields.join(", ")}`
+      });
     }
 
     const result = await sendMessage({ content, mode, summary, userNo, chatNo });
