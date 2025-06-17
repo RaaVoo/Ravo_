@@ -6,7 +6,6 @@ load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-
 def chat_with_gpt(user_input, emotion):
     prompt = f"(감정: {emotion}) {user_input}"
     response = client.chat.completions.create(

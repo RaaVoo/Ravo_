@@ -1,5 +1,5 @@
 // constructor는 user_id나 user_pw 등 필드들을 받아서 DTO 객체로 만들어줌
-class UserDTO {
+export class UserDTO {
     constructor({ user_id, user_pw, u_name, u_phone, u_email, u_gender, u_birth, c_content }) {
         this.user_id = user_id;
         this.user_pw = user_pw;
@@ -12,4 +12,5 @@ class UserDTO {
     }
 }
 
-module.exports = UserDTO;
+// module.exports = UserDTO;
+export default UserDTO;

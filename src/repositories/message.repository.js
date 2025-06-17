@@ -45,6 +45,7 @@ export const findAllMessages = async () => {
       m_summary,
       user_no
     FROM chat
+    WHERE m_del = 'N'
     ORDER BY id ASC
   `;
   const [rows] = await pool.execute(query);
