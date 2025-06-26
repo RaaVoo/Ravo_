@@ -218,6 +218,7 @@ import {
   findUserByEmail
 } from '../repositories/UserRepository.js';
 import pkg from 'jsonwebtoken';
+import db from '../config/db.js';     // 회원탈퇴 기능 -> DB 연결
 const { TokenExpiredError } = pkg;
 
 // userSignupHandler : HTTP 요청을 처리하는 핸들러 (회원가입)
@@ -399,5 +400,32 @@ export const phoneVerificationCheckHandler = async (req, res, body) => {
   } catch (err) {
     res.writeHead(400, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: err.message }));
+  }
+};
+
+// userDeleteHandler : '회원탈퇴'와 관련된 기능을 하는 핸들러
+export const userDeleteHandler = async (req, res) => {
+  try {
+    const { user_id } = req.body;
+
+    if (!user_id) {
+      return res.status(400).json({ error: '아이디 입력은 필수입니다.' });
+    }
+
+    // 실제 DB에서 사용자 정보 삭제 (탈퇴 기능)
+    const [result] = await db.execute(
+      //'DELETE FROM Users WHERE user_id = ?', [user_id]      // 원래 코드 -> 실습실 컴퓨터
+      'DELETE FROM User WHERE user_id = ?', [user_id]        // 지수 테스트 사용 코드
+    );
+
+    // 삭제 대상이 없을 경우 -> 해당 user가 존재하지 않는 경우
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: '해당 user_id를 가진 사용자가 없습니다.' });
+    }
+
+    return res.status(200).json({ message: '회원탈퇴가 완료되었습니다.' });
+  } catch (error) {
+    console.error('회원 탈퇴 오류: ', error);
+    return res.status(500).json({ error: '서버 오류로 탈퇴에 실패하였습니다. 다시 시도해주세요.' });
   }
 };

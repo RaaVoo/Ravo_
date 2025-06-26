@@ -48,19 +48,32 @@ GET http://localhost:3000/messages/chatlist/search?query=집
 POST http://localhost:3000/auth/signup
 Content-Type: application/json
 
+# {
+#   "user_id": "test1",
+#   "user_pw": "1234",
+#   "u_email": "test@example.com",
+#   "u_phone": "01012345678"
+# }
+
 {
-  "user_id": "testuser",
-  "password": "password123",
-  "email": "test@example.com",
-  "phone": "01012345678"
+    "user_pw": "1234",
+    "u_name": "테스트2",
+    "u_phone": "01012345678",
+    "u_email": "test2@gmail.com",
+    "u_gender":"M",
+    "user_id": "test1",
+    "chat_flag": "parent",
+    "user_flag": "parent",
+    "u_birth": "1998-02-19"
 }
+
 
 ### 2. 로그인
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
-  "user_id": "user_1",
+  "user_id": "test1",
   "user_pw": "1234"
 }
 
@@ -127,6 +140,32 @@ Content-Type: application/json
 {
   "info": "refresh test"
 }
+
+### 11. 로그아웃
+POST http://localhost:3000/auth/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamlzb280IiwidV9uYW1lIjoi7KeA7IiYNCIsImlhdCI6MTc1MDQyMDgwOCwiZXhwIjoxNzUwNDI0NDA4LCJpc3MiOiJncmFkdWF0aW9uQXBwIn0.6Hyj046nj6KAnhl_4AESSlEXX32h1p7GNruisAGb-c8
+Content-Type: application/json
+
+### 12. 회원탈퇴
+DELETE http://localhost:3000/auth/delete
+Content-Type: application/json
+
+{
+  "user_id": "test1"
+}
+
+### 13. 자녀추가
+POST http://localhost:3000/auth/signup/child
+Content-Type: application/json
+
+{
+  "parent_no": 1,
+  "c_name": "테스트",
+  "c_gender": "M",
+  "c_birth": "2018-02-14",
+  "c_content": "공감 부족"
+}
+
 
 ### 1. 홈캠 영상 저장
 POST http://localhost:3000/homecam/save
