@@ -21,6 +21,7 @@ import {
   phoneVerificationRequestHandler,
   phoneVerificationCheckHandler
 } from './controllers/UserController.js';
+import { logout } from './controllers/AuthController.js'    // 로그아웃 기능
 import { authenticateToken } from './middleware/AuthMiddleware.js'; //인증 미들웨어
 // import reportRoutes from './routes/reportRoutes.js'; //레포트 라우트
 // import voiceRoutes from './routes/voiceRoutes.js'; //레포트 라우트
@@ -31,6 +32,8 @@ import { authenticateToken } from './middleware/AuthMiddleware.js'; //인증 미
 import reportRoutes from './routes/reportRoutes.js';
 import voiceRoutes from './routes/voiceRoutes.js';
 import homecamRoutes from './routes/HomecamRoutes.js'; //홈캠 라우트
+import userRoutes from './routes/UserRoutes.js'     // 회원 탈퇴 기능 관련 라우트
+import childRoutes from './routes/ChildRoutes.js'   // 자녀추가 기능 관련 라우트
 
 
 
@@ -51,6 +54,12 @@ app.use('/voice', voiceRoutes);
 
 // ▶ 홈캠 관련 API 라우터 연결
 app.use('/homecam', homecamRoutes);
+
+// 12. 회원탈퇴 관련 라우터 연결 -> 여기다가는 기본 경로만 작성해줌 (나머지는 UserRoutes.js 코드 참고)
+app.use('/auth', userRoutes);
+
+// 13. 자녀추가 관련 라우터 연결
+app.use('/auth', childRoutes);
 
 
 app.post('/messages/send', sendMessageController); //메시지 전송
@@ -121,7 +130,10 @@ app.post('/auth/refresh', authenticateToken, (req, res) => {
   });
 });
 
-
+// 11. 로그아웃 관련 기능
+app.post('/auth/logout', (req, res) => {
+  logout(req, res);
+})
 
 
 //서버 실행

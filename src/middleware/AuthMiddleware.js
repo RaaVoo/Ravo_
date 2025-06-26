@@ -30,6 +30,7 @@
 // 토큰 검증 미들웨어 (로그인 후 사용자 인증 처리)
 import jwt from 'jsonwebtoken';
 import { secretKey } from '../config/jwtConfig.js';
+//import { isBlacklisted } from '../blacklist/TokenStore.js';      // isBlaklisted는 토큰을 확인하는 함수
 
 // 토큰 유효성 검사
 export const authenticateToken = (req, res, next) => {
