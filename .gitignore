@@ -33,3 +33,7 @@ coverage/
 __pycache__/
 *.pyc
 
+# Dependency lock files (선택적으로 제외)
+package.json
+package-lock.json
+yarn.lock
