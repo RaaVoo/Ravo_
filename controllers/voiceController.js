@@ -17,6 +17,7 @@ exports.createVoiceReport = (req, res) => {
 };
 
 // 상세 조회
+
 exports.getVoiceReportById = (req, res) => {
     const report_no = req.params.voice_no;
   const sql = `SELECT * FROM report WHERE report_no = ? AND report_flag = 'voice' AND r_del = false`;
@@ -27,6 +28,25 @@ exports.getVoiceReportById = (req, res) => {
         return res.status(404).json({ message: '음성 보고서가 존재하지 않음' });
     }
     res.status(200).json(rows[0]);
+    });
+};
+
+exports.getVoiceReportByTitle = (req, res) => {
+    const { title } = req.query;
+
+    if (!title) {
+        return res.status(400).json({ message: 'title 쿼리 파라미터가 필요합니다.' });
+    }
+
+    const sql = `SELECT * FROM report WHERE r_title LIKE ? AND report_flag = 'voice' AND r_del = false`;
+
+    db.query(sql, [`%${title}%`], (err, rows) => {
+        if (err) {
+            console.error('DB 오류:', err);
+            return res.status(500).json({ message: '서버 오류' });
+        }
+
+        res.status(200).json(rows);
     });
 };
 

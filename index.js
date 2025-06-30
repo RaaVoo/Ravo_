@@ -4,7 +4,7 @@ const reportRoutes = require('./routes/reportRoutes');
 require('dotenv').config();
 const db = require('./config/db'); // MySQL 연결
 
-app.use(express.json());
+app.use(express.json()); //JSON 파싱
 app.use('/record', reportRoutes);
 
 const voiceRoutes = require('./routes/voiceRoutes');
