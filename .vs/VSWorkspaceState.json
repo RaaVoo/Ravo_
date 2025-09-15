@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\blacklist",
+    "\\src\\config",
+    "\\src\\controllers",
+    "\\src\\dtos",
+    "\\src\\middleware",
+    "\\src\\repositories",
+    "\\src\\routes",
+    "\\src\\services"
+  ],
+  "SelectedNode": "\\src\\services\\mypageService.js",
+  "PreviewInSolutionExplorer": false
+}
