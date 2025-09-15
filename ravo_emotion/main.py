@@ -77,10 +77,43 @@ class EmotionReport:
         부모가 어떤 방식으로 접근하면 좋을지 한국어로 따뜻하고 실용적인 육아 팁을 3~5줄로 알려주세요.
         """
         return chat_with_gpt(prompt, emotion="neutral")
+    
+    
+# ✅ 음성 보고서 실행 함수
+def run_emotion_report():
+    report = EmotionReport()
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    audio_dir = os.path.join(BASE_DIR, "audio_inputs")
 
+    if not os.path.exists(audio_dir):
+        print(f"❌ 디렉토리 {audio_dir} 가 존재하지 않습니다.")
+        return
 
-# ✅ 메인 실행 함수
-def main():
+    audio_files = sorted([f for f in os.listdir(audio_dir) if f.endswith(".wav")],
+                         key=lambda x: int(os.path.splitext(x)[0]))
+
+    for filename in audio_files:
+        audio_path = os.path.join(audio_dir, filename)
+        print(f"\n🎤 파일 [{filename}] 음성 인식 중...")
+        user_text = transcribe_audio(audio_path)
+        print("👶 인식된 텍스트:", user_text)
+        emotion = report.add_turn(user_text)
+        print(f"🧠 감정 분석 결과: {emotion}")
+        reply = chat_with_gpt(user_text, emotion)
+        print(f"🤖 GPT 응답: {reply}")
+        speak_text(reply)
+        save_message_to_api(user_text, emotion, user_no=1)
+        save_message_to_api(reply, "neutral", user_no=2)
+
+    print("\n📊 전체 감정 요약:")
+    for emo, perc in report.get_emotion_summary().items():
+        print(f"- {emo}: {perc}%")
+    print("\n🔑 주요 키워드:")
+    for i, kw in enumerate(report.get_top_keywords(), 1):
+        print(f"{i}. {kw}")
+    print("\n👨‍👩‍👧 육아 솔루션 제안:")
+    print(report.generate_parenting_tip())
+
     report = EmotionReport()
 
     # 📌 audio_inputs 폴더 경로를 main.py 기준으로 절대 경로로 설정
@@ -133,6 +166,45 @@ def main():
     print(report.generate_parenting_tip())
 
 
-# ✅ 실행
+
+# ✅ 영상 보고서 실행 함수
+def run_behavior_report(video_path="./recorded_video.mp4"):
+    from behavior_report import BehaviorReport
+    b_report = BehaviorReport(video_path)
+    b_report.analyze()
+    print("\n🎥 행동 분석 보고서:")
+    print(b_report.generate_report_text())
+
+
+# ✅ CLI 진입점 추가
+def cli():
+    import argparse, os
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--mode", choices=["voice", "video"], required=True)
+    ap.add_argument("--video", help="분석할 mp4 경로 (video 모드 필수)")
+    args = ap.parse_args()
+
+    if args.mode == "voice":
+        run_emotion_report()
+    else:
+        if not args.video:
+            raise SystemExit("--video 경로가 필요합니다. (예: --video ./uploads/xxx.mp4)")
+        # 상대경로 보정
+        if not os.path.isabs(args.video):
+            base = os.path.dirname(os.path.abspath(__file__))
+            args.video = os.path.normpath(os.path.join(base, args.video))
+        run_behavior_report(args.video)
+
 if __name__ == "__main__":
-    main()
+    # 자동 실행 없음 (프론트/백에서 필요할 때만 cli()로 호출)
+    # 예) python ravo_emotion/main.py --mode video --video ./uploads/xxx.mp4
+    pass
+
+
+
+# # ✅ 실행
+# if __name__ == "__main__":
+# #    main()
+#     # 음성 페이지 → run_emotion_report()
+#     run_behavior_report("./ravo_emotion/test.mp4")
+#     pass

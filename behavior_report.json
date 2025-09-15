@@ -1,0 +1,1517 @@
+{
+  "video_path": "F:\\ravo_up\\ravo_emotion\\test.mp4",
+  "duration_sec": 37.5,
+  "params": {
+    "action_model": "facebook/timesformer-base-finetuned-k400 (timesformer)",
+    "abnormal_model": "mitegvg/videomae-base-finetuned-xd-violence (videomae)",
+    "sample_fps": 10,
+    "num_frames": 16,
+    "stride": 8,
+    "action_conf_thresh": 0.35,
+    "repetition_targets": [
+      "jumping",
+      "running"
+    ],
+    "repetition_min_sec": 10.0,
+    "abnormal_prob_thresh": 0.7
+  },
+  "clips": [
+    {
+      "t_start": 0.0,
+      "t_end": 1.5,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.8841
+        ],
+        [
+          "kicking soccer ball",
+          0.0785
+        ],
+        [
+          "shooting goal (soccer)",
+          0.0131
+        ],
+        [
+          "dribbling basketball",
+          0.008
+        ],
+        [
+          "side kick",
+          0.0027
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.8841,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.4803,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 0.8,
+      "t_end": 2.3,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.9121
+        ],
+        [
+          "kicking soccer ball",
+          0.0408
+        ],
+        [
+          "shooting goal (soccer)",
+          0.0183
+        ],
+        [
+          "dribbling basketball",
+          0.007
+        ],
+        [
+          "side kick",
+          0.0049
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.9121,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.4711,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 1.6,
+      "t_end": 3.1,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.9195
+        ],
+        [
+          "kicking soccer ball",
+          0.0405
+        ],
+        [
+          "shooting goal (soccer)",
+          0.0109
+        ],
+        [
+          "dribbling basketball",
+          0.0088
+        ],
+        [
+          "headbutting",
+          0.0044
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.9195,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.5234,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 2.4,
+      "t_end": 3.9,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.9115
+        ],
+        [
+          "kicking soccer ball",
+          0.0318
+        ],
+        [
+          "shooting goal (soccer)",
+          0.0158
+        ],
+        [
+          "dribbling basketball",
+          0.0104
+        ],
+        [
+          "headbutting",
+          0.0077
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.9115,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.55,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 3.2,
+      "t_end": 4.7,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.84
+        ],
+        [
+          "kicking soccer ball",
+          0.0482
+        ],
+        [
+          "shooting goal (soccer)",
+          0.039
+        ],
+        [
+          "side kick",
+          0.0122
+        ],
+        [
+          "headbutting",
+          0.0117
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.84,
+      "coarse": "playing",
+      "abnormal_label": "B6-0-0",
+      "abnormal_prob": 0.374,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 4.0,
+      "t_end": 5.5,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.8243
+        ],
+        [
+          "kicking soccer ball",
+          0.0577
+        ],
+        [
+          "shooting goal (soccer)",
+          0.0384
+        ],
+        [
+          "headbutting",
+          0.0197
+        ],
+        [
+          "side kick",
+          0.01
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.8243,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.3874,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 4.8,
+      "t_end": 6.3,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.7703
+        ],
+        [
+          "kicking soccer ball",
+          0.092
+        ],
+        [
+          "shooting goal (soccer)",
+          0.0388
+        ],
+        [
+          "headbutting",
+          0.025
+        ],
+        [
+          "dribbling basketball",
+          0.0171
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.7703,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.4294,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 5.6,
+      "t_end": 7.1,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.7303
+        ],
+        [
+          "kicking soccer ball",
+          0.1346
+        ],
+        [
+          "shooting goal (soccer)",
+          0.0414
+        ],
+        [
+          "headbutting",
+          0.0269
+        ],
+        [
+          "dribbling basketball",
+          0.013
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.7303,
+      "coarse": "playing",
+      "abnormal_label": "B6-0-0",
+      "abnormal_prob": 0.3696,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 6.4,
+      "t_end": 7.9,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.7429
+        ],
+        [
+          "kicking soccer ball",
+          0.0932
+        ],
+        [
+          "shooting goal (soccer)",
+          0.0587
+        ],
+        [
+          "headbutting",
+          0.0457
+        ],
+        [
+          "side kick",
+          0.0179
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.7429,
+      "coarse": "playing",
+      "abnormal_label": "B6-0-0",
+      "abnormal_prob": 0.4049,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 7.2,
+      "t_end": 8.7,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.6668
+        ],
+        [
+          "shooting goal (soccer)",
+          0.1064
+        ],
+        [
+          "headbutting",
+          0.049
+        ],
+        [
+          "kicking soccer ball",
+          0.0473
+        ],
+        [
+          "dribbling basketball",
+          0.0158
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.6668,
+      "coarse": "playing",
+      "abnormal_label": "B6-0-0",
+      "abnormal_prob": 0.4352,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 8.0,
+      "t_end": 9.5,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.7978
+        ],
+        [
+          "shooting goal (soccer)",
+          0.0438
+        ],
+        [
+          "lunge",
+          0.018
+        ],
+        [
+          "skipping rope",
+          0.0147
+        ],
+        [
+          "kicking soccer ball",
+          0.0091
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.7978,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.4294,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 8.8,
+      "t_end": 10.3,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.8811
+        ],
+        [
+          "skipping rope",
+          0.0337
+        ],
+        [
+          "shooting goal (soccer)",
+          0.0142
+        ],
+        [
+          "lunge",
+          0.0089
+        ],
+        [
+          "tap dancing",
+          0.0063
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.8811,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.5163,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 9.6,
+      "t_end": 11.1,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.8774
+        ],
+        [
+          "robot dancing",
+          0.0143
+        ],
+        [
+          "lunge",
+          0.0133
+        ],
+        [
+          "skipping rope",
+          0.0107
+        ],
+        [
+          "catching or throwing frisbee",
+          0.0082
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.8774,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.415,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 10.4,
+      "t_end": 11.9,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.7818
+        ],
+        [
+          "tossing coin",
+          0.0733
+        ],
+        [
+          "skipping rope",
+          0.0167
+        ],
+        [
+          "lunge",
+          0.0165
+        ],
+        [
+          "shooting goal (soccer)",
+          0.0127
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.7818,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.3622,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 11.2,
+      "t_end": 12.7,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.7785
+        ],
+        [
+          "tossing coin",
+          0.07
+        ],
+        [
+          "skipping rope",
+          0.013
+        ],
+        [
+          "shooting goal (soccer)",
+          0.0122
+        ],
+        [
+          "kicking soccer ball",
+          0.0109
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.7785,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.5725,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 12.0,
+      "t_end": 13.5,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.755
+        ],
+        [
+          "tossing coin",
+          0.0543
+        ],
+        [
+          "lunge",
+          0.0481
+        ],
+        [
+          "squat",
+          0.0123
+        ],
+        [
+          "skipping rope",
+          0.0119
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.755,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.5512,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 12.8,
+      "t_end": 14.3,
+      "action_topk": [
+        [
+          "lunge",
+          0.3626
+        ],
+        [
+          "juggling soccer ball",
+          0.3105
+        ],
+        [
+          "squat",
+          0.143
+        ],
+        [
+          "tossing coin",
+          0.0263
+        ],
+        [
+          "stretching leg",
+          0.0203
+        ]
+      ],
+      "action_top1": "lunge",
+      "action_prob": 0.3626,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.4983,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 13.6,
+      "t_end": 15.1,
+      "action_topk": [
+        [
+          "lunge",
+          0.4641
+        ],
+        [
+          "juggling soccer ball",
+          0.1704
+        ],
+        [
+          "squat",
+          0.1178
+        ],
+        [
+          "stretching leg",
+          0.0296
+        ],
+        [
+          "somersaulting",
+          0.022
+        ]
+      ],
+      "action_top1": "lunge",
+      "action_prob": 0.4641,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.5771,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 14.4,
+      "t_end": 15.9,
+      "action_topk": [
+        [
+          "lunge",
+          0.5459
+        ],
+        [
+          "juggling soccer ball",
+          0.1063
+        ],
+        [
+          "squat",
+          0.0864
+        ],
+        [
+          "pull ups",
+          0.0337
+        ],
+        [
+          "stretching leg",
+          0.0224
+        ]
+      ],
+      "action_top1": "lunge",
+      "action_prob": 0.5459,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.5782,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 15.2,
+      "t_end": 16.7,
+      "action_topk": [
+        [
+          "lunge",
+          0.4571
+        ],
+        [
+          "juggling soccer ball",
+          0.196
+        ],
+        [
+          "squat",
+          0.0698
+        ],
+        [
+          "pull ups",
+          0.0273
+        ],
+        [
+          "front raises",
+          0.024
+        ]
+      ],
+      "action_top1": "lunge",
+      "action_prob": 0.4571,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.4907,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 16.0,
+      "t_end": 17.5,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.7366
+        ],
+        [
+          "lunge",
+          0.0849
+        ],
+        [
+          "tossing coin",
+          0.0296
+        ],
+        [
+          "golf putting",
+          0.0269
+        ],
+        [
+          "stretching leg",
+          0.0133
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.7366,
+      "coarse": "playing",
+      "abnormal_label": "B6-0-0",
+      "abnormal_prob": 0.3744,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 16.8,
+      "t_end": 18.3,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.6992
+        ],
+        [
+          "lunge",
+          0.0977
+        ],
+        [
+          "golf putting",
+          0.046
+        ],
+        [
+          "tossing coin",
+          0.0264
+        ],
+        [
+          "stretching leg",
+          0.0146
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.6992,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.3764,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 17.6,
+      "t_end": 19.1,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.4521
+        ],
+        [
+          "lunge",
+          0.1663
+        ],
+        [
+          "golf putting",
+          0.1047
+        ],
+        [
+          "tossing coin",
+          0.0253
+        ],
+        [
+          "stretching leg",
+          0.0239
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.4521,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.4805,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 18.4,
+      "t_end": 19.9,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.4224
+        ],
+        [
+          "lunge",
+          0.2185
+        ],
+        [
+          "tossing coin",
+          0.0658
+        ],
+        [
+          "golf putting",
+          0.0429
+        ],
+        [
+          "swinging legs",
+          0.0334
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.4224,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.5469,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 19.2,
+      "t_end": 20.7,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.6105
+        ],
+        [
+          "lunge",
+          0.1861
+        ],
+        [
+          "tossing coin",
+          0.0844
+        ],
+        [
+          "squat",
+          0.0207
+        ],
+        [
+          "swinging legs",
+          0.0183
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.6105,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.5618,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 20.0,
+      "t_end": 21.5,
+      "action_topk": [
+        [
+          "lunge",
+          0.2905
+        ],
+        [
+          "juggling soccer ball",
+          0.2336
+        ],
+        [
+          "tossing coin",
+          0.152
+        ],
+        [
+          "squat",
+          0.0872
+        ],
+        [
+          "stretching leg",
+          0.0375
+        ]
+      ],
+      "action_top1": "lunge",
+      "action_prob": 0.2905,
+      "coarse": "other",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.5391,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 20.8,
+      "t_end": 22.3,
+      "action_topk": [
+        [
+          "lunge",
+          0.2374
+        ],
+        [
+          "squat",
+          0.1545
+        ],
+        [
+          "stretching leg",
+          0.1148
+        ],
+        [
+          "exercising arm",
+          0.0726
+        ],
+        [
+          "tossing coin",
+          0.0315
+        ]
+      ],
+      "action_top1": "lunge",
+      "action_prob": 0.2374,
+      "coarse": "other",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.3694,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 21.6,
+      "t_end": 23.1,
+      "action_topk": [
+        [
+          "exercising arm",
+          0.1715
+        ],
+        [
+          "lunge",
+          0.1548
+        ],
+        [
+          "stretching leg",
+          0.1418
+        ],
+        [
+          "stretching arm",
+          0.1179
+        ],
+        [
+          "squat",
+          0.0531
+        ]
+      ],
+      "action_top1": "exercising arm",
+      "action_prob": 0.1715,
+      "coarse": "other",
+      "abnormal_label": "B6-0-0",
+      "abnormal_prob": 0.4157,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 22.4,
+      "t_end": 23.9,
+      "action_topk": [
+        [
+          "exercising arm",
+          0.2245
+        ],
+        [
+          "stretching leg",
+          0.139
+        ],
+        [
+          "lunge",
+          0.1294
+        ],
+        [
+          "stretching arm",
+          0.0713
+        ],
+        [
+          "squat",
+          0.0591
+        ]
+      ],
+      "action_top1": "exercising arm",
+      "action_prob": 0.2245,
+      "coarse": "other",
+      "abnormal_label": "B6-0-0",
+      "abnormal_prob": 0.3782,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 23.2,
+      "t_end": 24.7,
+      "action_topk": [
+        [
+          "exercising arm",
+          0.1979
+        ],
+        [
+          "lunge",
+          0.1825
+        ],
+        [
+          "stretching arm",
+          0.1014
+        ],
+        [
+          "stretching leg",
+          0.0917
+        ],
+        [
+          "squat",
+          0.077
+        ]
+      ],
+      "action_top1": "exercising arm",
+      "action_prob": 0.1979,
+      "coarse": "other",
+      "abnormal_label": "B6-0-0",
+      "abnormal_prob": 0.373,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 24.0,
+      "t_end": 25.5,
+      "action_topk": [
+        [
+          "stretching arm",
+          0.2151
+        ],
+        [
+          "lunge",
+          0.163
+        ],
+        [
+          "exercising arm",
+          0.1135
+        ],
+        [
+          "stretching leg",
+          0.0868
+        ],
+        [
+          "squat",
+          0.0639
+        ]
+      ],
+      "action_top1": "stretching arm",
+      "action_prob": 0.2151,
+      "coarse": "other",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.371,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 24.8,
+      "t_end": 26.3,
+      "action_topk": [
+        [
+          "lunge",
+          0.2847
+        ],
+        [
+          "stretching arm",
+          0.0986
+        ],
+        [
+          "front raises",
+          0.0878
+        ],
+        [
+          "stretching leg",
+          0.0791
+        ],
+        [
+          "squat",
+          0.0764
+        ]
+      ],
+      "action_top1": "lunge",
+      "action_prob": 0.2847,
+      "coarse": "other",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.4075,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 25.6,
+      "t_end": 27.1,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.3278
+        ],
+        [
+          "lunge",
+          0.1276
+        ],
+        [
+          "golf putting",
+          0.1053
+        ],
+        [
+          "javelin throw",
+          0.0766
+        ],
+        [
+          "exercising arm",
+          0.0411
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.3278,
+      "coarse": "other",
+      "abnormal_label": "B6-0-0",
+      "abnormal_prob": 0.3623,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 26.4,
+      "t_end": 27.9,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.8726
+        ],
+        [
+          "lunge",
+          0.0301
+        ],
+        [
+          "tossing coin",
+          0.0135
+        ],
+        [
+          "golf putting",
+          0.0121
+        ],
+        [
+          "stretching leg",
+          0.0089
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.8726,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.3992,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 27.2,
+      "t_end": 28.7,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.8932
+        ],
+        [
+          "lunge",
+          0.0463
+        ],
+        [
+          "stretching leg",
+          0.0066
+        ],
+        [
+          "kicking soccer ball",
+          0.0054
+        ],
+        [
+          "tossing coin",
+          0.0053
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.8932,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.3978,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 28.0,
+      "t_end": 29.5,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.706
+        ],
+        [
+          "lunge",
+          0.1628
+        ],
+        [
+          "squat",
+          0.018
+        ],
+        [
+          "kicking soccer ball",
+          0.0151
+        ],
+        [
+          "stretching leg",
+          0.0148
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.706,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.4828,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 28.8,
+      "t_end": 30.3,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.6504
+        ],
+        [
+          "lunge",
+          0.176
+        ],
+        [
+          "squat",
+          0.0432
+        ],
+        [
+          "stretching leg",
+          0.0158
+        ],
+        [
+          "deadlifting",
+          0.0129
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.6504,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.4573,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 29.6,
+      "t_end": 31.1,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.906
+        ],
+        [
+          "lunge",
+          0.0383
+        ],
+        [
+          "headbutting",
+          0.0074
+        ],
+        [
+          "high kick",
+          0.0043
+        ],
+        [
+          "stretching leg",
+          0.004
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.906,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.4465,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 30.4,
+      "t_end": 31.9,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.9249
+        ],
+        [
+          "robot dancing",
+          0.0145
+        ],
+        [
+          "tossing coin",
+          0.0083
+        ],
+        [
+          "shooting goal (soccer)",
+          0.0055
+        ],
+        [
+          "headbutting",
+          0.0054
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.9249,
+      "coarse": "playing",
+      "abnormal_label": "B6-0-0",
+      "abnormal_prob": 0.3486,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 31.2,
+      "t_end": 32.7,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.7032
+        ],
+        [
+          "shooting goal (soccer)",
+          0.0609
+        ],
+        [
+          "jumpstyle dancing",
+          0.0499
+        ],
+        [
+          "lunge",
+          0.0385
+        ],
+        [
+          "side kick",
+          0.0169
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.7032,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.3513,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 32.0,
+      "t_end": 33.5,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.568
+        ],
+        [
+          "jumpstyle dancing",
+          0.0455
+        ],
+        [
+          "shooting goal (soccer)",
+          0.0439
+        ],
+        [
+          "side kick",
+          0.0381
+        ],
+        [
+          "dribbling basketball",
+          0.0355
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.568,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.4995,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 32.8,
+      "t_end": 34.3,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.5003
+        ],
+        [
+          "robot dancing",
+          0.0647
+        ],
+        [
+          "pumping fist",
+          0.0577
+        ],
+        [
+          "high kick",
+          0.0384
+        ],
+        [
+          "skipping rope",
+          0.0324
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.5003,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.5605,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 33.6,
+      "t_end": 35.1,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.2501
+        ],
+        [
+          "pumping fist",
+          0.1136
+        ],
+        [
+          "robot dancing",
+          0.093
+        ],
+        [
+          "exercising arm",
+          0.0836
+        ],
+        [
+          "passing American football (not in game)",
+          0.0619
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.2501,
+      "coarse": "other",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.4765,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 34.4,
+      "t_end": 35.9,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.3877
+        ],
+        [
+          "lunge",
+          0.1065
+        ],
+        [
+          "exercising arm",
+          0.0567
+        ],
+        [
+          "robot dancing",
+          0.0536
+        ],
+        [
+          "squat",
+          0.0527
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.3877,
+      "coarse": "playing",
+      "abnormal_label": "A",
+      "abnormal_prob": 0.4413,
+      "abnormal_flag": false
+    },
+    {
+      "t_start": 35.2,
+      "t_end": 36.7,
+      "action_topk": [
+        [
+          "juggling soccer ball",
+          0.9092
+        ],
+        [
+          "kicking soccer ball",
+          0.0361
+        ],
+        [
+          "shooting goal (soccer)",
+          0.0134
+        ],
+        [
+          "dribbling basketball",
+          0.0075
+        ],
+        [
+          "side kick",
+          0.0061
+        ]
+      ],
+      "action_top1": "juggling soccer ball",
+      "action_prob": 0.9092,
+      "coarse": "playing",
+      "abnormal_label": "B6-0-0",
+      "abnormal_prob": 0.4944,
+      "abnormal_flag": false
+    }
+  ],
+  "action_events": [
+    {
+      "type": "playing",
+      "t_start": 0.0,
+      "t_end": 20.7,
+      "avg_conf": 0.713
+    },
+    {
+      "type": "other",
+      "t_start": 20.0,
+      "t_end": 27.1,
+      "avg_conf": 0.2437
+    },
+    {
+      "type": "playing",
+      "t_start": 26.4,
+      "t_end": 34.3,
+      "avg_conf": 0.7472
+    },
+    {
+      "type": "other",
+      "t_start": 33.6,
+      "t_end": 35.1,
+      "avg_conf": 0.2501
+    },
+    {
+      "type": "playing",
+      "t_start": 34.4,
+      "t_end": 36.7,
+      "avg_conf": 0.6484
+    }
+  ],
+  "repetition_flags": [],
+  "abnormal_flags": [],
+  "summary": {
+    "duration_sec": 37.5,
+    "action_time_sec": {
+      "playing": 30.9,
+      "other": 8.6
+    },
+    "action_time_ratio": {
+      "playing": 0.7823,
+      "other": 0.2177
+    },
+    "top_actions": [
+      [
+        "playing",
+        0.7823
+      ],
+      [
+        "other",
+        0.2177
+      ]
+    ],
+    "repetition_flags_count": 0,
+    "abnormal_flags_count": 0
+  }
+}

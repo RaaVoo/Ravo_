@@ -252,3 +252,45 @@ DELETE http://localhost:3000/reports-list/1
 
 ### 13. 기록 API 테스트
 GET http://localhost:3000/record/test
+
+###
+# ✔ 마이페이지: 부모 정보 조회
+GET http://localhost:3000/mypage/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamlzb280IiwidV9uYW1lIjoi7KeA7IiYNCIsImlhdCI6MTc1MDQyMDgwOCwiZXhwIjoxNzUwNDI0NDA4LCJpc3MiOiJncmFkdWF0aW9uQXBwIn0.6Hyj046nj6KAnhl_4AESSlEXX32h1p7GNruisAGb-c8
+
+###
+# ✔ 마이페이지: 자녀 목록 조회
+GET http://localhost:3000/mypage/children
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamlzb280IiwidV9uYW1lIjoi7KeA7IiYNCIsImlhdCI6MTc1MDQyMDgwOCwiZXhwIjoxNzUwNDI0NDA4LCJpc3MiOiJncmFkdWF0aW9uQXBwIn0.6Hyj046nj6KAnhl_4AESSlEXX32h1p7GNruisAGb-c8
+
+###
+# ⭐ 회원 정보 수정 (PUT /mypage/me/profile)
+PUT http://localhost:3000/mypage/me/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamlzb280IiwidV9uYW1lIjoi7KeA7IiYNCIsImlhdCI6MTc1MDQyMDgwOCwiZXhwIjoxNzUwNDI0NDA4LCJpc3MiOiJncmFkdWF0aW9uQXBwIn0.6Hyj046nj6KAnhl_4AESSlEXX32h1p7GNruisAGb-c8
+Content-Type: application/json
+
+{
+  "u_name": "테스트2-수정",
+  "u_phone": "01098765432",
+  "u_gender": "M",
+  "u_img": "https://picsum.photos/200",
+  "currentPassword": "1234",
+  "newPassword": "12345"
+}
+
+###
+# (선택) 자녀 user_no를 알아야 함 → 자녀 목록에서 확인
+# 아래 child_no 값을 실제 값으로 교체
+# ⭐ 자녀 정보 수정 (PUT /mypage/children/profile)
+PUT http://localhost:3000/mypage/children/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamlzb280IiwidV9uYW1lIjoi7KeA7IiYNCIsImlhdCI6MTc1MDQyMDgwOCwiZXhwIjoxNzUwNDI0NDA4LCJpc3MiOiJncmFkdWF0aW9uQXBwIn0.6Hyj046nj6KAnhl_4AESSlEXX32h1p7GNruisAGb-c8
+Content-Type: application/json
+
+{
+  "child_no": 12,
+  "u_name": "테스트아이-수정",
+  "u_birth": "2018-05-21",
+  "u_gender": "F",
+  "u_img": "https://picsum.photos/200"
+}
+
