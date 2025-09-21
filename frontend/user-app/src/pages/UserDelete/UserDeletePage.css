@@ -1,0 +1,137 @@
+/* 회원 탈퇴하기 관련 css */
+.delete-page-container {
+  position: relative;
+  min-height: 100vh;
+  background-color: #FEEFAD;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.delete-box {
+  position: relative;
+  width: 550px;
+  height: 730px;
+  background: #FFFFFF;
+  border-radius: 50px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  padding: 50px 75px;
+  margin: 140px auto 90px;
+
+  /* 정렬 설정 */
+  display: flex;
+  flex-direction: column;      /* 수직 정렬 */
+  justify-content: center;      /* 가운데에서 시작 */
+}
+
+.delete-content {
+  width: 420px;           /* 원하는 정렬 기준 너비 */
+  /* margin: 0 40px 0 40px;         중앙 정렬 */
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  color: #03AED2;
+  font-family: 'PyeongChang Peace';
+  font-size: 35px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.page-title {
+  color: #FF8383;
+  font-family: 'LINE Seed Sans KR';
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+.goodbye-msg {
+  color: #6E6E6E;
+  font-family: 'LINE Seed Sans KR';
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 50px;
+}
+
+.notice-title {
+  color: #6E6E6E;
+  font-family: 'LINE Seed Sans KR';
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.notice-text {
+  color: #6E6E6E;
+  font-family: 'Inter';
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 35px;
+  margin-bottom: 30px;
+}
+
+.agree-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 55px;
+  margin-bottom: 25px;
+  padding-left: 30px;
+}
+
+.agree-checkbox input[type="checkbox"] {
+  width:17px;
+  height: 17px;
+  cursor: pointer;
+}
+
+.agree-checkbox label {
+  font-family: 'LINE Seed Sans KR';
+  font-size: 16px;
+  font-weight: 700;
+  color: #A4B4C3;
+  padding-top: 4px;
+}
+
+.delete-buttons {
+  display: flex;
+  /* margin-top: 20px; */
+  gap: 15px;
+  padding-left: 75px;
+}
+
+.back-btn, .delete-btn {
+  width: 120px;
+  height: 45px;
+  font-family: 'LINE Seed Sans KR';
+  font-size: 19px;
+  font-weight: 600;
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+  box-shadow: 0px 4px 0px;
+}
+
+.back-btn {
+  background-color: #68D2E8;
+  box-shadow: 0px 4px 0px #009FC1;
+  color: #FFFFFF;
+}
+
+.back-btn:hover {
+  /* transform: scale(1.02); */
+  background-color: #4cbcd6;
+}
+
+.delete-btn {
+  background-color: #FF8383;
+  box-shadow: 0px 4px 0px #C86B6B;
+  color: #FFFFFF;
+}
+
+.delete-btn:hover {
+  /* transform: scale(1.02); */
+  background-color: #e76b6b;
+}

@@ -1,0 +1,252 @@
+/* 아이정보 수정 페이지 css */
+.child-info-form-container {
+  background-color: #FEEFAD;
+  min-height: 100vh;
+  padding: 120px 0 60px 0;            /* 위 아래 여백 확보 */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;    /* 가운데 정렬x, 위에서부터 차곡차곡 배치 */
+  overflow-y: auto;           /* 내용이 넘칠 경우 스크롤 가능하도록 */
+}
+
+
+.child-info-box {
+  width: 540px;
+  height: auto;
+  background: #FFFFFF;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 50px;
+  /* padding: 85px 90px; */
+  padding: 70px 85px 50px 85px;
+  box-sizing: border-box;
+}
+
+.child-info-title-main {
+  font-family: 'PyeongChang Peace', sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: #03AED2;
+  margin-bottom: 6px;
+}
+
+.child-info-title-sub {
+  font-family: 'LINE Seed Sans KR', sans-serif;
+  font-size: 27px;
+  font-weight: 700;
+  color: #68D2E8;
+  margin-bottom: 20px;
+}
+
+/* 입력폼, 버튼들 css */
+.child-info-form {
+  display: flex;
+  flex-direction: column;
+  /* gap: 15px; */
+}
+
+/* child-form-section css 추가함 */
+.child-info-form-section {
+  display: flex;
+  flex-direction: column;       /* 수직 정렬 (세로로) */
+  gap: 13px;
+  margin-bottom: 50px;
+}
+
+.child-info-form-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #6E6E6E;
+  margin-bottom: -10px;
+  margin-left: 20px;
+}
+
+.child-info-form-input {
+  height: 65px;
+  border-radius: 40px;
+  border: none;
+  background-color: #E2E5EC;
+  padding: 0 24px;
+  font-size: 15px;
+  color: #505050;
+  width: 100%;                /* 부모 요소 너비 꽉 차게 (추가) */
+  box-sizing: border-box;
+  outline: none;
+}
+
+.child-info-form-textarea {
+  height: 115px;
+  border-radius: 50px;
+  border: none;
+  background-color: #E2E5EC;
+  padding: 20px 30px;
+  font-size: 15px;
+  resize: none;
+  color: #505050;
+  /* 아래 2개 추가함 */
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  font-family: 'LINE Seed Sans KR', sans-serif;
+}
+
+/* .form-input:focus, 
+.form-textarea:focus {
+  outline: none;
+  border: 1px solid #A4B4C3;     원하는 색상/두께로
+} */
+
+/* placeholder 글자색 변경 */
+.child-info-form-input::placeholder,
+.child-info-form-textarea::placeholder {
+    color: #A4B4C3;
+    font-family: 'LINE Seed Sans KR', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.child-info-gender-box {
+  display: flex;
+  gap: 40px;
+  /* 위 오른쪽 아래 왼쪽 */
+  margin-left: 20px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  /* padding: 5px 10px; */
+}
+
+.child-info-gender-box label {
+  font-size: 15px;
+  /* color: #6E6E6E; */
+  color: #A4B4C3;
+  font-weight: 700;         /* 추가함 */
+  display: flex;
+  align-items: center;      /* 세로 정렬을 중앙으로 */
+  gap: 8px;
+}
+
+.star-text {
+  color: #FF8383;
+}
+
+.child-info-submit-btn {
+  width: 100%;
+  height: 65px;
+  /* margin-top: 50px; */
+  background-color: #68D2E8;
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  border: none;
+  border-radius: 40px;
+  box-shadow: 0px 4px 0px #009FC1;
+  cursor: pointer;
+}
+
+.child-info-submit-btn:hover {
+  transform: scale(1.02);
+}
+
+/* 자녀 추가 */
+.child-info-add-child-btn {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #68D2E8;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: default;
+  flex-direction: column;           /* + 버튼과 글자 병렬로 만듦 */
+}
+
+.child-info-plus-icon {
+  width: 40px;
+  height: 40px;
+  background-color: #68D2E8;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 40px;
+  font-size: 28px;
+  margin-bottom: 5px;
+  box-shadow: inset 0px -4px 0px rgba(0, 0, 0, 0.25);
+  border: none;
+  cursor: pointer;
+}
+
+.child-info-plus-icon:hover {
+  transform: scale(1.1);
+}
+
+
+/* 여기 아래부터 새롭게 추가 */
+.child-info-number-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #68D2E8;
+  margin: 10px 0 10px 10px;
+  font-family: 'LINE Seed Sans KR', sans-serif;
+}
+
+/* 자녀 추가, 삭제 버튼 나란히 */
+.child-info-btn-groups {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+}
+
+/* 자녀 삭제 */
+.child-info-remove-child-btn {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #FF8383;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: default;
+  flex-direction: column;
+}
+
+.child-info-minus-icon {
+  width: 40px;
+  height: 40px;
+  background-color: #FF8383;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 40px;
+  font-size: 28px;
+  margin-bottom: 5px;
+  box-shadow: inset 0px -4px 0px rgba(0, 0, 0, 0.25);
+  border: none;
+  cursor: pointer;
+}
+
+.child-info-minus-icon:hover {
+  transform: scale(1.1);
+}
+
+/* 스크롤바 css */
+/* textarea 스크롤바 전체 영역 */
+.child-info-form-textarea::-webkit-scrollbar {
+  width: 15px;               /* 수직 스크롤 너비 */
+}
+
+/* 스크롤바 트랙 (배경 영역) */
+.child-info-form-textarea::-webkit-scrollbar-track {
+  background-color: transparent;
+  margin-top: 35px;         /* 스크롤바 시작 위치 ↓ 아래로 밀림 */
+  margin-bottom: 35px;
+}
+
+/* 스크롤바 썸 (움직이는 부분) */
+.child-info-form-textarea::-webkit-scrollbar-thumb {
+  background-color: #BFBFBF;
+  border-radius: 10px;
+}
+
+.child-info-form-textarea::-webkit-scrollbar-thumb:hover {
+  background-color: #9E9E9E;
+}

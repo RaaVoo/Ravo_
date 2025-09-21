@@ -159,13 +159,17 @@
 
 // 서비스에는 실제로 처리할 로직에 대해서 작성을 해줌
 import UserDTO from '../dtos/UserDTO.js';
-import { insertUser, findUserById, updateUserPassword, findUserByNamePhone } from '../repositories/UserRepository.js';
+import { insertUser, findUserById, updateUserPassword, findUserByNamePhone, findUserIdByNameAndPhone, findUserByEmail, createUser } from '../repositories/UserRepository.js';
 import nodemailer from 'nodemailer';              // node.js에서 이메일 전송을 위한 라이브러리
 // import axios from 'axios';     // 외부 API 호출을 위한 HTTP 클라이언트 (SMS API 호출에 사용 -> 실제로 사용할 때)
 import jwt from 'jsonwebtoken';        // 토큰 사용하기 위함
 import { secretKey, options } from '../config/jwtConfig.js';
 import dotenv from 'dotenv';
 dotenv.config();         // .env 파일에 있는 내용 가져와서 사용
+
+import crypto from 'crypto';        // 비밀번호 재설정 관련
+
+const passwordResetTokens = {};     // 비밀번호 재설정 관련 토큰
 
 // 회원가입 기능 (등록)
 export const registerUser = async (UserDTO) => {
@@ -174,17 +178,29 @@ export const registerUser = async (UserDTO) => {
 
 // 로그인 기능 + 토큰 생성 기능 추가
 export const loginUser = async (user_id, user_pw) => {
-    const user = await findUserById(user_id);
+    const id = String(user_id ?? '').trim();
+    const pw = String(user_pw ?? '').trim();
 
-    if (!user) {
-        throw new Error('존재하지 않는 사용자입니다!');
+    if (!id) {
+        throw new Error('아이디를 입력해주세요.');
+    } else if (!pw) {
+        throw new Error('비밀번호를 입력해주세요.');
     }
 
-    if (user.user_pw !== user_pw) {
+    // 아이디를 바탕으로 사용자 정보 조회
+    const user = await findUserById(id);       // 괄호 안 원래 user_id
+
+    if (!user) {
+        //throw new Error('존재하지 않는 사용자입니다!');
+        throw new Error('존재하지 않는 사용자입니다.');
+    }
+
+    if (user.user_pw !== pw) {         // 우항 user_pw였다가 변경
         throw new Error('비밀번호가 일치하지 않습니다.');
     }
 
     const payload = {
+        user_no: user.user_no,
         user_id: user.user_id,
         u_name: user.u_name
     };
@@ -193,7 +209,46 @@ export const loginUser = async (user_id, user_pw) => {
     return { user, token };
 };
 
-// 비밀번호 변경 기능
+// '아이디 찾기' 기능 (250718 만들음)
+export const findUserId = async (u_name, u_phone) => {
+    const normalizedPhone = String(u_phone).replace(/[^0-9]/g, '');        // 폰번호 입력 받을 때 숫자만 받도록 '정규화'
+    const user = await findUserIdByNameAndPhone(u_name.trim(), normalizedPhone);
+
+    if (!user) {
+        throw new Error('해당 정보와 일치하는 사용자가 없습니다.');
+    }
+
+    return user.user_id;
+}
+
+// 구글 계정 로그인 기능 (250721 만드는중)
+export const findOrCreateUserByGoogleProfile = async (profile) => {
+    const email = profile.emails[0].value;
+    const name = profile.displayName;
+
+    console.log("구글 프로필: ", profile);
+    //console.log("이메일 확인: ", email);
+
+    let user = await findUserByEmail(email);
+    if (!user) {
+        // 구글 계정이 없는 경우 -> 새 사용자 등록
+        console.log("해당 이메일 사용자 없음 -> 신규 등록 진행");
+
+        const newUser = {
+            u_name: name, u_email: email, user_pw: '12345', user_id: `google_${profile.id}`,
+            u_phone: '01012345678', u_gender: 'F', chat_flag: 'parent', user_flag: 'parent'
+        };
+
+        await createUser(newUser);
+        user = await findUserByEmail(email);
+    } else {
+        console.log("이미 존재하는 사용자: ", user);
+    }
+
+    return user;
+}
+
+// 비밀번호 변경(재설정) 기능 -> 마이페이지에서 변경할 때 사용(?)
 export const changeUserPassword = async (user_id, current_pw, new_pw) => {
     const user = await findUserById(user_id);
 
@@ -230,7 +285,7 @@ export const sendVerificationEmail = async (u_email, code) => {
     });
 
     const mailOptions = {
-        from: '"MyApp" <jisoopark8@gmail.com>',
+        from: '"MyApp" <ravoyanolja@gmail.com>',
         to: u_email,
         subject: '이메일 인증 코드',
         html: `<h1>인증 코드: <strong>${code}</strong></h1>`
@@ -240,7 +295,15 @@ export const sendVerificationEmail = async (u_email, code) => {
 };
 
 // 이메일 인증 코드를 '검증'하는 기능
-export const verifyEmailCode = (u_email, inputCode) => {
+export const verifyEmailCode = (u_email, inputCode, remove = false) => {        // remove = false (마이페이지 개인정보 수정에서 사용)
+    // 아래 잠깐 콘솔 로그 추가
+    console.log("verifyEmailCode check:", {
+        email: u_email,
+        input: inputCode,
+        stored: verificationCodes[u_email],
+        remove
+    });
+    
     const storeCode = verificationCodes[u_email];
 
     if (!storeCode) {
@@ -251,8 +314,15 @@ export const verifyEmailCode = (u_email, inputCode) => {
         throw new Error("인증 코드가 일치하지 않습니다.");
     }
 
-    delete verificationCodes[u_email];
+    // 인증 완료된 경우 인증번호 삭제
+    //delete verificationCodes[u_email];
+
+    // 최종 업데이트 시점에서 인증번호 삭제 (잠깐 추가)
+    if (remove) {
+        delete verificationCodes[u_email];
+    }
 };
+
 
 // 휴대폰 번호로 전송하기 위한 인증코드 생성 관련 코드 (비밀번호 찾기 기능)
 // const sendSMSVerificationCode = async (phone, code) => {
@@ -270,14 +340,17 @@ export const verifyEmailCode = (u_email, inputCode) => {
 
 // 휴대폰 번호로 전송된 인증코드 전송 기능 (비밀번호 찾기) -> 테스트라 콘솔창에 인증코드 출력되도록
 export const requestPhoneVerification = async (user_id, u_name, u_phone) => {
-    const user = await findUserByNamePhone(user_id, u_name, u_phone);
+    const normalizedPhone = String(u_phone).replace(/[^0-9]/g, '');
+
+    const user = await findUserByNamePhone(user_id, u_name, normalizedPhone);
 
     if (!user) {
         throw new Error('일치하는 사용자가 없습니다.');
     }
 
     const code = generateVerificationCode();
-    verificationCodes[u_phone] = code;
+    //verificationCodes[u_phone] = code;
+    verificationCodes[normalizedPhone] = code;
 
     console.log(`[테스트용 인증코드] ${code}`);
 
@@ -288,7 +361,8 @@ export const requestPhoneVerification = async (user_id, u_name, u_phone) => {
 
 // 휴대폰 번호로 전송된 인증코드 검증 기능
 export const verifyPhoneCode = (u_phone, inputCode) => {
-    const storedCode = verificationCodes[u_phone];
+    const normalizedPhone = String(u_phone).replace(/[^0-9]/g, '');
+    const storedCode = verificationCodes[normalizedPhone];          // 원래는 u_phone였음
 
     if (!storedCode) {
         throw new Error("인증 코드가 존재하지 않거나 만료되었습니다.");
@@ -298,5 +372,28 @@ export const verifyPhoneCode = (u_phone, inputCode) => {
         throw new Error("인증 코드가 일치하지 않습니다.");
     }
 
-    delete verificationCodes[u_phone];
+    delete verificationCodes[normalizedPhone];      // 원래 u_phone
+
+    // 인증 성공하면 -> 일회용 resetToken 발급 (비밀번호 재설정 관련)
+    const token = crypto.randomBytes(24).toString('hex');
+    passwordResetTokens[normalizedPhone] = token;
+    return token;
+};
+
+// 휴대폰 인증 기반 비밀번호 재설정 -> 현재 비번 불필요함 (비밀번호 찾기에서 사용중)
+export const resetUserPasswordByPhone = async (user_id, new_pw, u_phone, resetToken) => {
+  const normalizedPhone = String(u_phone).replace(/[^0-9]/g, '');
+  const saved = passwordResetTokens[normalizedPhone];
+
+  if (!saved || saved !== resetToken) {
+    throw new Error('인증이 만료되었거나 유효하지 않습니다. 다시 인증해주세요.');
+  }
+
+  const user = await findUserById(user_id);
+  if (!user) throw new Error('존재하지 않는 아이디입니다.');
+
+  await updateUserPassword(user_id, new_pw);
+
+  // 일회용 토큰 소각
+  delete passwordResetTokens[normalizedPhone];
 };

@@ -211,7 +211,9 @@ import {
   generateVerificationCode,
   verifyEmailCode,
   requestPhoneVerification,
-  verifyPhoneCode
+  verifyPhoneCode, 
+  findUserId,
+  resetUserPasswordByPhone
 } from '../services/UserService.js';
 import {
   findUserById,
@@ -221,7 +223,7 @@ import pkg from 'jsonwebtoken';
 import db from '../config/db.js';     // 회원탈퇴 기능 -> DB 연결
 const { TokenExpiredError } = pkg;
 
-// userSignupHandler : HTTP 요청을 처리하는 핸들러 (회원가입)
+// userSignupHandler : HTTP 요청을 처리하는 핸들러 ('회원가입')
 export const userSignupHandler = async (req, res, body) => {
   try {
     const userData = JSON.parse(body);
@@ -238,28 +240,43 @@ export const userSignupHandler = async (req, res, body) => {
   }
 };
 
-// userLoginHandler : 로그인 요청 처리하는 핸들러 + 이곳에 토큰을 클라이언트로 반환
+// userLoginHandler : '로그인 요청' 처리하는 핸들러 + 이곳에 토큰을 클라이언트로 반환
 export const userLoginHandler = async (req, res, body) => {
   try {
-    const { user_id, user_pw } = JSON.parse(body);
-    const { user, token } = await loginUser(user_id, user_pw);
+    const { user_id, user_pw } = req.body;
+    const { user, token, refreshToken } = await loginUser(user_id, user_pw);
+    // ↑ loginUser가 accessToken 과 refreshToken 만들어서 반환하도록 수정/확인
 
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(
-      JSON.stringify({
-        message: '로그인 성공',
-        user_id: user.user_id,
-        u_name: user.u_name,
-        token
-      })
-    );
+    // ★ 쿠키로 심기
+    res.cookie('accessToken', token, {
+      httpOnly: true,
+      sameSite: 'Lax',
+      // secure: true,          // HTTPS일 때만 켜세요(개발 http이면 주석)
+      maxAge: 1000 * 60 * 30,  // 30분
+      path: '/',
+    });
+    if (refreshToken) {
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        sameSite: 'Lax',
+        // secure: true,
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7일
+        path: '/',
+      });
+    }
+
+    return res.status(200).json({
+      message: '로그인 성공',
+      user_id: user.user_id,
+      u_name: user.u_name,
+      // token을 굳이 바디로 줄 필요는 없음(원한다면 유지)
+    });
   } catch (err) {
-    res.writeHead(401, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: err.message }));
+    return res.status(401).json({ error: err.message || '로그인 실패' });
   }
 };
 
-// userIdCheckHandler : 아이디 중복 체크 핸들러
+// userIdCheckHandler : '아이디 중복 체크' 핸들러
 export const userIdCheckHandler = async (req, res, user_id) => {
   try {
     const user = await findUserById(user_id);
@@ -273,7 +290,7 @@ export const userIdCheckHandler = async (req, res, user_id) => {
   }
 };
 
-// userEmailCheckHandler : 이메일 중복 체크 핸들러
+// userEmailCheckHandler : '이메일 중복 체크' 핸들러
 export const userEmailCheckHandler = async (req, res, body) => {
   try {
     const { u_email } = JSON.parse(body);
@@ -295,8 +312,31 @@ export const userEmailCheckHandler = async (req, res, body) => {
   }
 };
 
-// userChangePasswordHandler : 비밀번호 변경하는 핸들러
+// findUserIdHandler : '아이디 찾기'하는 핸들러
+export const findUserIdHandler = async (req, res, body) => {
+  try {
+    const { u_name, u_phone } = req.body;
+
+    if (!u_name || !u_phone) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: '이름과 휴대폰 번호를 입력해주세요.' }));
+      return;
+    }
+
+    const user_id = await findUserId(u_name, u_phone);
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ user_id }));
+  } catch (err) {
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: err.message }));
+  }
+};
+
+// userChangePasswordHandler : '비밀번호 변경(재설정)'하는 핸들러 -> 마이페이지에서 비밀번호 변경할 때 사용 가능
 export const userChangePasswordHandler = async (req, res, body) => {
+  console.log('[CHANGE] /auth/password');
+
   try {
     const { user_id, current_pw, new_pw } = JSON.parse(body);
 
@@ -316,7 +356,28 @@ export const userChangePasswordHandler = async (req, res, body) => {
   }
 };
 
-// emailVerificationHandler : 이메일 인증 코드 전송과 관련된 핸들러
+// 휴대폰 인증 기반 비밀번호 재설정 -> 원래 비번 불필요함 (현재 비번 모르는 상태에서 비번 바꾸기)
+export const userPasswordResetByPhoneHandler = async (req, res, body) => {
+  console.log('[RESET] /auth/password/reset');
+
+  try {
+    const { user_id, new_pw, u_phone, resetToken } = JSON.parse(body);
+    if (!user_id || !new_pw || !u_phone || !resetToken) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ error: '필수 값 누락 (user_id, new_pw, u_phone, resetToken)' }));
+    }
+
+    await resetUserPasswordByPhone(user_id, new_pw, u_phone, resetToken);
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ message: '비밀번호가 변경되었습니다.' }));
+  } catch (err) {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: err.message }));
+  }
+};
+
+// emailVerificationHandler : '이메일 인증 코드 전송'과 관련된 핸들러
 export const emailVerificationHandler = async (req, res, body) => {
   try {
     const { u_email } = JSON.parse(body);
@@ -340,7 +401,7 @@ export const emailVerificationHandler = async (req, res, body) => {
   }
 };
 
-// verifyEmailCondeHandler : 이메일 인증코드를 검증하는 핸들러
+// verifyEmailCondeHandler : '이메일 인증코드를 검증'하는 핸들러
 export const verifyEmailCondeHandler = async (req, res, body) => {
   try {
     const { u_email, code } = JSON.parse(body);
@@ -361,7 +422,7 @@ export const verifyEmailCondeHandler = async (req, res, body) => {
   }
 };
 
-// phoneVerificationRequestHandler : 휴대폰번호로 전달되는 '인증코드 요청' (비밀번호 찾기)
+// phoneVerificationRequestHandler : 휴대폰번호로 전달되는 '인증코드 요청' ('비밀번호 찾기')
 export const phoneVerificationRequestHandler = async (req, res, body) => {
   try {
     const { user_id, u_name, u_phone } = JSON.parse(body);
@@ -393,10 +454,12 @@ export const phoneVerificationCheckHandler = async (req, res, body) => {
       return;
     }
 
-    verifyPhoneCode(u_phone, code);
+    const resetToken = verifyPhoneCode(u_phone, code);    // 토큰 발급
+
+    //verifyPhoneCode(u_phone, code);
 
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ message: '인증 성공!' }));
+    res.end(JSON.stringify({ message: '인증 성공!', resetToken }));
   } catch (err) {
     res.writeHead(400, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: err.message }));
@@ -406,21 +469,21 @@ export const phoneVerificationCheckHandler = async (req, res, body) => {
 // userDeleteHandler : '회원탈퇴'와 관련된 기능을 하는 핸들러
 export const userDeleteHandler = async (req, res) => {
   try {
-    const { user_id } = req.body;
+    const { user_no } = req.user;     // JWT payload에서 user_no 가져오기
 
-    if (!user_id) {
-      return res.status(400).json({ error: '아이디 입력은 필수입니다.' });
+    if (!user_no) {
+      return res.status(400).json({ error: '회원 번호가 유효하지 않습니다.' });
     }
 
-    // 실제 DB에서 사용자 정보 삭제 (탈퇴 기능)
+    // 1. 사용자 정보 삭제 -> 사용자(User) 삭제 시 Child는 자동 삭제(CASCADE)
     const [result] = await db.execute(
-      //'DELETE FROM Users WHERE user_id = ?', [user_id]      // 원래 코드 -> 실습실 컴퓨터
-      'DELETE FROM User WHERE user_id = ?', [user_id]        // 지수 테스트 사용 코드
+      'DELETE FROM User WHERE user_no = ?',
+      [user_no]
     );
 
     // 삭제 대상이 없을 경우 -> 해당 user가 존재하지 않는 경우
     if (result.affectedRows === 0) {
-      return res.status(404).json({ error: '해당 user_id를 가진 사용자가 없습니다.' });
+      return res.status(404).json({ error: '해당 user_no를 가진 사용자가 없습니다.' });
     }
 
     return res.status(200).json({ message: '회원탈퇴가 완료되었습니다.' });

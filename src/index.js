@@ -1,6 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
+import passport from 'passport';      // 구글 계정 로그인 관련 코드
+import './config/passport.js';        // 구글 계정 로그인 관련 코드 (구글 전략)
 import { sendMessageController } from './controllers/message.controller.js'; //메시지 전송
 import { getMessagesController } from './controllers/message.controller.js'; //메시지 조회
 import { markMessageReadController } from './controllers/message.controller.js'; //메시지 읽음 처리
@@ -19,7 +21,8 @@ import {
   emailVerificationHandler,
   verifyEmailCondeHandler,
   phoneVerificationRequestHandler,
-  phoneVerificationCheckHandler
+  phoneVerificationCheckHandler,
+  userPasswordResetByPhoneHandler
 } from './controllers/UserController.js';
 import { logout } from './controllers/AuthController.js'    // 로그아웃 기능
 import { authenticateToken } from './middleware/AuthMiddleware.js'; //인증 미들웨어
@@ -32,18 +35,24 @@ import { authenticateToken } from './middleware/AuthMiddleware.js'; //인증 미
 import reportRoutes from './routes/reportRoutes.js';
 import voiceRoutes from './routes/voiceRoutes.js';
 import homecamRoutes from './routes/HomecamRoutes.js'; //홈캠 라우트
-import userRoutes from './routes/UserRoutes.js'     // 회원 탈퇴 기능 관련 라우트
-import childRoutes from './routes/ChildRoutes.js'   // 자녀추가 기능 관련 라우트
-
-
-
-
+import userRoutes from './routes/UserRoutes.js';     // 회원 탈퇴, 아이디 찾기 기능 관련 라우트
+import childRoutes from './routes/ChildRoutes.js';   // 자녀추가 기능 관련 라우트
+import GoogleAuthRoutes from './routes/GoogleAuthRoutes.js';    // 구글 계정 로그인 관련 라우트
+import cookieParser from 'cookie-parser';
+import AuthRoutes from './routes/AuthRoutes.js';
+import MypageRoutes from './routes/MypageRoutes.js'       // 마이페이지 '개인정보 수정' 관련 라우트
 
 const app = express();
 app.use(bodyParser.json());
 
 // const app = express();
-// app.use(express.json());
+app.use(express.json());
+
+// 16. 구글 계정 로그인 관련 쿠키 파싱
+app.use(cookieParser());
+
+// passport 초기화 -> 구글 계정 로그인 관련 코드
+app.use(passport.initialize());
 
 
 //레포트 관련 라우터 연결
@@ -58,8 +67,20 @@ app.use('/homecam', homecamRoutes);
 // 12. 회원탈퇴 관련 라우터 연결 -> 여기다가는 기본 경로만 작성해줌 (나머지는 UserRoutes.js 코드 참고)
 app.use('/auth', userRoutes);
 
-// 13. 자녀추가 관련 라우터 연결
+// 13. 자녀추가, 자녀 정보 조회 관련 라우터 연결
 app.use('/auth', childRoutes);
+
+// 14. 아이디 찾기 관련 라우터 연결
+app.use('/auth', userRoutes);
+
+// 15. 구글 계정 로그인 관련 라우터 연결
+app.use('/auth', GoogleAuthRoutes);
+
+// 17. 쿠키의 accessToken 검증 + 사용자 최소 정보 반환
+app.use('/auth', AuthRoutes);
+
+// 18. 마이페이지 '개인정보 수정' 관련 라우터 연결
+app.use('/mypage', MypageRoutes);
 
 
 app.post('/messages/send', sendMessageController); //메시지 전송
@@ -97,9 +118,14 @@ app.post('/auth/email-check', (req, res) => {
 });
 
 // 5. 비밀번호 변경
+// app.patch('/auth/password', (req, res) => {
+//   userChangePasswordHandler(req, res, JSON.stringify(req.body));
+// });
+
+// 5-1. 비밀번호 재설정 (휴대폰인증 기반)
 app.patch('/auth/password', (req, res) => {
-  userChangePasswordHandler(req, res, JSON.stringify(req.body));
-});
+  userPasswordResetByPhoneHandler(req, res, JSON.stringify(req.body));
+})
 
 // 6. 이메일 인증코드 전송
 app.post('/auth/email-auth/send', (req, res) => {
@@ -137,7 +163,8 @@ app.post('/auth/logout', (req, res) => {
 
 
 //서버 실행
-const PORT = 3000;
+//const PORT = 3000;
+const PORT = 8080;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
