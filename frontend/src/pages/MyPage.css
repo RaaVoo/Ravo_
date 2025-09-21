@@ -1,0 +1,171 @@
+/* MyPage.css */
+.mypage-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px;
+    background-color: #fbe04d;
+    font-family: 'LINE Seed Sans KR', sans-serif;
+    gap: 50px;
+  }
+  
+  .mypage-main {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    /* padding-left: 30px; */
+    margin-top: 40px;
+    align-items: center;
+  }
+  
+  .profile-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: #fff2aa;
+    padding: 30px 40px;
+    border-radius: 40px;
+    height: 250px;
+    position: relative;
+    box-sizing: border-box;
+  }
+  
+  .profile-left {
+    display: flex;
+    gap: 30px;
+  }
+  
+  .profile-image {
+    width: 150px;
+    height: 150px;
+    background-color: #d6d6d6;
+    border-radius: 50%;
+    margin-right: 30px;
+    flex-shrink: 0;
+  }
+  
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .profile-links span {
+    margin-right: 20px;
+    font-weight: 500;
+    color: #555;
+    cursor: pointer;
+  }
+
+  .profile-actions {
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
+    display: flex;
+    gap: 20px;
+  }
+  
+  .action-btn {
+    text-decoration: underline;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  
+  .weather-section {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;  /* ✅ 좌측 정렬 */
+    background-color: #68d2e8;
+    padding: 30px 40px;
+    border-radius: 40px;
+    height: 250px;
+    box-sizing: border-box;
+    position: relative;
+    width: 100%;
+  }
+  
+  .weather-left {
+    display: flex;
+    gap: 55px;
+    align-items: center; /* 이모지랑 텍스트 수직 정렬 */
+  }
+  
+  .weather-icon {
+    width: 150px;
+    height: 150px;
+    font-size: 150px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .weather-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: center;
+  }
+  
+  .weather-info h3 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.6;
+  }
+  
+  .add-child {
+    position: absolute;
+    bottom: 20px;
+    right: 30px;
+    background: none;
+    border: none;
+    text-decoration: underline;
+    color: #333;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  /* SideMenu.css */
+  .side-menu {
+    background-color: white;
+    border-radius: 30px;
+    padding: 30px;
+    width: 250px;
+    font-family: 'LINE Seed Sans KR', sans-serif;
+    box-sizing: border-box;
+    height: fit-content;
+  }
+  
+  .side-menu h2 {
+    text-align: center;
+    font-size: 20px;
+    /* margin-bottom: 30px; */
+    color: #555;
+  }
+  
+  .menu-group {
+    border-top: 3px solid #f5d452;
+    margin-top: 20px;
+    padding-top: 20px;
+  }
+  
+  .menu-group h3 {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 8px;
+  }
+  
+  .menu-group ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .menu-group li {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 6px;
+    cursor: pointer;
+  }
+  

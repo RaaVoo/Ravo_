@@ -33,3 +33,6 @@ coverage/
 
 # 기타
 *.swp
+__pycache__/
+*.pyc
+.vs/
