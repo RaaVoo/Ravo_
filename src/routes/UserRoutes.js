@@ -1,9 +1,12 @@
 import express from 'express';
-import { userDeleteHandler } from '../controllers/UserController.js';
+import { findUserIdHandler, userDeleteHandler } from '../controllers/UserController.js';
+import { authenticateToken } from '../middleware/AuthMiddleware.js';
 
 const router = express.Router();
 
-// 실제 DB에서 사용자 삭제 => 여기다가 /auth 나머지 경로 적어줌
-router.delete('/delete', userDeleteHandler);
+router.delete('/delete', authenticateToken, userDeleteHandler);         // authenticateToken 추가
+
+// 아이디 찾기 라우트
+router.post('/find-id', findUserIdHandler);
 
 export default router;

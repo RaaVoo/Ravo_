@@ -27,34 +27,47 @@
 // };
 
 // module.exports = authenticateToken;
-// 토큰 검증 미들웨어 (로그인 후 사용자 인증 처리)
+
+// 토큰 검증 미들웨어 (로그인 후 사용자 인증 처리, 자녀 정보 가져오기)
 import jwt from 'jsonwebtoken';
 import { secretKey } from '../config/jwtConfig.js';
-//import { isBlacklisted } from '../blacklist/TokenStore.js';      // isBlaklisted는 토큰을 확인하는 함수
 
 // 토큰 유효성 검사
 export const authenticateToken = (req, res, next) => {
-  // 헤더에서 Authorization: Bearer xxx 형식 중 'xxx'만 추출
+  let token;
+
+  // 1. Authorization 헤더 확인
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.split(' ')[1];
+  }
+
+  // 2. Authorization 헤더가 없으면 쿠키에서 accessToken 확인
+  if (!token && req.cookies?.accessToken) {
+    token = req.cookies.accessToken;
+  }
+
+  // 토큰 출력해보기
+  console.log('>>> Authorization header:', req.headers['authorization']);
+  console.log('>>> Cookie:', req.cookies);
+  console.log('>>> 최종 사용된 토큰:', token);
 
   // 토큰이 없는 경우
   if (!token) {
-    res.writeHead(401, { 'Content-Type': 'application/json' }); // 오타 수정: ContentType → Content-Type
-    res.end(JSON.stringify({ error: '토큰이 없습니다.' }));
-    return;
+    return res.status(401).json({ error: '토큰이 없습니다.' });
   }
 
   // 토큰 검증
   jwt.verify(token, secretKey, (err, user) => {
     if (err) {
-      res.writeHead(403, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: '토큰이 유효하지 않습니다.' }));
-      return;
+      console.error("JWT 검증 실패:", err.message);
+      return res.status(403).json({ error: '토큰이 유효하지 않습니다.' });
     }
+
+    console.log("Decoded JWT:", user);
 
     // 검증 성공 시 req.user에 사용자 정보 저장
     req.user = user;
-    next(); // 다음 미들웨어 또는 라우터로 이동
+    next();
   });
 };

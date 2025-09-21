@@ -1,0 +1,79 @@
+/* '탈퇴하기' 버튼 클릭 후 뜨는 팝업창 css */
+.user-delete-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.25);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.user-delete-popup-box {
+    position: relative;
+    width: 500px;
+    height: 270px;
+    background: #FFFFFF;
+    border-radius: 50px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    padding: 60px 40px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 15px;
+}
+
+.user-delete-popup-close {
+    position: absolute;
+    top: -15px;
+    right: -7px;
+    width: 50px;
+    height: 50px;
+    font-size: 40px;
+    font-weight: 700;
+    background: #FFFFFF;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    color: #03AED2;
+    cursor: pointer;
+}
+
+.user-delete-popup-content {
+    display: flex;
+    flex-direction: column;           /* 글자랑 버튼 병렬 배치 */
+    align-items: center;              /* 수직 정렬 시 버튼을 수평 중앙 정렬 */
+    justify-content: center;          /* 전체 내용을 수직 중앙 정렬 */
+    /* height: 100%; */
+}
+
+.user-delete-popup-message {
+    font-family: 'LINE Seed Sans KR', sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 50px;
+    text-align: center;
+    color: #6E6E6E;
+    /* margin-top: 10px; */
+}
+
+.user-delete-popup-confirm {
+    width: 220px;
+    height: 50px;
+    margin-top: 20px;
+    background-color: #68D2E8;
+    color: #FFFFFF;
+    font-size: 20px;
+    font-weight: 600;
+    border-radius: 40px;
+    border: none;
+    box-shadow: 0px 4px 0px #009FC1;
+    cursor: pointer;
+}
+
+.user-delete-popup-confirm:hover {
+    background-color: #4cbcd6;
+}

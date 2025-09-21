@@ -1,0 +1,120 @@
+/* 전체 화면 가운데 정렬 */
+.signup-select-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #FEEFAD;
+    min-height: 100vh;
+}
+
+/* 카드 박스 스타일 */
+.signup-select-box {
+    width: 540px;
+    height: 730px;
+    padding: 105px 40px 140px 40px;
+    background: white;
+    border-radius: 50px;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+    margin-top: 50px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: center; */
+    gap: 22px;
+}
+
+/* 제목 */
+.signup-select-title {
+    font-family: 'PyeongChang Peace', sans-serif;
+    font-size: 33px;
+    font-weight: 700;
+    color: #03AED2;
+    margin-left: -190px;
+}
+
+/* 부제목 */
+.signup-select-subtitle {
+    font-family: 'LINE Seed Sans KR', sans-serif;
+    font-size: 33px;
+    font-weight: 700;
+    color: #68D2E8;
+    margin-top: -20px;
+    margin-left: -180px;
+}
+
+/* 기본 회원가입 버튼 */
+.signup-select-button {
+    width: 75%;
+    height: 65px;
+    margin-top: 60px;
+    padding-top: 4px;
+    background: #68D2E8;
+    box-shadow: 0 4px 0 #009FC1;
+    border-radius: 40px;
+    border: none;
+    font-family: 'LINE Seed Sans KR', sans-serif;
+    font-size: 19px;
+    font-weight: 550;
+    color: white;
+    cursor: pointer;
+}
+
+.signup-select-button:hover {
+    background-color: #55c8e2;
+}
+
+/* 구글 회원가입 버튼 */
+.google-signup {
+    width: 75%;
+    height: 65px;
+    background: #ffffff;
+    border: 1px solid #A4B4C3;
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    cursor: pointer;
+    margin-top: -6px;
+}
+
+.google-signup:hover {
+    background-color: rgb(248, 248, 248);
+}
+
+.google-icon {
+    width: 19px;
+    height: 19px;
+}
+
+.google-text {
+    font-family: 'LINE Seed Sans KR', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #6E6E6E;
+    padding-top: 4px;
+}
+
+/* 로그인 안내 문구 */
+.login-section {
+    display: flex;
+    /* margin-top: 8px; */
+    gap: 8px;
+    font-size: 12px;
+    font-family: 'LINE Seed Sans KR', sans-serif;
+}
+
+.login-text {
+    color: #68D2E8;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.login-link {
+    color: #009FC1;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 15px;
+}

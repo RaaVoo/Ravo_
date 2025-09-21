@@ -1,0 +1,109 @@
+/* 아이디 찾기 성공 팝업창 css */
+.find-id-success-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.find-id-success-box {
+  position: relative;
+  width: 470px;
+  height: 315px;            /* 원래 auto였음 */
+  background: #FFFFFF;
+  border-radius: 60px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
+.find-id-success-close {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 50px;
+  height: 50px;
+  background: #FFFFFF;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  font-size: 30px;
+  font-weight: 800;
+  color: #03AED2;
+  cursor: pointer;
+}
+
+.check-icon {
+  width: 55px;
+  height: 55px;
+  margin-bottom: 10px;
+}
+
+.find-id-success-box b {
+  font-family: 'LINE Seed Sans KR';
+  font-size: 33px;
+  font-weight: 700;
+  color: #6E6E6E;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.find-id-success-box p {
+  font-family: 'LINE Seed Sans KR';
+  font-size: 19px;
+  font-weight: 500;
+  color: #6E6E6E;
+  margin: 0;
+}
+
+.find-success-btns {
+  display: flex;
+  gap: 20px;
+  margin-top: 17px;
+}
+
+.go-login-btn {
+  width: 160px;
+  height: 45px;
+  background-color: #68D2E8;
+  border-radius: 40px;
+  box-shadow: 0px 4px 0px #009FC1;
+  border: none;
+  font-family: 'LINE Seed Sans KR';
+  font-weight: 700;
+  font-size: 18px;
+  color: white;
+  cursor: pointer;
+}
+
+.go-find-pw {
+  width: 160px;
+  height: 45px;
+  background-color: #FF8383;
+  border-radius: 40px;
+  box-shadow: 0px 4px 0px #C86B6B;
+  border: none;
+  font-family: 'LINE Seed Sans KR';
+  font-weight: 700;
+  font-size: 18px;
+  color: white;
+  cursor: pointer;
+}
+
+.go-login-btn:hover {
+  background-color: #4cbcd6;
+}
+
+.go-find-pw:hover {
+  background-color: #e76b6b;
+}
