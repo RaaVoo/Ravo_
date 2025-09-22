@@ -1,0 +1,261 @@
+@import url('https://fonts.googleapis.com/css2?family=LINE+Seed+Sans+KR:wght@400;700&display=swap');
+
+/* ===== Theme ===== */
+:root{
+  --yellow:#FDDE55;
+  --sky:#68D2E8;
+  --sky-deep:#03AED2;
+  --gray6:#6E6E6E;
+  --bg-soft: rgba(254,239,173,0.5);
+  --shadow: 0px 4px 4px rgba(0,0,0,0.25);
+}
+
+*{ box-sizing: border-box; }
+body{ font-family: 'LINE Seed Sans KR', sans-serif; }
+
+/* ===== Page Wrapper ===== */
+.hc-wrap{
+  min-height: 100vh;
+  background:#fff;
+  padding: 120px 24px 80px;     /* 네비바는 별도라 본문 패딩만 */
+  margin-bottom: 20px;
+}
+
+/* ===== Header (Title + Search/Delete) ===== */
+.hc-header-row{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:24px; flex-wrap:wrap;
+  max-width: 960px;            /* 중앙 폭 더 컴팩트 */
+  margin: 8px auto 16px;
+}
+.hc-title{
+    font-size: 28px;
+    font-weight: bold;
+    color: #6E6E6E;
+    align-self: flex-start;
+}
+
+.hc-search{
+  position:relative; display:flex; align-items:center;
+}
+.hc-search input{
+  width:360px; height:56px;
+  border-radius:20px; border:1px solid #eee;
+  padding:0 56px 0 16px; font-size:18px; color:#6E6E6E;
+  background:#fff; box-shadow: var(--shadow);
+}
+.hc-search-btn{
+  position:absolute; right:56px;
+  width:32px; height:32px; border:none; background:transparent; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.hc-search-btn img{ width:100%; height:100%; margin:20px; }
+.hc-trash{
+  width:48px; height:48px; border:none; background:transparent; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.hc-trash img{ width:100%; height:100%; }
+
+/* ===== Content Box ===== */
+.hc-content{
+  background: var(--bg-soft);
+  border-radius: 28px;
+  padding: 36px 28px 44px;
+  max-width: 960px;
+  margin: 24px auto 0;
+}
+
+/* Toolbar */
+.hc-toolbar{ display:flex; justify-content:flex-start; margin-bottom:20px; }
+.hc-checkbox{ display:flex; align-items:center; gap:8px; color:#333; font-weight:600; }
+.hc-checkbox input{ width:18px; height:18px; }
+
+/* ===== Grid (Desktop 4 columns fixed) ===== */
+.hc-grid{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);  /* 한 줄 4개 고정 */
+  gap: 20px 24px;
+  justify-items: center;
+}
+
+/* ===== Card ===== */
+.hc-card{
+  width: 100%;
+  max-width: 200px;                 /* 카드 크기 축소 */
+  background:#fff;
+  border-radius:22px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding:10px;
+  position:relative;
+  overflow: visible;
+}
+
+/* 카드별 체크박스 (항상 위에, 크게) */
+.hc-card-check{
+  position:absolute; top:8px; left:8px; z-index:3;
+}
+.hc-card-check input{
+  appearance: auto;
+  width:20px; height:20px;
+  accent-color:#03AED2;          /* 지원 브라우저 */
+  background:#fff; border:1px solid #6E6E6E;
+}
+
+/* 썸네일 */
+.hc-thumb{
+  position:relative;
+  width:100%;
+  aspect-ratio: 4/3;
+  border-radius:12px;
+  overflow:hidden;
+  background: rgba(217,217,217,0.3);
+}
+.hc-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+/* ▶ 재생 아이콘(우하단) — (실제 썸네일 쓰는 경우용, 지금은 미사용) */
+.hc-play{
+  position:absolute; right:10px; bottom:10px;
+  width:34px; height:28px; border:none; background:transparent; cursor:pointer;
+}
+.hc-play-icon{ width:100%; height:100%; fill:#000; }
+
+/* 날짜 구분/텍스트 */
+.hc-sep{
+  margin:6px auto 4px;
+  border:0; border-top:1px solid #D9D9D9;
+  width:74%;
+}
+.hc-date{
+  display:block; text-align:center; font-size:13px; color:#000;
+}
+
+/* ===== Pagination ===== */
+.hc-paging{
+  display:flex; gap:12px; justify-content:center; margin-top:20px;
+}
+.hc-page-btn{
+  width:44px; height:44px; border-radius:40px;
+  border:3px solid #009FC1; background:#fff; color:#03AED2;
+  font-weight:700; font-size:18px; line-height:38px; text-align:center; cursor:pointer;
+}
+.hc-page-btn.active{ background:#68D2E8; color:#fff; border:none; }
+
+/* Loading */
+.hc-loading{ text-align:center; padding:60px 0; color:#6E6E6E; font-size:18px; }
+
+/* ===== Responsive ===== */
+@media (max-width: 1100px){
+  .hc-header-row, .hc-content { max-width: 860px; }
+  .hc-title{ font-size: 36px; }
+}
+@media (max-width: 900px){
+  .hc-grid{ grid-template-columns: repeat(3, 1fr); } /* 3열 */
+}
+@media (max-width: 680px){
+  .hc-grid{ grid-template-columns: repeat(2, 1fr); } /* 2열 */
+  .hc-card{ max-width: 220px; }
+  .hc-search input{ width: 300px; }
+}
+@media (max-width: 480px){
+  .hc-header-row, .hc-content { max-width: 100%; }
+  .hc-grid{ grid-template-columns: 1fr; }            /* 1열 */
+  .hc-title{ font-size: 28px; }
+  .hc-search input{ width: 100%; height:52px; }
+  .hc-search-btn{ right: 52px; }
+  .hc-page-btn{ width:40px; height:40px; line-height:36px; font-size:16px; }
+}
+
+/* ====== ⬇️ 추가: Placeholder(시안형) 썸네일 전용 스타일 ====== */
+.hc-thumb--mock{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: transparent;     /* 기존 회색 배경 덮어쓰기 */
+}
+
+.hc-thumb-face{
+  width:100%;
+  height:100%;
+  border-radius:12px;
+  background:#fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.hc-thumb-play-lg{
+  width:42%;
+  height:42%;
+  fill:#9E9E9E;
+}
+
+/* === 강제 Placeholder: 실제 이미지/오버레이 전부 숨기고 시안 모양으로 통일 === */
+
+/* 1) 진짜 썸네일 이미지 강제 숨김 */
+.hc-thumb img{
+  display: none !important;
+}
+
+/* 2) 우하단 작은 재생 아이콘/버튼도 전부 숨김 (남아있던 검은 삼각형 제거) */
+.hc-play, .hc-play-icon{
+  display: none !important;
+}
+
+/* 3) placeholder UI (흰 상자 + 가운데 큰 ▶) */
+.hc-thumb{
+  position: relative;
+  background: transparent !important;   /* 기존 회색 배경 제거 */
+  overflow: visible;                    /* 안쪽 그림자 여유 */
+}
+
+/* 흰 박스 */
+.hc-thumb::before{
+  content: "";
+  position: absolute;
+  inset: 6px;                           /* 테두리처럼 안쪽 여백 */
+  border-radius: 20px;
+  background: #F4F4F4;
+  /* box-shadow: 0 2px 4px rgba(0,0,0,.06); */
+}
+
+/* ▶ 아이콘: 끝이 둥근 마스크(SVG)로 생성 */
+.hc-thumb::after{
+  /* 이전 clip-path/삼각형 설정 무효화 */
+  border: 0 !important; border-left: 0 !important;
+  border-top: 0 !important; border-bottom: 0 !important;
+  -webkit-clip-path: none !important; clip-path: none !important;
+
+  content: "";
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px;                 /* ▶ 크기 조정 가능 */
+  height: 56px;
+  background: #D0D0D0;
+
+  /* 끝이 둥근 ▶ (stroke-linejoin="round") */
+  -webkit-mask: url('data:image/svg+xml;utf8,\
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">\
+  <path d="M30 20 L80 50 L30 80 Z" fill="white" stroke="white" stroke-width="12" stroke-linejoin="round"/>\
+</svg>') no-repeat center / contain;
+          mask: url('data:image/svg+xml;utf8,\
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">\
+  <path d="M30 20 L80 50 L30 80 Z" fill="white" stroke="white" stroke-width="12" stroke-linejoin="round"/>\
+</svg>') no-repeat center / contain;
+}
+
+
+/* === 배지 완전 차단 (어떤 위치/오버레이/가상요소든 숨김) === */
+.hc-badge,
+.hc-thumb .hc-badge,
+.hc-card .hc-badge,
+.hc-badge::before,
+.hc-badge::after {
+  display: none !important;
+  content: '' !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+
