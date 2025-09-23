@@ -11,6 +11,11 @@ const SignupSelectPage = () => {
         navigate('/auth/signup');
     }
 
+    // 구글 회원가입 버튼 클릭 시 -> 로그인 페이지의 handleGoogleLogin과 동일하게 처리
+    const handleGoogleSignup = () => {
+        window.location.href = 'http://localhost:8080/auth/google';
+    }
+
   return (
     <div className="signup-select-container">
       <div className="signup-select-box">
@@ -21,7 +26,7 @@ const SignupSelectPage = () => {
         <button className="signup-select-button" onClick={handleNormalSignupPage}>기존 회원가입</button>
 
         {/* Google 회원가입 */}
-        <div className="google-signup">
+        <div className="google-signup" onClick={handleGoogleSignup}>
           <img src={GoogleLogo} alt="google" className="google-icon" />
           <span className="google-text">Google로 회원가입</span>
         </div>

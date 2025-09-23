@@ -1,5 +1,5 @@
 // MyPage.jsx
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MyPage.css';
 import SlideMenu from '../../components/SlideMenu';
@@ -10,6 +10,27 @@ const MyPage = ({ onLogout }) => {      // onLogout : App.js에서 로그인 상
   const navigate = useNavigate();
   const { user } = useUser();           // 전역 상태 사용 (사용자 이름 받아옴)
   const [children, setChildren] = useState([]);         // 자녀 이름 불러오기 위한 상태
+  
+  const [weather, setWeather] = useState('sunny');    // 초기값: 맑음 (예지)
+  
+  // 아이콘 매핑 (예지)
+  const weatherIconMap = {
+    sunny: '/icons/sun.svg',
+    cloudy: '/icons/cloud.svg',
+    rain: '/icons/rain.svg',
+    thunder: '/icons/thunder.svg',
+  };
+
+  // 한국어 매핑 (예지)
+  const prettyMap = {
+    sunny: '맑음',
+    cloudy: '흐림',
+    rain: '비',
+    thunder: '번개',
+  };
+
+  // 날씨 순환용 배열 (예지)
+  const weatherOrder = ['sunny', 'cloudy', 'rain', 'thunder'];
 
   useEffect(() => {
     // 아이 정보 불러오기 (잠깐 추가)
@@ -41,6 +62,21 @@ const MyPage = ({ onLogout }) => {      // onLogout : App.js에서 로그인 상
     navigate('/');
   };
 
+  // -------------------------------
+  // 테스트용: 버튼으로 날씨 순환 (예지)
+  // -------------------------------
+  const handleChangeWeather = () => {
+    const currentIndex = weatherOrder.indexOf(weather);
+    const nextIndex = (currentIndex + 1) % weatherOrder.length;
+    setWeather(weatherOrder[nextIndex]);
+  };
+
+  // -------------------------------
+  // 렌더링 (예지)
+  // -------------------------------
+  const iconSrc = weatherIconMap[weather] || weatherIconMap.cloudy;
+  const pretty = prettyMap[weather] || '흐림';
+
   return (
     <div className="mypage-container">
       <SlideMenu />
@@ -69,13 +105,19 @@ const MyPage = ({ onLogout }) => {      // onLogout : App.js에서 로그인 상
           </div>
         </section>
 
+        {/* 날씨 섹션 */}
         <div className="weather-section">  
           {/* 자녀 여러명인 경우 다 보이게 하는 코드 */}
           <div className="children-list">
             {children.length > 0 ? (
               children.map((child, index) => (
                 <div className="weather-left" key={index}>
-                  <div className="weather-icon">🌞</div>
+                  {/* <div className="weather-icon">🌞</div> */}
+                  <img 
+                    src={iconSrc}
+                    alt={`${pretty} 아이콘`}
+                    className="weather-icon"
+                  />
                   <div className="weather-info">
                     <h3>{user.userName}님의</h3>
                     <h3>자녀 ‘{child.c_name}’</h3>
@@ -85,7 +127,12 @@ const MyPage = ({ onLogout }) => {      // onLogout : App.js에서 로그인 상
               ))
             ) : (
               <div className="weather-left">
-                <div className="weather-icon">🌞</div>
+                {/* <div className="weather-icon">🌞</div> */}
+                <img 
+                    src={iconSrc}
+                    alt={`${pretty} 아이콘`}
+                    className="weather-icon"
+                  />
                 <div className="weather-info">
                   <h3>{user.userName}님의</h3>
                   <h3>자녀 없음</h3>
@@ -97,6 +144,13 @@ const MyPage = ({ onLogout }) => {      // onLogout : App.js에서 로그인 상
 
           <button className="add-child" onClick={() => navigate('/mypage/children/add')}>자녀 추가하기</button>
         </div>
+
+        {/* ✅ 테스트용 버튼 */}
+          <div className="weather-test">
+            <button onClick={handleChangeWeather}>
+              날씨 바꾸기 (테스트)
+            </button>
+          </div>
       </main>
     </div>
   );

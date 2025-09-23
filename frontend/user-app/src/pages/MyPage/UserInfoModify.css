@@ -219,12 +219,8 @@ body {
   font-size: 12.8px;
   border-radius: 30px;
   border: none;
-  cursor: pointer;
+  cursor: not-allowed;        /* 마우스 포인터 변경 (250922) */
   margin-right: 47.5px;
-}
-
-.user-info-small-btn1:hover {
-  background-color: #55c8e2;
 }
 
 .star-text {
