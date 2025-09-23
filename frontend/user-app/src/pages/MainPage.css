@@ -300,3 +300,124 @@ body {
   #about h2, #ravo h2{ font-size:2.2rem; }
   .ravo-feature{ width:240px; height:80px; font-size:1.2rem; }
 }
+
+/* === HERO: 모바일에서 이미지/글자 과대해 보이는 문제 보정 === */
+@media (max-width: 768px) {
+  .hero-top-bg {
+    padding: 24px 6%;
+  }
+
+  .hero-content {
+    flex-direction: column;          /* 세로 배치 */
+    gap: 18px;                       /* 간격 축소 */
+    max-width: 640px;                /* 너무 넓게 안 퍼지게 */
+  }
+
+  .hero-image {
+    width: clamp(220px, 64vw, 360px);  /* 모바일에서 더 작게 */
+    max-width: none;
+  }
+
+  .hero-right {
+    text-align: center;              /* 텍스트 중앙 정렬 */
+  }
+  .hero-right h1 {
+    font-size: clamp(1.6rem, 7.2vw, 2.2rem);   /* 제목 축소 */
+    margin-bottom: 0.6rem;
+  }
+  .hero-subtitle {
+    font-size: clamp(1rem, 3.8vw, 1.15rem);    /* 부제 축소 */
+    margin-bottom: 0.5rem;
+  }
+  .hero-desc {
+    font-size: clamp(0.9rem, 3.6vw, 1.05rem);  /* 본문 축소 */
+    line-height: 1.6;
+  }
+
+  .hero-bottom-bg {
+    height: 160px;                   /* 하단 배경 높이도 축소 */
+  }
+
+  .hero-pill-nav {
+    bottom: 42px;                    /* 알약네비 살짝 위로 */
+    gap: 14px;
+  }
+  .hero-pill {
+    min-width: 110px;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+}
+
+/* 아주 작은 화면(아이폰 SE 등) 추가 보정 */
+@media (max-width: 380px) {
+  .hero-image { width: clamp(200px, 72vw, 320px); }
+  .hero-right h1 { font-size: clamp(1.5rem, 7.6vw, 2rem); }
+  .hero-desc { font-size: clamp(0.9rem, 3.4vw, 1rem); }
+  .hero-pill { min-width: 104px; padding: 9px 14px; }
+}
+
+/* === FINAL CTA: 모바일에서 섹션이 과하게 큼/여백이 넓음 보정 === */
+.final-section {
+  /* 기존: padding:100px 20px; → 뷰포트 기반으로 축소 */
+  padding: clamp(40px, 8vw, 100px) 20px;
+  min-height: auto;                  /* 100vh 강제 높이 방지 */
+}
+
+.final-section h2 {
+  font-size: clamp(1.6rem, 6.2vw, 2.6rem); /* 제목 유동 축소 */
+  line-height: 1.25;
+  margin-bottom: clamp(16px, 4vw, 28px);
+}
+
+.button-box {
+  display: flex;
+  gap: clamp(12px, 3vw, 24px);
+  justify-content: center;
+  margin-bottom: clamp(20px, 5vw, 40px);
+}
+
+.button-box button {
+  background: #FDE45C;
+  color: #555;
+  font-weight: 500;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all .3s ease;
+  /* 반응형 크기 */
+font-size: clamp(0.8rem, 3.4vw, 1rem);
+padding: clamp(8px, 2vw, 12px) clamp(14px, 4vw, 24px);
+min-width: clamp(90px, 30vw, 160px);   /* 버튼 폭도 가변 */
+}
+
+
+/* 라보 이미지 크기 유동화 (너무 작거나 크게 보이지 않게) */
+.ravo-image {
+  width: clamp(120px, 28vw, 220px);
+  height: auto;
+}
+
+/* === Hero Pill Nav 반응형 보정 === */
+@media (max-width: 768px) {
+  .hero-pill-nav {
+    bottom: 36px;
+    gap: clamp(8px, 3vw, 16px);
+    flex-wrap: nowrap;   /* 줄바꿈 절대 안 함 */
+  }
+
+  .hero-pill {
+    min-width: clamp(70px, 22vw, 100px);   /* 버튼 폭 자동 축소 */
+    padding: clamp(6px, 1.8vw, 10px) clamp(10px, 3vw, 16px);
+    font-size: clamp(0.75rem, 3vw, 0.9rem); /* 글씨 크기 줄어듦 */
+  }
+}
+
+/* 초소형 화면 대응 */
+@media (max-width: 380px) {
+  .hero-pill {
+    min-width: 68px;
+    font-size: 0.72rem;
+    padding: 6px 10px;
+  }
+}

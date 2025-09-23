@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './Header.css';
 
+const BREAKPOINT = 1100; // ✅ 768 → 1100 으로 확대 (예지)
+
 const Header = ({ isLoggedIn: initialLoggedIn = false, userName: initialUserName = '', onLogout = () => {}, isMainPage = false }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -73,8 +75,10 @@ const Header = ({ isLoggedIn: initialLoggedIn = false, userName: initialUserName
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-      if (window.innerWidth > 768) {
+      // setIsMobile(window.innerWidth <= 768); (예지)
+      setIsMobile(window.innerWidth <= BREAKPOINT);
+      // if (window.innerWidth > 768) { (예지)
+      if (window.innerWidth > BREAKPOINT) {
         setIsMobileMenuOpen(false);
       }
     };
@@ -191,20 +195,11 @@ const Header = ({ isLoggedIn: initialLoggedIn = false, userName: initialUserName
                   <hr />
                 </>
               )}
-              <div className="slide-item" onClick={() => handleNavigate('/login')}>로그인</div>
-              <div className="slide-item" onClick={() => handleNavigate('/signup')}>회원가입</div>
+              <div className="slide-item" onClick={() => handleNavigate('/auth/login')}>로그인</div>
+              <div className="slide-item" onClick={() => handleNavigate('/auth/signup/select')}>회원가입</div>
             </>
           )}
         </div>
-
-        {/* 맨 아래 '가운데' 닫기 버튼 */}
-        <button
-          className="close-btn"
-          onClick={() => setIsMobileMenuOpen(false)}
-          aria-label="메뉴 닫기"
-        >
-          <img src="/images/close.png" alt="닫기" className="close-icon" />
-        </button>
       </div>
     </header>
   );

@@ -236,7 +236,7 @@ export const findOrCreateUserByGoogleProfile = async (profile) => {
 
         const newUser = {
             u_name: name, u_email: email, user_pw: '12345', user_id: `google_${profile.id}`,
-            u_phone: '01012345678', u_gender: 'F', chat_flag: 'parent', user_flag: 'parent'
+            u_phone: '01012345678', u_gender: 'F', chat_flag: 'AI', user_flag: 'parent'
         };
 
         await createUser(newUser);

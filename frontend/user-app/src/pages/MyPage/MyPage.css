@@ -197,3 +197,20 @@
   .children-list::-webkit-scrollbar-thumb:hover {
     background: rgba(0,0,0,0.35);
   }
+
+  .weather-test button {
+  background-color: #fff2aa;
+  border: 2px solid #f5d452;
+  border-radius: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  font-family: 'LINE Seed Sans KR', sans-serif;
+}
+
+.weather-test button:hover {
+  background-color: #fbe04d;
+  transform: scale(1.05);
+}

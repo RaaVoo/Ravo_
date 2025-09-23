@@ -93,8 +93,8 @@ app.get('/messages/chatlist', getChatDateListController); //대화 목록 조회
 app.get('/messages/chatlist/:date', getChatDetailByDateController); //대화 상세 조회
 app.delete('/messages/chatlist/:date', deleteChatByDateController); //특정 날짜 대화 삭제
 
-app.get('/mypage/me', authenticateToken, getMyPage); //마이페이지 부모 정보 조회
-app.get('/mypage/children', authenticateToken, getMyChildrenInfo); //마이페이지 자녀 저보 조회
+//app.get('/mypage/me', authenticateToken, getMyPage); //마이페이지 부모 정보 조회 (여름)
+//app.get('/mypage/children', authenticateToken, getMyChildrenInfo); //마이페이지 자녀 저보 조회 (여름)
 
 // 1. 회원가입 기능
 app.post('/auth/signup', (req, res) => {
@@ -165,11 +165,11 @@ app.post('/auth/logout', (req, res) => {
   logout(req, res);
 })
 
-//12. 회원정보 수정
-app.put('/mypage/me/profile', authenticateToken, updateMyProfileController);
+//12. 회원정보 수정 (여름)
+//app.put('/mypage/me/profile', authenticateToken, updateMyProfileController);
 
-// 13. 자녀 정보 수정
-app.put('/mypage/children/profile', authenticateToken, updateChildProfileController);
+// 13. 자녀 정보 수정 (여름)
+//app.put('/mypage/children/profile', authenticateToken, updateChildProfileController);
 
 //서버 실행
 //const PORT = 3000;

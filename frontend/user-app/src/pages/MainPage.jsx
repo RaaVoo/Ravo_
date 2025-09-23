@@ -53,16 +53,16 @@ const MainPage = () => {
       </section>
 
      {/* About Section */}
-<section id="about" className="section fullpage" ref={aboutRef} data-aos="fade-up">
-  <h2>현대 부모들이 겪는 육아 문제</h2>
-  <div className="circle-box" data-aos="zoom-in" data-aos-delay="300">
-    
-    <img src="/images/difficult.png" alt="아이 감정 이해의 어려움" className="about-icon" />
-    <img src="/images/time.png" alt="시간 부족으로 인한 거리감" className="about-icon" />
-    <img src="/images/money.png" alt="전문가 상담의 비용과 시간 부담" className="about-icon" />
+    <section id="about" className="section fullpage" ref={aboutRef} data-aos="fade-up">
+      <h2>현대 부모들이 겪는 육아 문제</h2>
+      <div className="circle-box" data-aos="zoom-in" data-aos-delay="300">
+        
+        <img src="/images/difficult.png" alt="아이 감정 이해의 어려움" className="about-icon" />
+        <img src="/images/time.png" alt="시간 부족으로 인한 거리감" className="about-icon" />
+        <img src="/images/money.png" alt="전문가 상담의 비용과 시간 부담" className="about-icon" />
 
-  </div>
-</section>
+      </div>
+    </section>
 
       {/* Ravo Section */}
       <section id="ravo" className="section" ref={ravoRef} data-aos="fade-right">
