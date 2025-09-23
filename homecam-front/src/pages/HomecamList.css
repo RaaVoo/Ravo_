@@ -1,0 +1,232 @@
+@import url('https://fonts.googleapis.com/css2?family=LINE+Seed+Sans+KR:wght@400;700&display=swap');
+
+/* ===== Theme ===== */
+:root{
+  --yellow:#FDDE55;
+  --sky:#68D2E8;
+  --sky-deep:#03AED2;
+  --gray6:#6E6E6E;
+  --bg-soft: rgba(254,239,173,0.5);
+  --shadow: 0px 4px 4px rgba(0,0,0,0.25);
+}
+
+*{ box-sizing: border-box; }
+body{ font-family: 'LINE Seed Sans KR', sans-serif; }
+
+/* ===== Page Wrapper ===== */
+.hc-wrap{
+  min-height: 100vh;
+  background:#fff;
+  padding: 120px 24px 80px;     /* 네비바는 별도라 본문 패딩만 */
+  margin-bottom: 20px;
+}
+
+/* ===== Header (Title + Search/Delete) ===== */
+.hc-header-row{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:24px; flex-wrap:wrap;
+  max-width: 960px;            /* 중앙 폭 더 컴팩트 */
+  margin: 8px auto 16px;
+}
+
+.hc-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #6E6E6E;
+  align-self: flex-start;
+}
+
+/* 🔄 F&Q 스타일과 같은 검색행 (검색박스 + 휴지통) */
+.hc-search-row{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  max-width: 300px;
+  margin-left: auto;            /* 오른쪽 정렬 느낌 */
+}
+
+/* 🔄 F&Q의 .search-box 느낌으로 단순화 */
+.hc-search{
+  display:flex;
+  align-items:center;
+  border:1px solid #ccc;       /* F&Q와 동일 */
+  border-radius:40px;          /* F&Q와 동일 */
+  padding:4px 10px;            /* F&Q와 동일 */
+  background-color:#fff;       /* F&Q와 동일 */
+  width:100%;
+  position: static;            /* 기존 absolute 의존 제거 */
+  box-shadow:none;             /* 기존 그림자 제거 */
+  gap:6px;
+}
+
+/* input: F&Q와 유사한 타이포/폭 */
+.hc-search input{
+  border:none;
+  outline:none;
+  font-size:14px;              /* F&Q와 통일 */
+  width:140px;                 /* 최소 기준폭 */
+  background-color:transparent;
+  flex:1;
+  height:32px;
+  padding:0;
+  box-shadow:none;
+  border-radius:0;
+}
+
+/* 돋보기 아이콘 */
+.hc-search-icon{
+  width:16px;
+  height:16px;
+  cursor:pointer;
+}
+
+/* 기존 절대배치 검색버튼은 사용 안 함 */
+.hc-search-btn{ display:none !important; }
+
+/* 휴지통 버튼: 검색박스 오른쪽에 분리 */
+.hc-trash{
+  flex:0 0 auto;
+  width:32px; height:32px;
+  border:none; background:transparent; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  padding:0;
+}
+.hc-trash img{ width:100%; height:100%; }
+
+/* ===== Content Box ===== */
+.hc-content{
+  background: var(--bg-soft);
+  border-radius: 28px;
+  padding: 36px 28px 44px;
+  max-width: 960px;
+  margin: 24px auto 0;
+}
+
+/* Toolbar */
+.hc-toolbar{ display:flex; justify-content:flex-start; margin-bottom:20px; }
+.hc-checkbox{ display:flex; align-items:center; gap:8px; color:#333; font-weight:600; }
+.hc-checkbox input{ width:18px; height:18px; }
+
+/* ===== Grid (Desktop 4 columns fixed) ===== */
+.hc-grid{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);  /* 한 줄 4개 고정 */
+  gap: 20px 24px;
+  justify-items: center;
+}
+
+/* ===== Card ===== */
+.hc-card{
+  width: 100%;
+  max-width: 200px;                 /* 카드 크기 축소 */
+  background:#fff;
+  border-radius:22px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding:10px;
+  position:relative;
+  overflow: visible;
+}
+
+/* 카드별 체크박스 (항상 위에, 크게) */
+.hc-card-check{
+  position:absolute; top:8px; left:8px; z-index:3;
+}
+.hc-card-check input{
+  appearance: auto;
+  width:20px; height:20px;
+  accent-color:#03AED2;          /* 지원 브라우저 */
+  background:#fff; border:1px solid #6E6E6E;
+}
+
+/* 썸네일 */
+.hc-thumb{
+  position:relative;
+  width:100%;
+  aspect-ratio: 4/3;
+  border-radius:12px;
+  overflow:hidden;
+  background: rgba(217,217,217,0.3);
+}
+.hc-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+/* 날짜 구분/텍스트 */
+.hc-sep{
+  margin:6px auto 4px;
+  border:0; border-top:1px solid #D9D9D9;
+  width:74%;
+}
+.hc-date{
+  display:block; text-align:center; font-size:13px; color:#000;
+}
+
+/* ===== Pagination ===== */
+.hc-paging{
+  display:flex; gap:12px; justify-content:center; margin-top:20px;
+}
+.hc-page-btn{
+  width:44px; height:44px; border-radius:40px;
+  border:3px solid #009FC1; background:#fff; color:#03AED2;
+  font-weight:700; font-size:18px; line-height:38px; text-align:center; cursor:pointer;
+}
+.hc-page-btn.active{ background:#68D2E8; color:#fff; border:none; }
+
+/* Loading */
+.hc-loading{ text-align:center; padding:60px 0; color:#6E6E6E; font-size:18px; }
+
+/* ===== Responsive ===== */
+@media (max-width: 1100px){
+  .hc-header-row, .hc-content { max-width: 860px; }
+  .hc-title{ font-size: 24px; }
+}
+@media (max-width: 900px){
+  .hc-grid{ grid-template-columns: repeat(3, 1fr); } /* 3열 */
+}
+@media (max-width: 680px){
+  .hc-grid{ grid-template-columns: repeat(2, 1fr); } /* 2열 */
+  .hc-card{ max-width: 220px; }
+}
+@media (max-width: 480px){
+  .hc-header-row, .hc-content { max-width: 100%; }
+  .hc-grid{ grid-template-columns: 1fr; }            /* 1열 */
+  .hc-title{ font-size: 20px; }
+  .hc-page-btn{ width:40px; height:40px; line-height:36px; font-size:16px; }
+}
+
+/* ====== (옵션) Placeholder 썸네일 통일 스타일 계속 유지 ====== */
+.hc-thumb--mock{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: transparent;
+}
+
+.hc-thumb-face{
+  width:100%;
+  height:100%;
+  border-radius:12px;
+  background:#fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.hc-thumb-play-lg{
+  width:42%;
+  height:42%;
+  fill:#9E9E9E;
+}
+
+/* 실제 이미지/오버레이 숨김을 유지하고 싶다면 아래를 계속 사용 */
+.hc-thumb img{ display: none !important; }
+.hc-badge,
+.hc-thumb .hc-badge,
+.hc-card .hc-badge,
+.hc-badge::before,
+.hc-badge::after {
+  display: none !important;
+  content: '' !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
