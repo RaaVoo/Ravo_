@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './Header.css';
 
+const BREAKPOINT = 1100; // ✅ 768 → 1100 으로 확대
+
 const Header = ({
   isLoggedIn: initialLoggedIn = false,
   userName: initialUserName = '',
@@ -12,7 +14,7 @@ const Header = ({
   const navigate = useNavigate();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= BREAKPOINT);
 
   const [isLoggedIn, setIsLoggedIn] = useState(initialLoggedIn);
   const [userName, setUserName] = useState(initialUserName);
@@ -53,8 +55,8 @@ const Header = ({
 
   useEffect(() => {
     const onResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-      if (window.innerWidth > 768) setIsMobileMenuOpen(false);
+      setIsMobile(window.innerWidth <= BREAKPOINT);
+      if (window.innerWidth > BREAKPOINT) setIsMobileMenuOpen(false);
     };
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
@@ -67,11 +69,13 @@ const Header = ({
   return (
     <header className="header">
       <div className="nav-container">
+        {/* 로고 */}
         <div className="logo-section" onClick={() => handleNavigate('/')}>
           <img src="/images/ravo_logo.png" alt="라보 로고" className="logo-box" />
           <div className="logo-text">라보야 놀자</div>
         </div>
 
+        {/* 데스크탑 메뉴 */}
         {!isMobile && (
           <div className="menu-section">
             {isLoggedIn ? (
@@ -88,12 +92,14 @@ const Header = ({
                     </div>
                   </div>
                 </div>
+
                 <span
                   onClick={() => handleNavigate('/chat')}
                   className={isActiveExact('/chat') ? 'active' : ''}
                 >
                   대화하기
                 </span>
+
                 <span
                   onClick={() => handleNavigate('/homecam')}
                   className={isActiveExact('/homecam') ? 'active' : ''}
@@ -113,6 +119,7 @@ const Header = ({
           </div>
         )}
 
+        {/* 우측 유저 메뉴 */}
         {!isMobile && (
           <div className="user-section">
             {isLoggedIn ? (
@@ -138,6 +145,7 @@ const Header = ({
           </div>
         )}
 
+        {/* 모바일 햄버거 */}
         {isMobile && (
           <div className="hamburger" onClick={() => setIsMobileMenuOpen(true)}>
             ☰
@@ -145,6 +153,7 @@ const Header = ({
         )}
       </div>
 
+      {/* 오버레이 */}
       {isMobileMenuOpen && (
         <div className="overlay" onClick={() => setIsMobileMenuOpen(false)} />
       )}
@@ -154,8 +163,12 @@ const Header = ({
         <div className="menu-items">
           {isLoggedIn ? (
             <>
-              <div className="slide-item" onClick={() => handleNavigate('/report/voice')}>음성 보고서</div>
-              <div className="slide-item" onClick={() => handleNavigate('/report/video')}>영상 보고서</div>
+              <div className="slide-item" onClick={() => handleNavigate('/report/voice')}>
+                음성 보고서
+              </div>
+              <div className="slide-item" onClick={() => handleNavigate('/report/video')}>
+                영상 보고서
+              </div>
               <div className="slide-item" onClick={() => handleNavigate('/chat')}>대화하기</div>
               <div className="slide-item" onClick={() => handleNavigate('/homecam')}>홈캠</div>
               <hr />
@@ -177,7 +190,9 @@ const Header = ({
                 <>
                   <div className="slide-item" onClick={() => handleScrollTo('#about')}>About</div>
                   <div className="slide-item" onClick={() => handleScrollTo('#ravo')}>Ravo</div>
-                  <div className="slide-item" onClick={() => handleScrollTo('#function')}>Function</div>
+                  <div className="slide-item" onClick={() => handleScrollTo('#function')}>
+                    Function
+                  </div>
                   <hr />
                 </>
               )}
@@ -186,15 +201,6 @@ const Header = ({
             </>
           )}
         </div>
-
-        {/* 맨 아래 '가운데' 닫기 버튼 */}
-        <button
-          className="close-btn"
-          onClick={() => setIsMobileMenuOpen(false)}
-          aria-label="메뉴 닫기"
-        >
-          <img src="/images/close.png" alt="닫기" className="close-icon" />
-        </button>
       </div>
     </header>
   );

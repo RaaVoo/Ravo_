@@ -13,7 +13,6 @@ import MyPage from './pages/MyPage';
 import ChatPage from './pages/ChatPage';
 import Footer from './components/Footer';
 import MainPage from './pages/MainPage';
-import EditChildPage from './pages/EditChildPage';
 import FAQPage from './pages/FAQPage';
 import ChatBot from './pages/ChatBot';
 import ChatButton from './components/ChatButton';
@@ -51,7 +50,6 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/" element={<MainPage />} />
-        <Route path="/edit-child" element={<EditChildPage />} />
         <Route path="/faq" element={<FAQPage />} />
 
         {/* ✅ Pi Camera HLS 스트리밍 테스트 페이지 */}

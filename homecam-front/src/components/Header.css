@@ -16,31 +16,49 @@
 
 /* 로고 */
 .logo-section { display: flex; align-items: center; cursor: pointer; }
-/* .logo-box { width: 40px; height: 40px; background-color: #fff; margin-right: 10px; } */
 .logo-box {
-  width: 42px;        /* 네모 크기 그대로 */
-  height: 42px;
-  object-fit: contain; /* 이미지 비율 유지 */
-  display: block;
+  width: 42px; height: 42px;
+  object-fit: contain; display: block;
 }
-.logo-text { font-family: 'PyeongChang Peace'; font-weight: 700; font-size: 20px; color: #fff; }
+.logo-text {
+  font-family: 'PyeongChang Peace';
+  font-weight: 700; font-size: 20px; color: #fff; margin-left: 8px;
+}
 
-/* 데스크탑 메뉴 */
-.menu-section { display: flex; justify-content: center; flex: 1; gap: 100px; position: relative; }
+/* 데스크탑 메뉴: gap을 반응형으로 조절 */
+.menu-section {
+  display: flex; justify-content: center; flex: 1;
+  gap: clamp(24px, 8vw, 100px);
+  position: relative;
+}
+
 .user-section { display: flex; align-items: center; gap: 12px; }
 
 .menu-section span {
-  display: inline-block; font-family: 'LINE Seed Sans KR'; font-weight: 700;
-  font-size: 16px; color: #6E6E6E; cursor: pointer; padding: 6px 10px;
-  transition: all .2s ease; border-bottom: 2px solid transparent;
+  display: inline-block;
+  font-family: 'LINE Seed Sans KR';
+  font-weight: 700;
+  font-size: 16px;
+  color: #6E6E6E;
+  cursor: pointer;
+  padding: 6px 10px;
+  transition: all .2s ease;
+  border-bottom: 2px solid transparent;
 }
+
 .menu-section span.active { color: #fff; border-bottom: 2px solid #fff; }
 .menu-section span:hover { color: #fff; }
 
 .user-section span {
-  display: inline-block; font-family: 'LINE Seed Sans KR'; font-weight: 700;
-  font-size: 16px; color: #fff; cursor: pointer; padding: 6px 10px;
+  display: inline-block;
+  font-family: 'LINE Seed Sans KR';
+  font-weight: 700;
+  font-size: 16px;
+  color: #fff;
+  cursor: pointer;
+  padding: 6px 10px;
 }
+
 .hamburger { display: none; font-size: 24px; color: #fff; cursor: pointer; }
 
 /* 모바일 슬라이드 메뉴 */
@@ -51,7 +69,7 @@
   padding: 20px; transition: right .3s ease-in-out;
   z-index: 1000;
 
-  display: flex;               /* 세로 레이아웃 */
+  display: flex;
   flex-direction: column;
 }
 .mobile-slide-menu.open { right: 0; }
@@ -73,38 +91,32 @@
 }
 .slide-item:hover { background-color: #F3F3F3; }
 
-/* 맨 아래 '가운데' 닫기 버튼 */
-.close-btn {
-  margin-top: auto;           /* 맨 아래로 */
-  align-self: center;         /* 가운데 정렬 */
-  width: 50px; height: 50px;
-  border: none; border-radius: 50%;
-  background: rgba(0,0,0,.25);
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,.18);
-  transition: transform .18s ease, background-color .18s ease, box-shadow .18s ease;
-}
-.close-btn:hover { background: rgba(0,0,0,.35); transform: scale(1.05); }
-
-.close-icon { width: 22px; height: 22px; object-fit: contain; pointer-events: none; }
-
 /* 드롭다운(데스크탑) */
 .dropdown { position: relative; }
 .dropdown-balloon {
-  display: none; position: absolute; top: 28px; left: 50%; transform: translateX(-50%); z-index: 1000;
+  display: none; position: absolute; top: 28px; left: 50%;
+  transform: translateX(-50%); z-index: 1000;
 }
 .dropdown-balloon .triangle {
-  width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent;
+  width: 0; height: 0;
+  border-left: 12px solid transparent; border-right: 12px solid transparent;
   border-bottom: 12px solid #68D2E8; margin: 0 auto;
 }
-.dropdown-content { background-color: #68D2E8; border-radius: 12px; padding: 8px 0; min-width: 120px; text-align: center; }
+.dropdown-content {
+  background-color: #68D2E8; border-radius: 12px;
+  padding: 8px 0; min-width: 120px; text-align: center;
+}
 .dropdown-content div { color: #fff; font-size: 14px; padding: 10px 16px; cursor: pointer; }
 .dropdown-content div:hover { background-color: #4db9d9; border-radius: 12px; }
 .dropdown:hover .dropdown-balloon { display: block; }
 
-/* 반응형 */
-@media (max-width: 768px) {
+/* 중간 폭에서 살짝 축소 */
+@media (max-width: 1200px) {
+  .menu-section span { font-size: 14px; padding: 6px 8px; }
+}
+
+/* ✅ 1100px 이하면 데스크탑 메뉴/유저영역 숨기고 햄버거만 노출 */
+@media (max-width: 1100px) {
   .menu-section, .user-section { display: none; }
   .hamburger { display: block; }
 }

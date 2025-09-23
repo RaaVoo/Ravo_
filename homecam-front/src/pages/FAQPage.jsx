@@ -92,7 +92,7 @@ const FAQPage = () => {
             value={searchKeyword}
             onChange={handleSearch}
           />
-          <img src="/images/search.png" alt="검색" />
+          <img src="/icons/search.svg" alt="검색" />
         </div>
       </div>
 

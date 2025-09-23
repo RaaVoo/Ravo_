@@ -132,22 +132,33 @@ export default function HomecamList() {
       <div className="hc-header-row">
         <h2 className="hc-title">저장된 영상</h2>
 
-        <div className="hc-search">
-          <input
-            placeholder="YYYY-MM-DD 로 검색"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && onSearch()}
-            aria-label="영상 날짜 검색"
-          />
-          <button className="hc-search-btn" aria-label="검색" onClick={onSearch}>
-            <img src="/icons/search.svg" alt="search" />
-          </button>
+        {/* 🔄 F&Q 같은 구조: input + img (돋보기), 휴지통은 바깥 */}
+        <div className="hc-search-row">
+          <div className="hc-search">
+            <input
+              placeholder="YYYY-MM-DD 로 검색"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && onSearch()}
+              aria-label="영상 날짜 검색"
+            />
+            <img
+              className="hc-search-icon"
+              src="/icons/search.svg"
+              alt="검색"
+              onClick={onSearch}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onSearch()}
+            />
+          </div>
+
           <button
             className="hc-trash"
             type="button"
             onClick={handleDeleteSelected}
             title="선택 삭제"
+            aria-label="선택 삭제"
           >
             <img src="/icons/trash.svg" alt="delete" />
           </button>
@@ -206,23 +217,8 @@ export default function HomecamList() {
                       <div className="hc-thumb-ph" />
                     )}
 
-                    {/* 상태 배지 */}
+                    {/* 상태 배지 (placeholder 통일 중이면 CSS에서 숨김 처리됨) */}
                     <div className="hc-badge">{v.cam_url ? "파일있음" : "파일없음"}</div>
-
-                    {/* ▶ 재생 아이콘 → 상세로 이동 */}
-                    <button
-                      className="hc-play"
-                      onClick={(e) => {
-                        // 어디를 눌러도 상세로 가는 UX
-                        goDetail(v.record_no);
-                      }}
-                      aria-label="재생"
-                      type="button"
-                    >
-                      <svg viewBox="0 0 100 100" className="hc-play-icon">
-                        <polygon points="35,25 80,50 35,75" />
-                      </svg>
-                    </button>
                   </div>
 
                   <hr className="hc-sep" />
