@@ -1,0 +1,212 @@
+/* 상단 고정 네비바 */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background-color: #FDDE55;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+}
+
+/* 3단 구성 */
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  margin: 0 auto;
+}
+
+/* 로고 영역 */
+.logo-section {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.logo-box {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  display: block;
+}
+
+.logo-text {
+  font-family: 'PyeongChang Peace';
+  font-weight: 700;
+  font-size: 20px;
+  color: #fff;
+  margin-left: 8px;
+}
+
+/* 중앙 메뉴 */
+.menu-section {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+  gap: clamp(24px, 8vw, 100px);
+  position: relative;
+}
+
+/* 유저 메뉴 (오른쪽) */
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 중앙 메뉴 텍스트 */
+.menu-section span {
+  display: inline-block;
+  font-family: 'LINE Seed Sans KR';
+  font-weight: 700;
+  font-size: 16px;
+  color: #6E6E6E;
+  cursor: pointer;
+  padding: 6px 10px;
+  transition: all 0.2s ease;
+  border-bottom: 2px solid transparent;
+}
+
+/* 현재 경로 강조 (밑줄 + 흰색) */
+.menu-section span.active {
+  color: #fff;
+  border-bottom: 2px solid #fff;
+}
+
+/* 호버 시 흰색으로 */
+.menu-section span:hover {
+  color: #fff;
+}
+
+/* 오른쪽 유저 메뉴 텍스트 (항상 흰색, 밑줄 없음) */
+.user-section span {
+  display: inline-block;
+  font-family: 'LINE Seed Sans KR';
+  font-weight: 700;
+  font-size: 16px;
+  color: #fff;
+  cursor: pointer;
+  padding: 6px 10px;
+}
+
+/* .user-section span:hover {
+  color: white;
+} */
+
+
+.hamburger {
+  display: none;
+  font-size: 24px;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* 슬라이드 메뉴 */
+.mobile-slide-menu {
+  position: fixed;
+  top: 0;
+  right: -300px;
+  width: 250px;
+  height: 100vh;
+  background: #fff;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  transition: right 0.3s ease-in-out;
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-slide-menu.open {
+  right: 0;
+}
+
+/* 메뉴 스크롤 영역 */
+.menu-items { flex: 1 1 auto; overflow-y: auto; padding-bottom: 12px; }
+
+/* 오버레이 어두운 배경 */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 900;
+}
+
+
+.slide-item {
+  margin-bottom: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+.slide-item:hover {
+  background-color: #F3F3F3;
+}
+
+/* 드롭다운 */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-balloon {
+  display: none;
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+
+.dropdown-balloon .triangle {
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 12px solid #68D2E8;
+  margin: 0 auto;
+}
+
+.dropdown-content {
+  background-color: #68D2E8;
+  border-radius: 12px;
+  padding: 8px 0;
+  min-width: 120px;
+  text-align: center;
+}
+
+.dropdown-content div {
+  color: #fff;
+  font-size: 14px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.dropdown-content div:hover {
+  background-color: #4db9d9;
+  border-radius: 12px;
+}
+
+.dropdown:hover .dropdown-balloon {
+  display: block;
+}
+
+/* 중간 폭에서 살짝 축소 */
+@media (max-width: 1200px) {
+  .menu-section span { font-size: 14px; padding: 6px 8px; }
+}
+
+/* ✅ 1100px 이하면 데스크탑 메뉴/유저영역 숨기고 햄버거만 노출 */
+@media (max-width: 1100px) {
+  .menu-section, .user-section { display: none; }
+  .hamburger { display: block; }
+}

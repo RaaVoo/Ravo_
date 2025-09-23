@@ -1,0 +1,277 @@
+/* 회원정보 수정 페이지 css */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'LINE Seed Sans KR', sans-serif;
+  background-color: #fff;
+}
+
+.user-info-container {
+  min-height: 100vh;
+  background-color: #fff;
+  position: relative;
+}
+
+/* 네비게이션바 관련 css */
+.navbar {
+  width: 100%;
+  height: 120px;
+  background-color: #FDDE55;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 60px;
+  position: relative;
+  z-index: 10;
+}
+
+.logo-box {
+  width: 40px;
+  height: 40px;
+  background-color: #fff;
+}
+
+.brand {
+  font-family: 'PyeongChang Peace', sans-serif;
+  font-size: 31px;
+  font-weight: 700;
+  color: #fff;
+  position: absolute;
+  left: 115px;
+  top: 35px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+}
+
+.nav-link {
+  font-size: 24px;
+  font-weight: 550;
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.user-info-background-section {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #FEEFAD;
+  position: relative;   /* absolute에서 변경함 */
+  left: 0;
+  z-index: 0;
+  padding: 120px 100px 90px 100px;       /* footer와 겹치지 않도록 공간 확보 */
+}
+
+.user-info-box {
+  width: 550px;
+  background-color: #fff;
+  border-radius: 50px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  padding: 75px 60px;
+  margin: 0 auto;       /* 150 auto였는데 바꿨음 */
+  position: relative;
+  z-index: 2;
+}
+
+.user-info-title-sub {
+  font-size: 33px;
+  font-weight: 700;
+  color: #68D2E8;
+  text-align: left;
+  margin-top: 3px;
+  margin-bottom: 20px;
+  margin-left: 20px;
+}
+
+.user-info-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  /* 아래 코드 추가하면 가운데 정렬 됨 */
+  /* display: flex;                  /* 추가
+  justify-content: center;       /* 가로 가운데
+  align-items: center;           세로 가운데*/
+}
+
+.user-info-input-group0 {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;                 /* 원래는 10이었음 */
+  position: relative;
+  left: 22px;
+  width: 90%;
+}
+
+.user-info-input-group0 label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #6E6E6E;
+  margin-left: 25px;   /* 간격 오른쪽으로 하려고 추가함 */
+}
+
+/* 비번, 이름, 폰번호, 이메일 정보 입력창 */
+.user-info-input-group0 input[type='text'],
+.user-info-input-group0 input[type='password'],
+.user-info-input-group0 input[type='email'] {
+  height: 63px;
+  padding: 0 24px;
+  border-radius: 40px;
+  background-color: #E2E5EC;
+  border: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: #505050;
+  outline: none;
+}
+
+.user-info-input-group0[data-label="verify"] {
+  margin-top: -19px;
+}
+
+/* 비밀번호 확인 후 이름 사이 간격 줄이기 */
+.user-info-input-group0:nth-of-type(2), .user-info-input-group0:nth-of-type(3), .user-info-input-group0:nth-of-type(6) {
+  margin-bottom: -15px;     /* 추가 */
+}
+
+/* 인증 관련 버튼 */
+.user-info-small-btn {
+  position: absolute;
+  right: 7px;
+  top: 29px;
+  width: 23%;
+  height: 48px;
+  padding: 0 16px;
+  background-color: #68D2E8;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 3px 0 #009FC1;
+}
+
+.user-info-small-btn[data-label="verify-complete"] {
+  top: 5.5px;
+}
+
+.user-info-small-btn:hover {
+  background-color: #55c8e2;
+}
+
+/* 아이디 입력창 */
+.user-info-input-group1 {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;                 /* 원래는 10이었음 */
+  position: relative;
+  margin-bottom: -15px;
+  left: 22px;
+}
+
+.user-info-input-group1 label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #6E6E6E;
+  margin-left: 25px;
+}
+
+.user-info-input-group1 input[type='text'] {
+  width: 69%;
+  height: 63px;
+  padding: 0 24px;
+  border-radius: 40px;
+  background-color: #E2E5EC;
+  border: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: #505050;     
+  outline: none;
+}
+
+/* placeholder 글자색 변경 */
+.user-info-input-group1 input[type='text']::placeholder, 
+.user-info-input-group0 input[type='text']::placeholder,
+.user-info-input-group0 input[type='password']::placeholder,
+.user-info-input-group0 input[type='email']::placeholder {
+  color: #A4B4C3;
+  font-family: 'LINE Seed Sans KR', sans-serif;
+  font-weight: 545;
+}
+
+/* 중복 확인 버튼 */
+.user-info-small-btn1 {
+  position: absolute;
+  right: 0;
+  top: 25px;
+  width: 19.3%;
+  height: 59px;
+  padding: 0 16px;
+  background-color: #68D2E8;
+  color: #fff;
+  font-weight: 600;
+  font-size: 12.8px;
+  border-radius: 30px;
+  border: none;
+  cursor: not-allowed;        /* 마우스 포인터 변경 (250922) */
+  margin-right: 47.5px;
+}
+
+.star-text {
+  color: #FF8383;
+}
+
+.user-info-gender-options {
+  display: flex;
+  margin-top: 5px;
+  margin-bottom: 6px;
+  gap: 20px;
+  align-items: center;
+}
+
+.user-info-input-group[data-label="gender"] > label {
+  margin-bottom: 3px;
+}
+
+.user-info-gender-options label {
+  font-size: 15px;
+  color: #6E6E6E;
+}
+
+.user-info-btn {
+  width: 89%;
+  height: 65px;
+  background-color: #68D2E8;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  border: none;
+  border-radius: 40px;
+  box-shadow: 0 4px 0 #009FC1;
+  margin-top: 25px;
+  margin-left: 26px;
+  cursor: pointer;
+}
+
+.user-info-btn:hover {
+  transform: scale(1.02);
+}
+
+.verify-complete {
+  font-size: 14px;
+  color: #FF8383;
+  margin-top: 5px;
+}
+
+@font-face {
+    font-family: 'PyeongChangPeace-Bold';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/PyeongChangPeace-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}

@@ -1,0 +1,284 @@
+/* .box {
+  height: 1168px;
+  width: 653px;
+}
+
+.box .group {
+  height: 1168px;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 661px;
+}
+
+.box .overlap {
+  height: 1168px;
+  position: relative;
+  width: 653px;
+}
+
+.box .rectangle {
+  background-color: #ffffff;
+  border-radius: 50px;
+  height: 1138px;
+  left: 0;
+  position: absolute;
+  top: 30px;
+  width: 653px;
+}
+
+.box .union-wrapper {
+  background-color: #ffffff;
+  border-radius: 30px;
+  box-shadow: 0px 4px 4px #00000040;
+  height: 60px;
+  left: 537px;
+  position: absolute;
+  top: 0;
+  width: 60px;
+}
+
+.box .union {
+  height: 22px;
+  left: 19px;
+  position: absolute;
+  top: 20px;
+  width: 22px;
+}
+
+.box .text-wrapper {
+  color: #6e6e6e;
+  font-family: "LINE Seed Sans KR-Bold", Helvetica;
+  font-size: 38px;
+  font-weight: 700;
+  left: 204px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 103px;
+}
+
+.box .div {
+  color: #6e6e6e;
+  font-family: "LINE Seed Sans KR-Bold", Helvetica;
+  font-size: 38px;
+  font-weight: 700;
+  left: 70px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 646px;
+}
+
+.box .overlap-group-wrapper {
+  height: 51px;
+  left: 212px;
+  position: absolute;
+  top: 1053px;
+  width: 231px;
+}
+
+.box .overlap-group {
+  background-color: #68d2e8;
+  border-radius: 40px;
+  box-shadow: 0px 4px 0px #009fc0;
+  height: 51px;
+  position: relative;
+  width: 229px;
+}
+
+.box .text-wrapper-2 {
+  color: #ffffff;
+  font-family: "LINE Seed Sans KR-Bold", Helvetica;
+  font-size: 20px;
+  font-weight: 700;
+  left: 97px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 12px;
+  width: 36px;
+}
+
+.box .line {
+  height: 1px;
+  left: 71px;
+  object-fit: cover;
+  position: absolute;
+  top: 1022px;
+  width: 516px;
+}
+
+.box .img {
+  height: 1px;
+  left: 71px;
+  object-fit: cover;
+  position: absolute;
+  top: 597px;
+  width: 516px;
+}
+
+.box .group-2 {
+  height: 388px;
+  left: 615px;
+  position: absolute;
+  top: 173px;
+  width: 28px;
+}
+
+.box .polygon {
+  height: 18px;
+  left: 4px;
+  position: absolute;
+  top: 3px;
+  width: 20px;
+}
+
+.box .polygon-2 {
+  height: 18px;
+  left: 4px;
+  position: absolute;
+  top: 367px;
+  width: 20px;
+}
+
+.box .rectangle-2 {
+  background-color: #d9d9d9;
+  border-radius: 11px;
+  height: 37px;
+  left: 6px;
+  position: absolute;
+  top: 32px;
+  width: 16px;
+}
+
+.box .element-a-b-c-d-e-ID-f {
+  color: #000000;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 12px;
+  font-weight: 400;
+  left: 51px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 187px;
+  width: 536px;
+}
+
+.box .span {
+  font-weight: 700;
+}
+
+.box .text-wrapper-3 {
+  font-family: "Inter-Regular", Helvetica;
+}
+
+.box .element {
+  color: #000000;
+  font-family: "Inter-Bold", Helvetica;
+  font-size: 12px;
+  font-weight: 400;
+  left: 51px;
+  letter-spacing: 0;
+  line-height: normal;
+  position: absolute;
+  top: 730px;
+  width: 536px;
+} */
+
+/* 아래 코드로 작성하기 */
+/* 이용약관 팝업 관련 css */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.popup-content {
+    position: relative;
+    width: 548px;
+    height: 1168px;         /* 1168 원래 높이 */
+    background: #fff;
+    border-radius: 50px;
+    padding: 40px;
+    overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+    max-height: 85vh;       /* 최대 높이 설정 */
+    padding-right: 40px;    /* 스크롤바에 글자가 겹치지 않도록 */
+    scrollbar-gutter: stable both-edges;    /* 스크롤 공간 확보 */
+}
+
+.popup-content span {
+  font-size: 16px;
+}
+
+.popup-title {
+    font-size: 30px;
+    font-weight: bold;
+    color: #6E6E6E;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.popup-text {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.popup-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 32px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.popup-confirm {
+    display: block;
+    margin: 30px auto 0;
+    padding: 12px 40px;
+    font-size: 18px;
+    background-color: #68D2E8;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 40px;
+    box-shadow: 0px 4px 0px #009FC1;
+    cursor: pointer;
+}
+
+.popup-confirm:hover {
+  background-color: #55c8e2;
+}
+
+/* 스크롤바 관련 css */
+/* WebKit 기반 브라우저용 (Chrome, Safari 등) */
+.popup-content::-webkit-scrollbar {
+    width: 17px;
+}
+
+.popup-content::-webkit-scrollbar-track {
+    background-color: transparent;    /* 트랙 배경은 투명하게 */
+    margin-top: 80px;      /* 스크롤바 시작 위치 ↓ 아래로 밀림 */
+    margin-bottom: 80px;   /* 스크롤바 끝 위치 ↑ 위로 올라감 */
+}
+
+.popup-content::-webkit-scrollbar-thumb {
+    background-color: #BFBFBF;
+    border-radius: 14px;
+}
+
+.popup-content::-webkit-scrollbar-thumb:hover {
+    background-color: #9E9E9E;
+}

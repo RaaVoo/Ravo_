@@ -1,0 +1,304 @@
+### ✅ 메시지 전송 (사용자)
+POST http://localhost:3000/messages/send
+Content-Type: application/json
+
+{
+  "content": "집 갈래",
+  "mode": "VOICE",
+  "summary": "기쁨",
+  "userNo": 1,
+  "chatNo": 1
+}
+
+### ✅ 메시지 전송 (GPT)
+POST http://localhost:3000/messages/send
+Content-Type: application/json
+
+{
+  "content": "좋은 하루가 될 것 같네요! 😊",
+  "mode": "VOICE",
+  "summary": "neutral",
+  "userNo": 2,
+  "chatNo": 1
+}
+
+### ✅ 전체 메시지 조회
+GET http://localhost:3000/messages
+
+### ✅ 메시지 읽음 처리 (PATCH) -> 수정중
+PATCH http://localhost:3000/messages/1/read
+Content-Type: application/json
+
+### ✅ 메시지 삭제 (소프트 딜리트)
+DELETE http://localhost:3000/messages/45
+
+### ✅ 대화 목록 날짜별 조회
+GET http://localhost:3000/messages/chatlist
+
+### ✅ 특정 날짜의 대화 상세 조회
+GET http://localhost:3000/messages/chatlist/2025-06-17
+
+### ✅ 특정 날짜의 대화 전체 삭제
+DELETE http://localhost:3000/messages/chatlist/2025-06-17
+
+### ✅ 대화 내용 검색 (키워드 기반)
+GET http://localhost:3000/messages/chatlist/search?query=집
+
+### 1. 회원가입
+POST http://localhost:3000/auth/signup
+Content-Type: application/json
+
+# {
+#   "user_id": "test1",
+#   "user_pw": "1234",
+#   "u_email": "test@example.com",
+#   "u_phone": "01012345678"
+# }
+
+{
+    "user_pw": "1234",
+    "u_name": "테스트3",
+    "u_phone": "010-1234-5678",
+    "u_email": "test2@gmail.com",
+    "u_gender":"M",
+    "user_id": "test3",
+    "chat_flag": "parent",
+    "user_flag": "parent"
+}
+
+
+### 2. 로그인
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+  "user_id": "test1",
+  "user_pw": "1234"
+}
+
+### 3. 아이디 중복확인
+GET http://localhost:3000/auth/id-check?user_id=testuser
+
+### 4. 이메일 중복확인
+POST http://localhost:3000/auth/email-check
+Content-Type: application/json
+
+{
+  "u_email": "etnsumm@gmail.com"
+}
+
+### 5. 아이디 찾기
+POST http://localhost:3000/auth/find-id
+Content-Type: application/json
+
+{
+  "u_name": "테스트2",
+  "u_phone": "010-1234-5678"
+}
+
+### 6. 비밀번호 변경
+PATCH http://localhost:3000/auth/password
+Content-Type: application/json
+
+{
+  "user_id": "user_1",
+  "user_pw": "1234",
+  "new_pw": "12345"
+}
+
+### 7. 이메일 인증코드 전송
+POST http://localhost:3000/auth/email-auth/send
+Content-Type: application/json
+
+{
+  "u_email": "etnsumm@gmail.com"
+}
+
+### 8. 이메일 인증코드 검증
+POST http://localhost:3000/auth/email-auth/verify
+Content-Type: application/json
+
+{
+  "u_email": "etnsumm@gmail.com",
+  "code": "123456"
+}
+
+### 9. 비밀번호 찾기 - 번호 인증 요청
+POST http://localhost:3000/auth/password-auth/send
+Content-Type: application/json
+
+{
+  "u_phone": "01012345678"
+}
+
+### 10. 비밀번호 찾기 - 번호 인증 검증
+POST http://localhost:3000/auth/password-auth/verify
+Content-Type: application/json
+
+{
+  "u_phone": "01012345678",
+  "code": "123456"
+}
+
+### 11. 토큰 재발급
+POST http://localhost:3000/auth/refresh
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidXNlcl8xIiwidV9uYW1lIjoia2ltIiwiaWF0IjoxNzUwMTExNTQzLCJleHAiOjE3NTAxMTUxNDMsImlzcyI6ImdyYWR1YXRpb25BcHAifQ.RdRCbUJQuGVhfrN1ElzBc5FUoNX6i9UMs83DQp6h8gA
+Content-Type: application/json
+
+{
+  "info": "refresh test"
+}
+
+### 12. 로그아웃
+POST http://localhost:3000/auth/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamlzb280IiwidV9uYW1lIjoi7KeA7IiYNCIsImlhdCI6MTc1MDQyMDgwOCwiZXhwIjoxNzUwNDI0NDA4LCJpc3MiOiJncmFkdWF0aW9uQXBwIn0.6Hyj046nj6KAnhl_4AESSlEXX32h1p7GNruisAGb-c8
+Content-Type: application/json
+
+### 13. 회원탈퇴
+DELETE http://localhost:3000/auth/delete
+Content-Type: application/json
+
+{
+  "user_id": "google_112054577518684763887"
+}
+
+### 14. 자녀추가
+POST http://localhost:3000/auth/signup/child
+Content-Type: application/json
+
+{
+  "parent_no": 1,
+  "c_name": "테스트",
+  "c_gender": "M",
+  "c_birth": "2018-02-14",
+  "c_content": "공감 부족"
+}
+
+
+### 1. 홈캠 영상 저장
+POST http://localhost:3000/homecam/save
+Content-Type: application/json
+
+{
+  "user_no": 1,
+  "r_start": "2025-06-17 10:00:00",
+  "r_end": "2025-06-17 10:30:00",
+  "p_start": "2025-06-17 10:05:00",
+  "p_end": "2025-06-17 10:10:00",
+  "record_title": "거실 홈캠 테스트 영상",
+  "cam_url": "http://example.com/cam.mp4",
+  "snapshot_url": "http://example.com/snapshot.jpg",
+  "cam_status": "active"
+}
+
+
+### 2. 홈캠 상태 변경
+PATCH http://localhost:3000/homecam/1/status
+Content-Type: application/json
+
+{
+  "cam_status": "paused"
+}
+
+
+### 3. 홈캠 전체 목록 조회 (페이징)
+GET http://localhost:3000/homecam/camlist?page=1
+
+
+### 4. 홈캠 날짜 검색 (예: 0617 형식)
+GET http://localhost:3000/homecam/camlist/search?date=0617
+
+
+### 5. 홈캠 단일 상세 조회
+GET http://localhost:3000/homecam/camlist/1
+
+
+### 6. 홈캠 단일 삭제
+DELETE http://localhost:3000/homecam/camlist/1
+
+
+### 7. 홈캠 다중 삭제 (소프트 삭제)
+DELETE http://localhost:3000/homecam/camlist
+Content-Type: application/json
+
+{
+  "record_nos": [2, 3, 4],
+  "isHardDelete": false
+}
+
+
+### [1] 보고서 생성
+POST http://localhost:3000/reports
+Content-Type: application/json
+
+{
+  "r_title": "테스트 보고서 제목",
+  "r_content": "이건 테스트용 내용입니다.",
+  "user_no": 1
+}
+
+###
+
+### [2] 보고서 리스트 조회
+GET http://localhost:3000/reports-list?user_no=1
+
+###
+
+### [3] 특정 보고서 조회 (record_no는 실제 값으로 바꿔줘야 함)
+GET http://localhost:3000/reports/1
+
+###
+
+### [4] 보고서 검색
+GET http://localhost:3000/reports/search?keyword=테스트
+
+###
+
+### [5] 보고서 삭제 (record_no는 실제 값으로 바꿔줘야 함)
+DELETE http://localhost:3000/reports-list/1
+
+
+### 13. 기록 API 테스트
+GET http://localhost:3000/record/test
+
+###
+# ✔ 마이페이지: 부모 정보 조회
+GET http://localhost:3000/mypage/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamlzb280IiwidV9uYW1lIjoi7KeA7IiYNCIsImlhdCI6MTc1MDQyMDgwOCwiZXhwIjoxNzUwNDI0NDA4LCJpc3MiOiJncmFkdWF0aW9uQXBwIn0.6Hyj046nj6KAnhl_4AESSlEXX32h1p7GNruisAGb-c8
+
+###
+# ✔ 마이페이지: 자녀 목록 조회
+GET http://localhost:3000/mypage/children
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamlzb280IiwidV9uYW1lIjoi7KeA7IiYNCIsImlhdCI6MTc1MDQyMDgwOCwiZXhwIjoxNzUwNDI0NDA4LCJpc3MiOiJncmFkdWF0aW9uQXBwIn0.6Hyj046nj6KAnhl_4AESSlEXX32h1p7GNruisAGb-c8
+
+###
+# ⭐ 회원 정보 수정 (PUT /mypage/me/profile)
+PUT http://localhost:3000/mypage/me/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamlzb280IiwidV9uYW1lIjoi7KeA7IiYNCIsImlhdCI6MTc1MDQyMDgwOCwiZXhwIjoxNzUwNDI0NDA4LCJpc3MiOiJncmFkdWF0aW9uQXBwIn0.6Hyj046nj6KAnhl_4AESSlEXX32h1p7GNruisAGb-c8
+Content-Type: application/json
+
+{
+  "u_name": "테스트2-수정",
+  "u_phone": "01098765432",
+  "u_gender": "M",
+  "u_img": "https://picsum.photos/200",
+  "currentPassword": "1234",
+  "newPassword": "12345"
+}
+
+###
+# (선택) 자녀 user_no를 알아야 함 → 자녀 목록에서 확인
+# 아래 child_no 값을 실제 값으로 교체
+# ⭐ 자녀 정보 수정 (PUT /mypage/children/profile)
+PUT http://localhost:3000/mypage/children/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamlzb280IiwidV9uYW1lIjoi7KeA7IiYNCIsImlhdCI6MTc1MDQyMDgwOCwiZXhwIjoxNzUwNDI0NDA4LCJpc3MiOiJncmFkdWF0aW9uQXBwIn0.6Hyj046nj6KAnhl_4AESSlEXX32h1p7GNruisAGb-c8
+Content-Type: application/json
+
+{
+  "child_no": 12,
+  "u_name": "테스트아이-수정",
+  "u_birth": "2018-05-21",
+  "u_gender": "F",
+  "u_img": "https://picsum.photos/200"
+}
+
