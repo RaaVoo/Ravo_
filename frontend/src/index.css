@@ -1,0 +1,52 @@
+/* 1) LINE Seed 웹폰트 불러오기 */
+@import url('https://cdn.jsdelivr.net/gh/LINESeed/line_seed_sans/webfont/lineSeed.css');
+
+/* 2) 특정 단어용 커스텀 폰트(PyeongChang Peace Bold) */
+@font-face {
+  font-family: 'PyeongChangPeace-Bold';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/PyeongChangPeace-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* 3) 레이아웃 기본값 (Footer가 바닥에 가도록) */
+html, body, #root {
+  height: 100%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* 4) 전역 타이포/리셋 */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'LINE Seed Sans KR', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 코드 폰트 */
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+/* 5) 페이지 레이아웃 컨테이너 */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+/* 메인 영역이 남는 공간을 채워서 Footer를 아래로 밀어냄 */
+.main-content {
+  flex: 1;
+}
+
+/* 6) 필요 시: 특정 단어만 PyeongChang Peace 적용 */
+.special-word {
+  font-family: 'PyeongChangPeace-Bold', sans-serif;
+}

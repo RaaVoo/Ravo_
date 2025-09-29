@@ -1,0 +1,8 @@
+.rnwc-container {
+  background: #f6fbff;
+  border: 1px solid #e6eef6;
+}
+.rnwc-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.07);
+}
