@@ -17,8 +17,8 @@ import {
   userLoginHandler,
   userIdCheckHandler,
   userEmailCheckHandler,
-  userChangePasswordHandler,
   emailVerificationHandler,
+  userChangePasswordHandler,
   verifyEmailCondeHandler,
   phoneVerificationRequestHandler,
   phoneVerificationCheckHandler,
@@ -35,6 +35,17 @@ import { authenticateToken } from './middleware/AuthMiddleware.js'; //인증 미
 import reportRoutes from './routes/reportRoutes.js';
 import voiceRoutes from './routes/voiceRoutes.js';
 import homecamRoutes from './routes/HomecamRoutes.js'; //홈캠 라우트
+import userRoutes from './routes/UserRoutes.js'     // 회원 탈퇴 기능 관련 라우트
+import childRoutes from './routes/ChildRoutes.js'   // 자녀추가 기능 관련 라우트
+import { getMyPage, getMyChildrenInfo } from './controllers/mypageController.js'; //마이페이지(부모 + 자녀)
+import { chatbotSendController, chatbotGetController } from './controllers/chatbot.controller.js'; //문의챗봇
+
+
+// === [추가] 업로드 관련 의존성/설정 ===
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+import cors from "cors";
 
 import userRoutes from './routes/UserRoutes.js';     // 회원 탈퇴, 아이디 찾기 기능 관련 라우트
 import childRoutes from './routes/ChildRoutes.js';   // 자녀추가 기능 관련 라우트
@@ -93,8 +104,16 @@ app.get('/messages/chatlist', getChatDateListController); //대화 목록 조회
 app.get('/messages/chatlist/:date', getChatDetailByDateController); //대화 상세 조회
 app.delete('/messages/chatlist/:date', deleteChatByDateController); //특정 날짜 대화 삭제
 
+
 //app.get('/mypage/me', authenticateToken, getMyPage); //마이페이지 부모 정보 조회 (여름)
 //app.get('/mypage/children', authenticateToken, getMyChildrenInfo); //마이페이지 자녀 저보 조회 (여름)
+
+app.post('/chatbot/send', chatbotSendController); // 챗봇 메시지 저장(사용자/봇 공통)
+app.get('/chatbot/send', chatbotGetController);   // 챗봇 메시지 조회 (?date=YYYY-MM-DD)
+
+app.get('/mypage/me', authenticateToken, getMyPage); //마이페이지 부모 정보 조회
+app.get('/mypage/children', authenticateToken, getMyChildrenInfo); //마이페이지 자녀 저보 조회
+
 
 // 1. 회원가입 기능
 app.post('/auth/signup', (req, res) => {
@@ -171,9 +190,49 @@ app.post('/auth/logout', (req, res) => {
 // 13. 자녀 정보 수정 (여름)
 //app.put('/mypage/children/profile', authenticateToken, updateChildProfileController);
 
+
+
+app.use(cors()); // 개발 중에는 전체 허용, 배포 시에는 도메인 제한 권장
+
+// 저장 폴더: ravo_emotion/audio_inputs
+const AUDIO_DIR = path.join(process.cwd(), "ravo_emotion", "audio_inputs");
+fs.mkdirSync(AUDIO_DIR, { recursive: true });
+
+// multer 저장 전략
+const storage = multer.diskStorage({
+  destination: (_, __, cb) => cb(null, AUDIO_DIR),
+  filename: (req, file, cb) => {
+    const ts = new Date().toISOString().replace(/[:.]/g, "-");
+    const ext = path.extname(file.originalname || ".wav") || ".wav";
+    cb(null, `pi_${ts}${ext}`);
+  },
+});
+const upload = multer({ storage });
+
+// 정적 서빙 (저장 확인용)
+app.use("/audio_inputs", express.static(AUDIO_DIR));
+
+/**
+ * 파이에서 WAV 업로드 (multipart/form-data)
+ * field name: "file"
+ */
+app.post("/upload", upload.single("file"), (req, res) => {
+  if (!req.file) return res.status(400).json({ ok: false, msg: "no file" });
+  console.log("✅ 저장됨:", req.file.path);
+  return res.json({
+    ok: true,
+    saved: req.file.path,
+    url: `/audio_inputs/${path.basename(req.file.path)}`,
+  });
+});
+
+
+
+
 //서버 실행
 //const PORT = 3000;
 const PORT = 8080;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
