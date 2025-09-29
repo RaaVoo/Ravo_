@@ -5,10 +5,14 @@ from stt_module import transcribe_audio
 from emotion_module import classify_emotion
 from chat_module import chat_with_gpt
 from tts_module import speak_text
+from consult_chatbot import consult_reply
 import requests  # 상단 import에 추가
 import json
+import time
 
 
+
+#아이대화 백연결
 def save_message_to_api(text, emotion, mode="VOICE", user_no=1, chat_no=1):
     payload = {
         "content": text,
@@ -33,6 +37,62 @@ def save_message_to_api(text, emotion, mode="VOICE", user_no=1, chat_no=1):
     else:
         print(f"❌ 메시지 저장 실패: {response.status_code}, {response.text}")
 
+
+#상담챗봇 백연결
+def save_consult_message_to_api(text, mode="CONSULT", user_no=1, summary=None, server="http://localhost:3000"):
+    payload = {"content": text, "mode": mode, "userNo": user_no, "summary": summary}
+    headers = {"Content-Type": "application/json"}
+
+    print("📤 상담 payload:", json.dumps(payload, ensure_ascii=False))
+
+    try:
+        r = requests.post(f"{server}/chatbot/send", json=payload, headers=headers, timeout=10)
+        print("🔎 status:", r.status_code, "body:", r.text)  # ← 추가!
+        if r.status_code in (200, 201):
+            print("✅ 상담 메시지 저장 성공!")
+        else:
+            print(f"❌ 상담 메시지 저장 실패: {r.status_code}, {r.text}")
+    except Exception as e:
+        print("⚠️ 네트워크 예외:", e)
+
+
+
+#상담 챗봇 클래스
+def run_consult_chat(tone="담백하고 예의 있는 상담 톤", save=True, user_no=1):
+    """
+    문의 상담 챗봇: 특정 질문(사용법/병원)만 대응.
+    - tone: 답변 말투 힌트
+    - save: True면 /messages/send 로 로그 저장(옵션)
+    """
+    print("🔸 문의상담 챗봇 (종료: exit/quit/q)")
+    print(f"🔹 tone = {tone} | save_to_db = {save}")
+
+    while True:
+        try:
+            user_text = input("\n👤 You: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\n👋 bye"); break
+
+        if user_text.lower() in {"exit", "quit", "q"}:
+            print("👋 bye"); break
+        if not user_text:
+            continue
+
+        # 답변 생성 (내용은 고정, 문체만 변환)
+        reply = consult_reply(user_text, tone=tone)
+
+        print(f"🤖 Bot: {reply}")
+
+        # 원하면 메시지 로그 저장(선택)
+        if save:
+            try:
+                save_consult_message_to_api(user_text, mode="CONSULT", user_no=user_no)
+
+                time.sleep(1)
+
+                save_consult_message_to_api(reply, mode="BOT", user_no=2)
+            except Exception as e:
+                print("⚠️ 저장 실패:", e)
 
 
 # ✅ 감정 리포트 클래스
@@ -180,26 +240,34 @@ def run_behavior_report(video_path="./recorded_video.mp4"):
 def cli():
     import argparse, os
     ap = argparse.ArgumentParser()
-    ap.add_argument("--mode", choices=["voice", "video"], required=True)
+    ap.add_argument("--mode", choices=["voice", "video", "consult"], required=True)
     ap.add_argument("--video", help="분석할 mp4 경로 (video 모드 필수)")
+    # 상담 챗봇용 옵션
+    ap.add_argument("--tone", default="담백하고 예의 있는 상담 톤",
+                    help="문의 챗봇 답변 톤 힌트 (예: '친근하고 간결', '공식적이고 간결')")
+    ap.add_argument("--no-save", action="store_true",
+                    help="문의 챗봇 대화를 /messages/send 로 저장(옵션)")
+    ap.add_argument("--user-no", type=int, default=1,
+                    help="(save 사용 시) 사용자 user_no")
     args = ap.parse_args()
 
     if args.mode == "voice":
         run_emotion_report()
-    else:
+
+    elif args.mode == "video":
         if not args.video:
             raise SystemExit("--video 경로가 필요합니다. (예: --video ./uploads/xxx.mp4)")
-        # 상대경로 보정
         if not os.path.isabs(args.video):
             base = os.path.dirname(os.path.abspath(__file__))
             args.video = os.path.normpath(os.path.join(base, args.video))
         run_behavior_report(args.video)
 
-if __name__ == "__main__":
-    # 자동 실행 없음 (프론트/백에서 필요할 때만 cli()로 호출)
-    # 예) python ravo_emotion/main.py --mode video --video ./uploads/xxx.mp4
-    pass
+    else:  # consult
+        run_consult_chat(tone=args.tone, save=not args.no_save, user_no=args.user_no)
 
+
+if __name__ == "__main__":
+    cli()
 
 
 # # ✅ 실행

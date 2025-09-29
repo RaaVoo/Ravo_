@@ -40,7 +40,8 @@ export const sendMessageController = async (req, res) => {
 export const getMessagesController = async (req, res) => {
   try {
     const messages = await getAllMessages();
-    res.status(200).json({ success: true, data: messages });
+    const filtered = messages.filter(m => m.m_mode === 'VOICE');
+    res.status(200).json({ success: true, data: filtered });
   } catch (error) {
     console.error('메시지 조회 오류:', error);
     res.status(500).json({ success: false, message: '서버 오류입니다.' });
@@ -114,12 +115,13 @@ export const getChatDetailByDateController = async (req, res) => {
     }
 
     const messages = await fetchMessagesByDate(date);
+    const filtered = messages.filter(m => m.m_mode === 'VOICE');
 
-    if (!messages || messages.length === 0) {
+    if (!filtered || filtered.length === 0) {
       return res.status(404).json({ success: false, message: '해당 날짜에 대화가 없습니다.' });
     }
 
-    res.status(200).json({ success: true, data: messages });
+    res.status(200).json({ success: true, data: filtered });
 
   } catch (error) {
     console.error('대화 상세 조회 오류:', error);
@@ -127,7 +129,7 @@ export const getChatDetailByDateController = async (req, res) => {
   }
 };
 
-//특정 날짜 대화 삭제제
+//특정 날짜 대화 삭제
 export const deleteChatByDateController = async (req, res) => {
   try {
     const date = req.params.date;
@@ -163,11 +165,12 @@ export const searchChatMessagesController = async (req, res) => {
     }
 
     const results = await searchChatMessages(query);
+    const filtered = results.filter(m => m.m_mode === 'VOICE');
 
     res.status(200).json({
       success: true,
-      count: results.length,
-      data: results
+      count: filtered.length,
+      data: filtered
     });
 
   } catch (error) {

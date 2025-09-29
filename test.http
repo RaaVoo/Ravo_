@@ -302,3 +302,25 @@ Content-Type: application/json
   "u_img": "https://picsum.photos/200"
 }
 
+### 1. 메시지 전송 (상담 챗봇)
+POST http://localhost:3000/chatbot/send
+Content-Type: application/json
+
+{
+  "content": "상담 챗봇, 사용 방법 알려줘",
+  "mode": "CONSULT",
+  "summary": "neutral",
+  "userNo": 1
+}
+
+### 2. 전체 상담 메시지 조회
+GET http://localhost:3000/chatbot/send
+
+### 3. 특정 날짜 상담 대화 조회
+GET http://localhost:3000/chatbot/send?date=2025-09-25
+
+### 4. 상담 메시지 삭제 (id=1 가정)
+DELETE http://localhost:3000/chatbot/1
+
+### 5. 특정 날짜 상담 대화 삭제
+DELETE http://localhost:3000/chatbot/send?date=2025-09-25

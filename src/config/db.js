@@ -6,13 +6,13 @@ dotenv.config();
 export const pool = mysql.createPool({
   host: process.env.DB_HOST || "localhost", // mysql의 hostname
   user: process.env.DB_USER || "root", // user 이름
-  // port: process.env.DB_PORT || 3306, // 포트 번호
-  // database: process.env.DB_NAME || "ravo", // 데이터베이스 이름
-  // password: process.env.DB_PASSWORD || "bitbybit12", // 비밀번호
+  port: process.env.DB_PORT || 3306, // 포트 번호
+  database: process.env.DB_NAME || "ravo", // 데이터베이스 이름
+  password: process.env.DB_PASSWORD || "quf!sla0380", // 비밀번호
 
-  port: process.env.DB_PORT, // 포트 번호 -> 지수 테스트 사용 코드
-  database: process.env.DB_NAME, // 데이터베이스 이름 -> 지수 테스트 사용 코드
-  password: process.env.DB_PASSWORD, // 비밀번호 -> 지수 테스트 사용 코드
+  //port: process.env.DB_PORT, // 포트 번호 -> 지수 테스트 사용 코드
+  //database: process.env.DB_NAME, // 데이터베이스 이름 -> 지수 테스트 사용 코드
+  //password: process.env.DB_PASSWORD, // 비밀번호 -> 지수 테스트 사용 코드
 
   waitForConnections: true,
   // Pool에 획득할 수 있는 connection이 없을 때,

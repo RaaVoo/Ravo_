@@ -36,7 +36,6 @@ export const saveMessage = async (messageDTO) => {
 export const findAllMessages = async () => {
   const query = `
     SELECT 
-      id,
       createdDate,
       m_content,
       m_mode,
@@ -46,7 +45,6 @@ export const findAllMessages = async () => {
       user_no
     FROM chat
     WHERE m_del = 'N'
-    ORDER BY id ASC
   `;
   const [rows] = await pool.execute(query);
   return rows;
