@@ -20,9 +20,11 @@ Thumbs.db
 .idea/
 
 # Dependency lock files (선택적으로 제외)
-package.json/
-package-lock.json/
-yarn.lock/
+# 모든 경로의 lock 파일 무시
+**/package-lock.json
+**/yarn.lock
+**/pnpm-lock.yaml
+
 
 # Build 결과물
 dist/
@@ -33,6 +35,7 @@ coverage/
 
 # 기타
 *.swp
+
 __pycache__/
 *.pyc
-.vs/
+
