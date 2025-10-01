@@ -26,20 +26,17 @@ import {
 } from './controllers/UserController.js';
 import { logout } from './controllers/AuthController.js'    // 로그아웃 기능
 import { authenticateToken } from './middleware/AuthMiddleware.js'; //인증 미들웨어
-// import reportRoutes from './routes/reportRoutes.js'; //레포트 라우트
-// import voiceRoutes from './routes/voiceRoutes.js'; //레포트 라우트
 // const reportRoutes = require('./routes/reportRoutes.js');
 // const voiceRoutes = require('./routes/voiceRoutes.js');
 // //import { homecamRoutes } from './routes/HomecamRoutes.js'; //홈캠 라우트
 // const homecamRoutes = require('./routes/HomecamRoutes');
-import reportRoutes from './routes/reportRoutes.js';
-import voiceRoutes from './routes/voiceRoutes.js';
+import reportRoutes from "./routes/reportRoutes.js";  // 영상 레포트
+import voiceRoutes from "./routes/voiceRoutes.js";    // 음성 레포트
 import homecamRoutes from './routes/HomecamRoutes.js'; //홈캠 라우트
-import userRoutes from './routes/UserRoutes.js'     // 회원 탈퇴 기능 관련 라우트
-import childRoutes from './routes/ChildRoutes.js'   // 자녀추가 기능 관련 라우트
-import { getMyPage, getMyChildrenInfo } from './controllers/mypageController.js'; //마이페이지(부모 + 자녀)
+//import { getMyPage, getMyChildrenInfo } from './controllers/mypageController.js'; //마이페이지(부모 + 자녀)
 import { chatbotSendController, chatbotGetController } from './controllers/chatbot.controller.js'; //문의챗봇
 
+import piCamTest from './routes/piCamTest.js';
 
 // === [추가] 업로드 관련 의존성/설정 ===
 import multer from "multer";
@@ -54,7 +51,119 @@ import cookieParser from 'cookie-parser';
 import AuthRoutes from './routes/AuthRoutes.js';
 import MypageRoutes from './routes/MypageRoutes.js'       // 마이페이지 '개인정보 수정' 관련 라우트
 
+import { query } from './config/db.js';
+
 const app = express();
+
+/* ============================================================================
+ * 1. 공통 미들웨어
+ *    - CORS 허용 (개발용: 로컬/내부망 포트 허용)
+ *    - JSON 파싱, URL 인코딩, 쿠키 파싱
+ *    - Passport 초기화 (구글 계정 로그인)
+ * ========================================================================== */
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://10.207.17.0:3000', 'http://10.207.16.130:3000'],
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+}));
+app.use(express.urlencoded({ extended: true }));
+
+/* ----------------------------- 파일 정적 서빙 ----------------------------- */
+// 레코딩 파일 저장 디렉토리 (RecordWorker와 동일 경로 사용)
+const MEDIA_TMP = process.env.MEDIA_TMP || path.join(process.cwd(), 'media-tmp');
+
+// /media/* 정적 제공 시 헤더 보정 (mp4는 인라인 재생 + Range 허용)
+app.use(
+  '/media',
+  express.static(MEDIA_TMP, {
+    setHeaders(res, filePath) {
+      if (filePath.toLowerCase().endsWith('.mp4')) {
+        res.setHeader('Content-Type', 'video/mp4');
+        res.setHeader('Content-Disposition', 'inline');
+        res.setHeader('Accept-Ranges', 'bytes');
+        res.setHeader('Access-Control-Allow-Origin', '*');
+      }
+      if (/\.(jpg|jpeg|png)$/i.test(filePath)) {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+      }
+    },
+  })
+);
+
+/* --------------------------- 스트리밍(시킹) 라우트 --------------------------- */
+/**
+ * /media/stream/:file
+ * - 브라우저가 Range(부분 전송)로 요청하면 206으로 쪼개서 응답
+ * - 파일명 정규화(디렉터리 탈출 방지), 잘못된 Range=416 처리
+ */
+app.get('/media/stream/:file', (req, res) => {
+  // 파일명 정규화 (../ 방지)
+  const safeName = path.basename(decodeURIComponent(req.params.file));
+  const filePath = path.join(MEDIA_TMP, safeName);
+
+  if (!fs.existsSync(filePath)) {
+    return res.sendStatus(404);
+  }
+
+  const stat = fs.statSync(filePath);
+  const range = req.headers.range;
+
+  // CORS & 캐시 정책(필요 시 조정)
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Cache-Control', 'no-store');
+
+  // Range 헤더가 없으면 전체 전송
+  if (!range) {
+    res.setHeader('Content-Type', 'video/mp4');
+    res.setHeader('Content-Disposition', 'inline');
+    res.setHeader('Accept-Ranges', 'bytes');
+    res.setHeader('Content-Length', stat.size);
+    return fs.createReadStream(filePath).pipe(res);
+  }
+
+  // Range 206 처리
+  const CHUNK = 1 * 1024 * 1024; // 1MB
+  const [startStr, endStr] = range.replace(/bytes=/, '').split('-');
+  const start = parseInt(startStr, 10);
+
+  if (!Number.isFinite(start) || start >= stat.size) {
+    // 잘못된 Range → 416
+    res.writeHead(416, { 'Content-Range': `bytes */${stat.size}` });
+    return res.end();
+  }
+
+  const end = endStr ? parseInt(endStr, 10) : Math.min(start + CHUNK, stat.size - 1);
+
+  res.writeHead(206, {
+    'Content-Range': `bytes ${start}-${end}/${stat.size}`,
+    'Accept-Ranges': 'bytes',
+    'Content-Length': end - start + 1,
+    'Content-Type': 'video/mp4',
+    'Content-Disposition': 'inline',
+  });
+
+  fs.createReadStream(filePath, { start, end }).pipe(res);
+});
+
+/* -------------------------------- 헬스체크 -------------------------------- */
+// const db = require('./config/db');
+
+app.get('/db/health', async (_req, res) => {
+  try {
+    const rows = await query('SELECT 1 AS ok');
+    res.json({ ok: true, rows });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: String(e) });
+  }
+});
+
+app.get('/ping', (_, res) => res.json({ ok: true, from: 'index.js' }));
+app.get('/homecam/health', (_, res) =>
+  res.json({ ok: true, time: new Date().toISOString() })
+);
+// 예지
+
 app.use(bodyParser.json());
 
 // const app = express();
@@ -71,10 +180,12 @@ app.use(passport.initialize());
 dotenv.config();
 app.use('/record', reportRoutes);
 app.use('/voice', voiceRoutes);
+app.use('/video', reportRoutes);       // 영상보고서
 
 
 // ▶ 홈캠 관련 API 라우터 연결
 app.use('/homecam', homecamRoutes);
+app.use('/pi-cam', piCamTest);
 
 // 12. 회원탈퇴 관련 라우터 연결 -> 여기다가는 기본 경로만 작성해줌 (나머지는 UserRoutes.js 코드 참고)
 app.use('/auth', userRoutes);
@@ -110,9 +221,6 @@ app.delete('/messages/chatlist/:date', deleteChatByDateController); //특정 날
 
 app.post('/chatbot/send', chatbotSendController); // 챗봇 메시지 저장(사용자/봇 공통)
 app.get('/chatbot/send', chatbotGetController);   // 챗봇 메시지 조회 (?date=YYYY-MM-DD)
-
-app.get('/mypage/me', authenticateToken, getMyPage); //마이페이지 부모 정보 조회
-app.get('/mypage/children', authenticateToken, getMyChildrenInfo); //마이페이지 자녀 저보 조회
 
 
 // 1. 회원가입 기능

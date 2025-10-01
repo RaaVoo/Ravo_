@@ -4,6 +4,7 @@ import { pool } from '../config/db.js';
 // user_no로 사용자 조회
 export const getUserById = async (user_no) => {
   const sql = 'SELECT user_id, user_pw, u_name, u_phone, u_email, u_gender FROM User WHERE user_no = ? AND u_del = FALSE';
+  //const sql = 'SELECT user_id, user_pw, u_name, u_phone, u_email, u_gender FROM Users WHERE user_no = ? AND u_del = FALSE';
   const [rows] = await pool.execute(sql, [user_no]);
   return rows[0];
 };

@@ -1,0 +1,112 @@
+.video-report-container {
+    max-width: 900px;
+    margin: 40px auto 80px;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #444;
+    padding: 0 15px;
+}
+
+.video-report-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.video-report-date {
+    font-weight: 500;
+    font-size: 14px;
+    color: #666;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.video-report-title {
+    font-weight: 700;
+    font-size: 28px;
+    color: #666666; /* 어두운 회색 */
+    font-family: 'Noto Sans KR', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px; /* 텍스트와 이모지 간격 */
+}
+
+.video-report-title span {
+  font-size: 28px; /* 이모지 크기 맞춤 */
+}
+
+.video-report-summary-box {
+    background-color: #f9eaa7;
+    color: #665a00;
+    padding: 20px 25px;
+    border-radius: 20px;
+    margin-bottom: 40px;
+    line-height: 1.5;
+    font-size: 15px;
+}
+
+.video-report-summary-box h3 {
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.video-report-overall-summary {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    color: #444;
+}
+
+.video-report-overall-summary h3 {
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+
+.video-report-friend-solution {
+    background-color: #f9eaa7;
+    color: #665a00;
+    border-radius: 20px;
+    padding: 18px 25px;
+    margin-top: 20px;
+}
+
+.video-report-friend-solution h4 {
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.video-report-friend-solution ul {
+    margin-left: 18px;
+    margin-bottom: 12px;
+    list-style-type: disc;
+}
+
+.video-report-friend-solution li {
+    margin-bottom: 8px;
+}
+
+.video-report-friend-solution p {
+    margin-top: 8px;
+    font-weight: 600;
+}
+
+.video-report-buttons {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.btn {
+    background-color: #f9eaa7;
+    border: none;
+    padding: 10px 24px;
+    margin: 0 10px;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.12);
+    transition: background-color 0.3s ease;
+    font-size: 14px;
+}
+
+.btn:hover {
+    background-color: #fff15c;
+}

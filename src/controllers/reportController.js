@@ -1,3 +1,4 @@
+//src/controllers/reportControllers.js
 import { pool as db } from '../config/db.js';
 
 // 1. 등록

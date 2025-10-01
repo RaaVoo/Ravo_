@@ -5,14 +5,8 @@ import Header from './components/Header';
 import HomecamPage from './pages/HomecamPage';
 import HomecamDetail from './pages/HomecamDetail';
 import HomecamList from './pages/HomecamList';
-import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
-import VoiceReportPage from './pages/VoiceReportPage';
-import VideoReportPage from './pages/VideoReportPage';
-import MyPage from './pages/MyPage';
 import ChatPage from './pages/ChatPage';
 import Footer from './components/Footer';
-import MainPage from './pages/MainPage';
 import FAQPage from './pages/FAQPage';
 import ChatBot from './pages/ChatBot';
 import ChatButton from './components/ChatButton';
@@ -44,12 +38,6 @@ function App() {
         <Route path="/homecam/camlist/:record_no" element={<HomecamDetail />} />
         <Route path="/chatbot" element={<ChatBot />} />
         <Route path="/chat" element={<ChatPage />} />
-        <Route path="/report/voice" element={<VoiceReportPage />} />
-        <Route path="/report/video" element={<VideoReportPage />} />
-        <Route path="/mypage" element={<MyPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/" element={<MainPage />} />
         <Route path="/faq" element={<FAQPage />} />
 
         {/* ✅ Pi Camera HLS 스트리밍 테스트 페이지 */}
