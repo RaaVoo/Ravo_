@@ -6,23 +6,28 @@
 // - grabNow(sourceUrl, seconds, nameHint): 폴백(짧게 캡처) + 실제길이(ffprobe)
 // - debugSessions(): 현재 살아있는 세션의 record_no 목록(디버그용)
 // ------------------------------------------------------------
-const { spawn, execFile } = require('child_process');
-const util = require('util');
-const path = require('path');
-const fs = require('fs');
+import { spawn, execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import path from 'node:path';
+import fs from 'node:fs';
 
-const execFileP = util.promisify(execFile);
 
-const FFMPEG     = process.env.FFMPEG_PATH   || 'ffmpeg';
-const FFPROBE    = process.env.FFPROBE_PATH  || 'ffprobe';
-const MEDIA_TMP  = process.env.MEDIA_TMP     || path.join(process.cwd(), 'media-tmp');
-const PUBLIC_BASE = (process.env.PUBLIC_BASE || 'http://localhost:8080').replace(/\/+$/, '');
+
+const execFileP = promisify(execFile);
+
+const FFMPEG      = process.env.FFMPEG_PATH   || 'ffmpeg';
+const FFPROBE     = process.env.FFPROBE_PATH  || 'ffprobe';
+const MEDIA_TMP   = process.env.MEDIA_TMP     || path.join(process.cwd(), 'media-tmp');
+const PUBLIC_BASE = (process.env.PUBLIC_BASE  || 'http://localhost:8080').replace(/\/+$/, '');
 
 fs.mkdirSync(MEDIA_TMP, { recursive: true });
 
+
+console.log('[ffmpeg paths]', { FFMPEG, FFPROBE, MEDIA_TMP });
+
 // 메모리 세션 맵: key(record_no 문자열) -> { child, outFile, thumbFile }
 const sessions = new Map();
-const keyOf = (n) => String(n); // ✅ 항상 문자열 키로 통일 (숫자/문자열 불일치 버그 방지)
+const keyOf = (n) => String(n); // ✅ 문자열 키 통일 (숫자/문자열 혼용 버그 방지)
 
 function nowStamp() {
   const d = new Date();
@@ -55,7 +60,7 @@ function inputArgs(sourceUrl) {
     '-preset', 'veryfast',
     '-r', '30',
     '-movflags', '+faststart',
-    // 필요시 고정 해상도:
+    // 필요시 해상도 고정:
     // '-vf', 'scale=1280:-2',
   ];
 }
@@ -82,7 +87,7 @@ async function probeDurationSec(filePath) {
 }
 
 /** 녹화 시작: ffmpeg 무한 인코딩 (정지는 stopAndUpload에서 'q') */
-exports.start = async ({ record_no, sourceUrl }) => {
+export async function start({ record_no, sourceUrl }) {
   if (!sourceUrl) throw new Error('sourceUrl required');
 
   const key = keyOf(record_no);
@@ -97,10 +102,10 @@ exports.start = async ({ record_no, sourceUrl }) => {
 
   sessions.set(key, { child, outFile, thumbFile });
   return { outFile };
-};
+}
 
 /** 녹화 정지 + 썸네일 + 실제 duration */
-exports.stopAndUpload = async (record_no) => {
+export async function stopAndUpload(record_no) {
   const key = keyOf(record_no);
   const s = sessions.get(key);
   if (!s) throw new Error('녹화 세션 없음');
@@ -110,7 +115,7 @@ exports.stopAndUpload = async (record_no) => {
   // ffmpeg 정상 종료 신호
   try { child.stdin.write('q'); } catch {}
 
-  // ⛔ 과거엔 타임아웃으로 끊겼을 수 있음 → 이제는 close 이벤트까지 확실히 대기
+  // close 이벤트까지 대기
   await new Promise((resolve) => child.on('close', resolve));
 
   // 썸네일(실패 무시)
@@ -126,10 +131,10 @@ exports.stopAndUpload = async (record_no) => {
   const thumbUrl = fs.existsSync(thumbFile) ? `${PUBLIC_BASE}/media/${path.basename(thumbFile)}` : null;
 
   return { s3Url: url, s3Thumb: thumbUrl, durationSec };
-};
+}
 
 /** 폴백: 지금 HLS에서 N초 캡처 → 실제 길이(ffprobe) 측정 */
-exports.grabNow = async function grabNow(sourceUrl, seconds = 8, nameHint = 'grab') {
+export async function grabNow(sourceUrl, seconds = 8, nameHint = 'grab') {
   const base = `${nowStamp()}_${nameHint}`;
   const outName = `${base}.mp4`;
   const outFile = path.join(MEDIA_TMP, outName);
@@ -144,13 +149,16 @@ exports.grabNow = async function grabNow(sourceUrl, seconds = 8, nameHint = 'gra
   const url = `${PUBLIC_BASE}/media/${path.basename(outFile)}`;
   const thumbUrl = fs.existsSync(thumbFile) ? `${PUBLIC_BASE}/media/${path.basename(thumbFile)}` : null;
 
-  // ✅ 캡처된 짧은 파일이라도 정확한 길이 저장
+  // ✅ 캡처 파일 길이 측정
   const durationSec = await probeDurationSec(outFile);
 
   return { s3Url: url, s3Thumb: thumbUrl, durationSec };
-};
+}
 
 // 🔎 디버그: 현재 살아있는 ffmpeg 세션 목록 반환
-// - /save 호출 후 여기에 record_no가 보여야 /end로 정상 종료 가능
-// - 빈 배열이면 세션이 없어서 /end 시 폴백으로 떨어짐
-exports.debugSessions = () => Array.from(sessions.keys());
+export function debugSessions() {
+  return Array.from(sessions.keys());
+}
+
+// ✅ default export (라우트에서 편하게 import 가능)
+export default { start, stopAndUpload, grabNow, debugSessions };

@@ -1,0 +1,247 @@
+/* ✅ LINE Seed Sans KR 폰트 선언 */
+@font-face {
+  font-family: 'LINE Seed Sans KR';
+  font-weight: 400;
+  src: url('https://cdn.jsdelivr.net/gh/webfontworld/line-seed/LINESeedKR-Rg.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'LINE Seed Sans KR';
+  font-weight: 700;
+  src: url('https://cdn.jsdelivr.net/gh/webfontworld/line-seed/LINESeedKR-Bd.woff2') format('woff2');
+}
+
+.homecam-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 120px;
+  font-family: 'LINE Seed Sans KR', sans-serif;
+  background-color: white;
+}
+
+.homecam-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #68D2E8;
+  margin-bottom: 24px;
+  padding-bottom: 8px;
+}
+
+/* 🎥 영상 박스 */
+.video-box {
+  width: 80%;
+  max-width: 800px;
+  aspect-ratio: 16 / 9;
+  background-color: black;
+  border: 5px solid #68D2E8;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 14px;
+}
+
+/* 🎥 실제 <video> */
+.hc-live-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ✅ 브라우저 기본 컨트롤까지 둥글게 */
+.hc-live-video::-webkit-media-controls-enclosure {
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+/* 버튼 그룹 */
+.button-group {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+
+.record-btn,
+.pause-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  font-size: 24px;
+  color: white;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.record-icon-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  margin: 0 auto;
+}
+
+.record-btn { background-color: #DC2626; }
+.pause-btn  { background-color: #FACC15; color: white; }
+
+.record-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #374151;
+}
+.record-status .dot {
+  width: 10px; height: 10px; background-color: red; border-radius: 50%;
+}
+.record-status.gray { color: #6b7280; }
+
+.timer { margin-top: 5px; font-size: 14px; color: #6B7280; }
+
+/* =======================
+   ✅ 모달(팝업) 공통
+   ======================= */
+.modal-overlay {
+  position: fixed; inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex; justify-content: center; align-items: center;
+}
+
+/* 팝업 박스(반응형 크기) */
+.report-modal {
+  position: relative;
+  width: clamp(280px, 80vw, 500px);   /* ✅ 화면 크기에 맞춰 줄어듦 */
+  padding: clamp(24px, 6vw, 50px) clamp(16px, 5vw, 40px); /* ✅ 반응형 패딩 */
+  background: white;
+  border-radius: 30px;   /* ✅ 둥글기 조금 줄여서 모바일에서 안 답답하게 */
+  text-align: center;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+  font-family: 'LINE Seed Sans KR', sans-serif;
+}
+
+
+/* 닫기 버튼(우상단, 반응형) */
+.close-btn {
+  position: absolute;
+  top: 0; right: 0;
+  transform: translate(-90%, -35%);
+  width: clamp(40px, 9vw, 54px);
+  height: clamp(40px, 9vw, 54px);
+  padding: 0; border: 0; border-radius: 50%;
+  background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 12px rgba(0,0,0,.18);
+  cursor: pointer;
+  line-height: 1;
+  z-index: 2;
+}
+
+.close-icon-img {
+  width: clamp(16px, 4.6vw, 22px);
+  height: clamp(16px, 4.6vw, 22px);
+  display: block;
+}
+
+/* 제목(반응형 폰트) */
+.modal-title {
+  font-size: clamp(20px, 4.5vw, 32px);
+  font-weight: 700;
+  color: #6E6E6E;
+  margin-bottom: clamp(8px, 2vw, 14px);
+}
+
+/* 버튼 영역 */
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: clamp(12px, 3.8vw, 30px);
+  margin-bottom: clamp(16px, 4.4vw, 30px);
+}
+
+/* 공통 버튼 스타일(반응형 크기) */
+.modal-buttons button {
+  min-width: clamp(96px, 28vw, 140px);
+  height: clamp(40px, 6.6vw, 50px);
+  font-size: clamp(14px, 3.2vw, 18px);
+  font-weight: 700;
+  border-radius: clamp(20px, 7vw, 40px);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* hover / active 공통 효과 */
+.modal-buttons button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+.modal-buttons button:active {
+  transform: translateY(1px);
+}
+
+/* 예/아니오 색상 + 그림자 */
+.yes-btn { background: #68D2E8; box-shadow: 0px 4px 0px #009FC1; }
+.no-btn  { background: #FF8383; box-shadow: 0px 4px 0px #C86B6B; }
+.yes-btn:active { box-shadow: 0px 2px 0px #009FC1; }
+.no-btn:active  { box-shadow: 0px 2px 0px #C86B6B; }
+
+/* 버튼과 문구 간격(추가 영역이 있으면 사용) */
+.modal-actions {
+  display: flex; gap: 16px; justify-content: center; align-items: center; margin-top: 8px;
+}
+
+/* ✅ 빨간 안내 문구 + 밑줄 */
+.modal-warning {
+  margin-top: 14px;
+  text-align: center;
+  color: #ff6b6b;
+  font-weight: 700;
+  font-size: clamp(12px, 1.8vw, 14px);
+  letter-spacing: -0.2px;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+/* 로딩바 */
+.loading-bar {
+  width: 80%;
+  height: 8px;
+  background: #E5E7EB;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 20px auto 0;
+}
+.progress {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(to right, #FF7F7F, #D1D5DB);
+  animation: loadingAnimation 2s infinite;
+  border-radius: 4px;
+}
+@keyframes loadingAnimation {
+  0% { width: 0%; }
+  50% { width: 80%; }
+  100% { width: 0%; }
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .video-box { width: 90%; }
+  .record-btn, .pause-btn { width: 52px; height: 52px; font-size: 20px; }
+  .homecam-title { font-size: 20px; }
+}
+@media (max-width: 480px) {
+  .homecam-title { font-size: 18px; }
+  .record-btn, .pause-btn { width: 48px; height: 48px; font-size: 18px; }
+  .video-box { border-width: 4px; }
+}

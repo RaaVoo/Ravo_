@@ -5,7 +5,7 @@ import { pool } from '../config/db.js';
 
 // '회원가입' 기능
 export const insertUser = async (UserDTO) => {
-    //const sql = 'INSERT INTO Users (user_id, user_pw, u_name, u_phone, u_email, u_gender, u_birth) VALUES (?, ?, ?, ?, ?, ?, ?)';       // 원래 코드
+    //const sql = 'INSERT INTO Users (user_id, user_pw, u_name, u_phone, u_email, u_gender) VALUES (?, ?, ?, ?, ?, ?, ?)';       // 원래 코드
     const sql = 'INSERT INTO User (user_id, user_pw, u_name, u_phone, u_email, u_gender) VALUES (?, ?, ?, ?, ?, ?)';          // 지수 테스트 코드
 
     const normalizedPhone = UserDTO.u_phone ? String(UserDTO.u_phone).replace(/[^0-9]/g, '') : null;
@@ -42,6 +42,7 @@ export const findUserByEmail = async (u_email) => {
 // '아이디 찾기' 기능
 export const findUserIdByNameAndPhone = async (u_name, u_phone) => {
     const sql = 'SELECT user_id FROM User WHERE u_name = ? AND u_phone = ? AND u_del = FALSE';
+    //const sql = 'SELECT user_id FROM Users WHERE u_name = ? AND u_phone = ? AND u_del = FALSE';
     
     const [rows] = await pool.execute(sql, [u_name, u_phone]);
     return rows[0];
@@ -58,6 +59,7 @@ export const updateUserPassword = async (user_id, new_pw) => {
 export const findUserByNamePhone = async (user_id, u_name, u_phone) => {
     const [rows] = await pool.query(
         'SELECT * FROM User WHERE user_id = ? AND u_name = ? AND u_phone = ?', 
+        //'SELECT * FROM Users WHERE user_id = ? AND u_name = ? AND u_phone = ?', 
         [user_id, u_name, u_phone]
     );      // From Users가 원래였고 잠깐 From User로 바꿈
     return rows[0];         // 일치하는 사용자 정보 리턴
@@ -92,6 +94,7 @@ export const createUser = async (user) => {
 // RefreshToken 저장하는 코드 (구글 계정 로그인 관련)
 export const saveRefreshToken = async (user_no, refreshToken) => {
     const sql = `UPDATE User SET refresh_token = ? WHERE user_no = ?`;
+    //const sql = `UPDATE Users SET refresh_token = ? WHERE user_no = ?`;
     await pool.execute(sql, [refreshToken, user_no]);
 }
 

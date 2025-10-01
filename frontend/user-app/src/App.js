@@ -18,6 +18,26 @@ import ChildInfoModify from './pages/MyPage/ChildInfoModify.jsx';
 import ChildInfoAdd from './pages/MyPage/ChildInfoAdd.jsx';
 import { UserProvider, useUser } from './context/UserContext.js';     // 전역 상태 받아옴 (250919)
 
+// 음성 보고서
+import VoiceReport from './pages/Report/VoiceReport';       // 상세 페이지
+import VoiceReportList from './pages/Report/VoiceReportList'; // 목록 페이지
+// 영상 보고서
+import VideoReport from './pages/Report/VideoReport';
+import VideoReportList from './pages/Report/VideoReportList';
+
+import HomecamPage from './pages/Homecam/HomecamPage.jsx';
+import HomecamDetail from './pages/Homecam/HomecamDetail.jsx';
+import HomecamList from './pages/Homecam/HomecamList.jsx';
+import ChatPage from './pages/Homecam/ChatPage.jsx';
+import FAQPage from './pages/Homecam/FAQPage.jsx';
+import ChatBot from './pages/Homecam/ChatBot.jsx';
+import ChatButton from './components/ChatButton.jsx';
+import ScrollTopButton from './components/ScrollTopButton.jsx';
+// ✅ HLS Player import
+import HlsPlayer from './pages/Homecam/HlsPlayer.jsx';
+
+const HLS_URL = "http://10.207.17.0:3000/stream/out.m3u8";
+
 // 원래 App()이었음
 function AppContent() {
   // 헤더 부분 변경되기 위함 -> 로그인 한 상태 전달을 위한 코드
@@ -76,8 +96,48 @@ function AppContent() {
         <Route path="/mypage" element={<MyPage onLogout={handleLogout}/>} />
         <Route path="/mypage/me/profile" element={<UserInfoModify />} />
         <Route path="/mypage/children/profile" element={<ChildInfoModify />} />
-        <Route path="/mypage/children/add" element={<ChildInfoAdd />} /> 
+        <Route path="/mypage/children/add" element={<ChildInfoAdd />} />
+
+        {/* === 영상 보고서 === */}
+        {/* 목록 */}
+        <Route path="/report/video" element={<VideoReportList />}/>
+        {/* 상세 */}
+        <Route path="/report/video/:video_no" element={<VideoReport />}/>
+
+        {/* === 음성 보고서 === */}
+        {/* 목록 */}
+        <Route path="/report/voice" element={<VoiceReportList />} />
+        {/* 상세 */}
+        <Route path="/report/voice/:id" element={<VoiceReport/>} />
+
+        <Route path="/homecam" element={<HomecamPage />} />
+        <Route path="/homecam/camlist" element={<HomecamList />} />
+        <Route path="/homecam/camlist/:record_no" element={<HomecamDetail />} />
+        <Route path="/chatbot" element={<ChatBot />} />
+        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/faq" element={<FAQPage />} />
+
+        {/* ✅ Pi Camera HLS 스트리밍 테스트 페이지 */}
+        <Route
+          path="/stream-test"
+          element={
+            <div style={{ padding: 16 }}>
+              <h1>Pi Camera Stream (HLS)</h1>
+              <HlsPlayer src={HLS_URL} />
+            </div>
+          }
+        />
       </Routes>
+      {/* ✅ 전역 플로팅 채팅 버튼 */}
+      <ChatButton
+        to="/chatbot"
+        hideOnPaths={['/chatbot']}
+        bottom={32}
+        right={32}
+        size={64}
+        bgColor="#68D2E8"
+      />
+      <ScrollTopButton />
       <Footer/>
     </BrowserRouter>
   );

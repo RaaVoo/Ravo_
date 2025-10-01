@@ -1,253 +1,255 @@
-// // 서비스 로직 호출용
-// const service = require('../services/homecam.service');
+// backend/controllers/HomecamController.js
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 
+const service = require('../services/HomecamService');
 
-//  // [홈캠 영상 저장]
+/* 유틸: 서비스 함수 이름이 코드마다 다를 수 있어 안전하게 선택 */
+const pick = (...fns) => fns.find((f) => typeof f === 'function');
 
-//  // record_no - 기본 키, 고유번호 AUTO_INCREMENT라서 자동 생성됨 (입력 안 해도 됨)
-// // createdDate	최초 생성일	DEFAULT CURRENT_TIMESTAMP로 자동 저장됨
-// // modifiedDate	수정일	ON UPDATE CURRENT_TIMESTAMP로 자동 갱신됨 (수정 시)
-// // 그 외 나머지 다 저장
-
-// exports.saveHomecam = async (req, res) => {
-//   try {
-//     await service.saveHomecam(req.body);
-//     res.status(201).json({ message: '홈캠 영상 저장 성공!' });
-//   } catch (err) {
-//     console.error('DB Error:', err);
-//     res.status(500).json({ error: 'DB 저장 실패' });
-//   }
-// };
-
-
-// // [홈캠 상태 변경]
-// exports.updateHomecamStatus = async (req, res) => {
-//   const { record_no } = req.params;
-//   const { cam_status } = req.body;
-//   const validStatus = ['active', 'inactive', 'paused'];
-
-//   // 유효한 상태값인지 검사 - cam_status가 없거나 잘못된 값인 경우
-//   if (!validStatus.includes(cam_status)) {
-//     return res.status(400).json({ message: 'cam_status 값이 유효하지 않습니다.' });
-//   }
-
-//   try {
-//     const [result] = await service.updateStatus(record_no, cam_status);
-//     if (result.affectedRows === 0) {
-//       return res.status(404).json({ message: '해당 홈캠 영상이 존재하지 않습니다.' });
-//     }
-//     res.status(200).json({ message: '홈캠 상태가 성공적으로 변경되었습니다.' });
-//   } catch (err) {
-//     console.error('상태 변경 오류:', err);
-//     res.status(500).json({ message: '서버 오류' });
-//   }
-// };
-
-// // [홈캠 단일 삭제] 소프트 딜리트 처리 (record_del = 'Y')
-// exports.deleteHomecam = async (req, res) => {
-//   try {
-//     const [result] = await service.deleteOne(req.params.record_no);
-//     if (result.affectedRows === 0) {
-//       return res.status(404).json({ message: '해당 영상이 존재하지 않습니다.' });
-//     }
-//     res.status(200).json({ message: ' 홈캠 영상이 삭제 처리되었습니다.' });
-//   } catch (err) {
-//     console.error('삭제 오류:', err);
-//     res.status(500).json({ message: '서버 오류' });
-//   }
-// };
-
-// // [홈캠 다중 삭제] 여러 영상을 소프트 또는 하드 딜리트 처리
-// exports.deleteMultipleHomecams = async (req, res) => {
-//   const { record_nos, isHardDelete } = req.body;
-
-//   if (!Array.isArray(record_nos) || record_nos.length === 0) {
-//     return res.status(400).json({ message: '삭제할 영상 번호를 배열로 전달해주세요.' });
-//   }
-
-//   try {
-//     const [result] = await service.deleteMany(record_nos, isHardDelete);
-//     res.status(200).json({ message: ` 총 ${result.affectedRows}개의 영상이 삭제 처리되었습니다.` });
-//   } catch (err) {
-//     console.error('다중 삭제 오류:', err);
-//     res.status(500).json({ message: '서버 오류' });
-//   }
-// };
-
-// //  [홈캠 목록 조회] 삭제되지 않은 영상만 페이지 단위로 조회 + 날짜 필터링
-// exports.getHomecamList = async (req, res) => {
-//   const page = parseInt(req.query.page, 10) || 1;
-//   const date = req.query.date || '';
-
-//   try {
-//     const result = await service.getList(page, 8, date);
-//     res.status(200).json(result);
-//   } catch (err) {
-//     console.error(' 홈캠 목록 조회 오류:', err);
-//     res.status(500).json({ message: 'DB 조회 실패', error: err.message });
-//   }
-// };
-
-// // [홈캠 날짜 기반 검색] 쿼리 파라미터로 받은 날짜(date)로 영상 목록 조회(r_start의 날짜가 일치하는)
-// exports.searchHomecam = async (req, res) => {
-//   let { date } = req.query;
-
-//   if (!date) {
-//     return res.status(400).json({ message: '날짜(date) 쿼리 파라미터가 필요합니다.' });
-//   }
-
-//   // 다양한 날짜 형식 지원: 0614, 20250614, 2025-06-14
-//   if (date.length === 4) {
-//     const year = new Date().getFullYear();
-//     date = `${year}-${date.slice(0, 2)}-${date.slice(2, 4)}`;
-//   } else if (date.length === 8 && /^\d{8}$/.test(date)) {
-//     date = `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}`;
-//   }
-
-//   try {
-//     const [rows] = await service.searchByDate(date);
-//     res.status(200).json(rows);
-//   } catch (err) {
-//     console.error('홈캠 날짜 검색 오류:', err);
-//     res.status(500).json({ message: 'DB 검색 실패' });
-//   }
-// };
-
-// //  [홈캠 상세 조회] record_no로 특정 영상의 상세정보 조회
-// exports.getHomecamDetail = async (req, res) => {
-//   try {
-//     const [rows] = await service.getDetail(req.params.record_no);
-//     if (rows.length === 0) {
-//       return res.status(404).json({ message: '해당 영상이 존재하지 않습니다.' });
-//     }
-//     res.status(200).json(rows[0]);
-//   } catch (err) {
-//     console.error('홈캠 상세조회 오류:', err);
-//     res.status(500).json({ message: 'DB 조회 실패', error: err });
-//   }
-// };
-// 서비스 로직 호출용
-import * as service from '../services/HomecamService.js';
-
-
-// [홈캠 영상 저장]
-// record_no - 기본 키, 고유번호 AUTO_INCREMENT라서 자동 생성됨 (입력 안 해도 됨)
-// createdDate	최초 생성일	DEFAULT CURRENT_TIMESTAMP로 자동 저장됨
-// modifiedDate	수정일	ON UPDATE CURRENT_TIMESTAMP로 자동 갱신됨 (수정 시)
-// 그 외 나머지 다 저장
+/**
+ * [POST] /homecam/save
+ * 녹화 row 생성 후 insertId(record_no) 반환
+ */
 export const saveHomecam = async (req, res) => {
   try {
-    await service.saveHomecam(req.body);
-    res.status(201).json({ message: '홈캠 영상 저장 성공!' });
+    const saveFn = pick(service.saveHomecam, service.createRecording);
+    if (!saveFn) throw new Error('service.saveHomecam 미구현');
+
+    const [result] = await saveFn(req.body); // mysql2: [result].insertId
+    const record_no = result?.insertId;
+    if (!record_no) {
+      return res.status(500).json({ error: 'insertId 추출 실패' });
+    }
+    return res.status(201).json({ message: '홈캠 영상 저장 시작', record_no });
   } catch (err) {
-    console.error('DB Error:', err);
-    res.status(500).json({ error: 'DB 저장 실패' });
+    console.error('❌ DB Error(saveHomecam):', err);
+    return res.status(500).json({
+      error: 'DB 저장 실패',
+      code: err?.code,
+      errno: err?.errno,
+      detail: err?.sqlMessage || String(err),
+    });
   }
 };
 
-// [홈캠 상태 변경]
+/**
+ * [PATCH] /homecam/:record_no/status
+ * cam_status: active | paused | inactive
+ */
 export const updateHomecamStatus = async (req, res) => {
   const { record_no } = req.params;
   const { cam_status } = req.body;
   const validStatus = ['active', 'inactive', 'paused'];
 
-  // 유효한 상태값인지 검사 - cam_status가 없거나 잘못된 값인 경우
+  if (!record_no) return res.status(400).json({ error: 'record_no 필요' });
   if (!validStatus.includes(cam_status)) {
-    return res.status(400).json({ message: 'cam_status 값이 유효하지 않습니다.' });
+    return res.status(400).json({ error: 'cam_status 값이 유효하지 않습니다.' });
   }
 
   try {
-    const [result] = await service.updateStatus(record_no, cam_status);
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: '해당 홈캠 영상이 존재하지 않습니다.' });
+    const statusFn = pick(service.updateHomecamStatus, service.updateStatus);
+    if (!statusFn) throw new Error('service.updateHomecamStatus 미구현');
+
+    const [result] = await statusFn(record_no, cam_status);
+    if (!result || result.affectedRows === 0) {
+      return res.status(404).json({ error: '해당 record_no 없음' });
     }
-    res.status(200).json({ message: '홈캠 상태가 성공적으로 변경되었습니다.' });
+    return res.json({ message: '홈캠 상태 변경 성공' });
   } catch (err) {
-    console.error('상태 변경 오류:', err);
-    res.status(500).json({ message: '서버 오류' });
+    console.error('❌ DB Error(updateHomecamStatus):', err);
+    return res.status(500).json({
+      error: 'DB 상태 변경 실패',
+      code: err?.code,
+      errno: err?.errno,
+      detail: err?.sqlMessage || String(err),
+    });
   }
 };
 
-// [홈캠 단일 삭제] 소프트 딜리트 처리 (record_del = 'Y')
+/**
+ * [PATCH] /homecam/:record_no/end
+ * 종료 메타데이터 업데이트 (r_end 필수)
+ * Body: { r_end, cam_url?, snapshot_url?, duration_sec? }
+ */
+export const updateEndTime = async (req, res) => {
+  const { record_no } = req.params;
+  const { r_end, cam_url, snapshot_url, duration_sec } = req.body;
+
+  if (!record_no) return res.status(400).json({ error: 'record_no 필요' });
+  if (!r_end) return res.status(400).json({ error: 'r_end(ISO) 필요' });
+
+  try {
+    const endFn = pick(service.endHomecam, service.updateEndMeta);
+    if (!endFn) throw new Error('service.endHomecam/updateEndMeta 미구현');
+
+    const [result] = await endFn(record_no, {
+      r_end,
+      cam_url: cam_url ?? null,
+      snapshot_url: snapshot_url ?? null,
+      duration_sec: duration_sec ?? null,
+    });
+
+    if (!result || result.affectedRows === 0) {
+      return res.status(404).json({ error: '해당 record_no 없음' });
+    }
+    return res.json({ message: '종료 메타데이터 저장 완료' });
+  } catch (err) {
+    console.error('❌ updateEndTime Error:', err);
+    return res.status(500).json({
+      error: 'DB 종료시간 저장 실패',
+      code: err?.code,
+      errno: err?.errno,
+      detail: err?.sqlMessage || String(err),
+    });
+  }
+};
+
+/**
+ * [DELETE] /homecam/camlist/:record_no
+ * 단일 삭제 (기본 소프트 삭제: record_del='Y')
+ */
 export const deleteHomecam = async (req, res) => {
+  const { record_no } = req.params;
+  const { isHardDelete } = req.query;
+
+  if (!record_no) return res.status(400).json({ error: 'record_no 필요' });
+
   try {
-    const [result] = await service.deleteOne(req.params.record_no);
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: '해당 영상이 존재하지 않습니다.' });
+    const delOne = pick(service.deleteHomecam, service.deleteOne);
+    if (!delOne) throw new Error('service.deleteHomecam/deleteOne 미구현');
+
+    const [result] = await delOne(record_no, isHardDelete === 'true');
+    if (!result || result.affectedRows === 0) {
+      return res.status(404).json({ error: '해당 record_no 없음' });
     }
-    res.status(200).json({ message: ' 홈캠 영상이 삭제 처리되었습니다.' });
+    return res.json({ message: '삭제 성공' });
   } catch (err) {
-    console.error('삭제 오류:', err);
-    res.status(500).json({ message: '서버 오류' });
+    console.error('❌ DB Error(deleteHomecam):', err);
+    return res.status(500).json({
+      error: '삭제 실패',
+      code: err?.code,
+      errno: err?.errno,
+      detail: err?.sqlMessage || String(err),
+    });
   }
 };
 
-// [홈캠 다중 삭제] 여러 영상을 소프트 또는 하드 딜리트 처리
+/**
+ * [DELETE] /homecam/camlist
+ * 다중 삭제
+ * Body: { record_nos: number[], isHardDelete?: boolean }
+ */
 export const deleteMultipleHomecams = async (req, res) => {
-  const { record_nos, isHardDelete } = req.body;
-
+  const { record_nos, isHardDelete } = req.body || {};
   if (!Array.isArray(record_nos) || record_nos.length === 0) {
-    return res.status(400).json({ message: '삭제할 영상 번호를 배열로 전달해주세요.' });
+    return res.status(400).json({ error: 'record_nos 배열 필요' });
   }
 
   try {
-    const [result] = await service.deleteMany(record_nos, isHardDelete);
-    res.status(200).json({ message: ` 총 ${result.affectedRows}개의 영상이 삭제 처리되었습니다.` });
+    const delMany = pick(service.deleteMultipleHomecams, service.deleteMany);
+    if (!delMany) throw new Error('service.deleteMultipleHomecams/deleteMany 미구현');
+
+    const [result] = await delMany(record_nos, !!isHardDelete);
+    return res.json({ message: '다중 삭제 성공', affectedRows: result?.affectedRows ?? 0 });
   } catch (err) {
-    console.error('다중 삭제 오류:', err);
-    res.status(500).json({ message: '서버 오류' });
+    console.error('❌ DB Error(deleteMultipleHomecams):', err);
+    return res.status(500).json({
+      error: '다중 삭제 실패',
+      code: err?.code,
+      errno: err?.errno,
+      detail: err?.sqlMessage || String(err),
+    });
   }
 };
 
-// [홈캠 목록 조회] 삭제되지 않은 영상만 페이지 단위로 조회 + 날짜 필터링
+/**
+ * [GET] /homecam/camlist
+ * 목록 조회 (페이지/날짜 필터)
+ */
 export const getHomecamList = async (req, res) => {
-  const page = parseInt(req.query.page, 10) || 1;
-  const date = req.query.date || '';
-
   try {
-    const result = await service.getList(page, 8, date);
-    res.status(200).json(result);
+    const listFn = pick(service.getHomecamList, service.getList);
+    if (!listFn) throw new Error('service.getHomecamList/getList 미구현');
+
+    // const data = await listFn(req.query);
+    // return res.json(data);
+    const data = await listFn(req.query);   // { page, size, total, totalPages, videos }
+    const videos = Array.isArray(data?.videos)
+      ? data.videos
+      : (data?.videos ? [data.videos] : []);  // ← 한 개일 때도 배열로
+    return res.json({ ...data, videos }); 
+    
   } catch (err) {
-    console.error(' 홈캠 목록 조회 오류:', err);
-    res.status(500).json({ message: 'DB 조회 실패', error: err.message });
+    console.error('❌ DB Error(getHomecamList):', err);
+    return res.status(500).json({
+      error: '목록 조회 실패',
+      code: err?.code,
+      errno: err?.errno,
+      detail: err?.sqlMessage || String(err),
+    });
   }
 };
 
-// [홈캠 날짜 기반 검색] 쿼리 파라미터로 받은 날짜(date)로 영상 목록 조회(r_start의 날짜가 일치하는)
+/**
+ * [GET] /homecam/camlist/search
+ * 날짜/키워드 검색
+ */
 export const searchHomecam = async (req, res) => {
-  let { date } = req.query;
-
-  if (!date) {
-    return res.status(400).json({ message: '날짜(date) 쿼리 파라미터가 필요합니다.' });
-  }
-
-  // 다양한 날짜 형식 지원: 0614, 20250614, 2025-06-14
-  if (date.length === 4) {
-    const year = new Date().getFullYear();
-    date = `${year}-${date.slice(0, 2)}-${date.slice(2, 4)}`;
-  } else if (date.length === 8 && /^\d{8}$/.test(date)) {
-    date = `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}`;
-  }
-
   try {
-    const [rows] = await service.searchByDate(date);
-    res.status(200).json(rows);
+    const searchFn = pick(service.searchHomecam, service.searchByDate);
+    if (!searchFn) throw new Error('service.searchHomecam/searchByDate 미구현');
+
+    const data = await searchFn(req.query);
+    return res.json(data);
   } catch (err) {
-    console.error('홈캠 날짜 검색 오류:', err);
-    res.status(500).json({ message: 'DB 검색 실패' });
+    console.error('❌ DB Error(searchHomecam):', err);
+    return res.status(500).json({
+      error: '검색 실패',
+      code: err?.code,
+      errno: err?.errno,
+      detail: err?.sqlMessage || String(err),
+    });
   }
 };
 
-// [홈캠 상세 조회] record_no로 특정 영상의 상세정보 조회
+/**
+ * [GET] /homecam/camlist/:record_no
+ * 단건 상세
+ */
 export const getHomecamDetail = async (req, res) => {
+  const { record_no } = req.params;
+  if (!record_no) return res.status(400).json({ error: 'record_no 필요' });
+
   try {
-    const [rows] = await service.getDetail(req.params.record_no);
-    if (rows.length === 0) {
-      return res.status(404).json({ message: '해당 영상이 존재하지 않습니다.' });
+    const detailFn = pick(service.getHomecamDetail, service.getDetail);
+    if (!detailFn) throw new Error('service.getHomecamDetail/getDetail 미구현');
+
+    // mysql2는 [rows, fields] 형태를 반환하므로 rows만 언랩
+    const [rows] = await detailFn(record_no);
+    if (!rows || rows.length === 0) {
+      return res.status(404).json({ error: '데이터 없음' });
     }
-    res.status(200).json(rows[0]);
+    return res.json(rows[0]);
   } catch (err) {
-    console.error('홈캠 상세조회 오류:', err);
-    res.status(500).json({ message: 'DB 조회 실패', error: err });
+    console.error('❌ DB Error(getHomecamDetail):', err);
+    return res.status(500).json({
+      error: '상세 조회 실패',
+      code: err?.code,
+      errno: err?.errno,
+      detail: err?.sqlMessage || String(err),
+    });
   }
+};
+
+// ✅ default export로 라우트에서 쉽게 import 가능
+export default {
+  saveHomecam,
+  updateHomecamStatus,
+  updateEndTime,
+  deleteHomecam,
+  deleteMultipleHomecams,
+  getHomecamList,
+  searchHomecam,
+  getHomecamDetail,
 };
