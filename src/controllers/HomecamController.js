@@ -16,7 +16,18 @@ export const saveHomecam = async (req, res) => {
     const saveFn = pick(service.saveHomecam, service.createRecording);
     if (!saveFn) throw new Error('service.saveHomecam 미구현');
 
-    const [result] = await saveFn(req.body); // mysql2: [result].insertId
+    // 세션/토큰에서 사용자 번호 추출(프로젝트 인증 방식에 맞게) - 251006 추가
+    const resolvedUserNo =
+      req.user?.user_no || req.user?.id ||        // Passport 세션 사용 시
+      req.authUser?.user_no || req.authUser?.id ||// JWT 미들웨어가 넣어준 경우
+      req.body?.user_no || null;                  // 마지막 폴백
+    if (!resolvedUserNo) {
+      return res.status(401).json({ error: '로그인이 필요합니다.(user_no 없음)' });
+    }
+    const body = { ...req.body, user_no: resolvedUserNo }; // ✅ 서버가 최종 확정
+    const [result] = await saveFn(body);  // 여기까지
+    //const [result] = await saveFn(req.body); // mysql2: [result].insertId  // 잠깐 주석 (원래 코드)
+
     const record_no = result?.insertId;
     if (!record_no) {
       return res.status(500).json({ error: 'insertId 추출 실패' });

@@ -1,5 +1,4 @@
-// src/routes/reportRoutes
-// backend/src/routes/video.routes.js
+// src/routes/reportRoutes.js
 import express from 'express';
 import {
   searchReports,     
@@ -17,13 +16,13 @@ router.get('/reports/search', searchReports);
 // 생성
 router.post('/reports', createReport);
 
-// 상세 조회(파라미터명 통일: video_no)
-router.get('/reports/:video_no', getReportById);
+// 상세 (파라미터: record_no)
+router.get('/reports/:record_no', getReportById);
 
-// 리스트
+// 목록 (쿼리: user_no[, page, pageSize])
 router.get('/reports-list', getReportList);
 
-// 삭제
-router.delete('/reports-list/:video_no', deleteReport);
+// 삭제 (파라미터: record_no)
+router.delete('/reports-list/:record_no', deleteReport);
 
 export default router;

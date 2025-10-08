@@ -5,7 +5,8 @@ import { fetchVideoDetail, deleteVideoReport } from '../../api/video';
 import './VideoReport.css';
 
 const Video_report = () => {
-  const { video_no } = useParams();
+  // ✅ 파라미터명 통일: record_no
+  const { record_no } = useParams();
   const navigate = useNavigate();
 
   const [data, setData] = useState(null);
@@ -16,15 +17,16 @@ const Video_report = () => {
     (async () => {
       try {
         setLoading(true);
-        const res = await fetchVideoDetail(video_no);
+        const res = await fetchVideoDetail(record_no);
 
-        // 백엔드 필드명 매핑 가드(레코드 필드명이 다를 수 있어 대비)
+        // ✅ 백엔드 응답 키에 맞춘 매핑 (reportControllers.getReportById)
         const mapped = {
-          id: res.video_no ?? res.record_no ?? video_no,
-          title: res.title ?? '(제목 없음)',
-          date: res.r_date ?? res.created_at ?? null,
+          id: res.record_no ?? res.report_no ?? record_no,
+          title: res.r_title ?? res.title ?? '(제목 없음)',
+          date: res.date ?? res.r_date ?? res.createdDate ?? null,
+          // 선택 필드(없어도 동작): 영상/썸네일 경로, 요약/하이라이트 등
           video_url: res.video_url ?? res.thumbnail_url ?? '',
-          summary: res.summary ?? '',
+          summary: res.r_content ?? res.summary ?? '',
           highlights: Array.isArray(res.highlights) ? res.highlights : [],
           behavior_stats: res.behavior_stats ?? {},
         };
@@ -36,13 +38,15 @@ const Video_report = () => {
         setLoading(false);
       }
     })();
-  }, [video_no]);
+  }, [record_no]);
 
   const handleDelete = async () => {
     if (!window.confirm('해당 보고서를 삭제할까요?')) return;
     try {
-      await deleteVideoReport(video_no);
-      navigate('/video/reports');
+      // ✅ record_no로 삭제
+      await deleteVideoReport(record_no);
+      // ✅ 목록 경로와 일치 (App 라우팅: /report/video)
+      navigate('/report/video');
     } catch (e) {
       console.error(e);
       alert('삭제 중 오류가 발생했습니다.');
@@ -62,8 +66,7 @@ const Video_report = () => {
       <section className="video-report-header">
         <div className="video-report-date">{displayDate}</div>
         <h1 className="video-report-title">
-          {data.title}{' '}
-          <span role="img" aria-label="thinking face">🤨</span>
+          {data.title} <span role="img" aria-label="thinking face">🤨</span>
         </h1>
       </section>
 
@@ -93,7 +96,6 @@ const Video_report = () => {
       {/* 총평 & 하이라이트/솔루션 */}
       <section className="video-report-overall-summary">
         <h3><span role="img" aria-label="memo">📝</span> 오늘의 총평</h3>
-        {/* 필요 시 data.overall 같은 추가 필드가 있으면 여기에 표시 */}
         <p>관찰된 행동과 표정에 근거한 총평을 여기에 표시하세요.</p>
 
         <div className="video-report-friend-solution">
@@ -113,7 +115,7 @@ const Video_report = () => {
 
       {/* 하단 버튼 */}
       <section className="video-report-buttons">
-        <button className="btn" onClick={() => navigate('/video/reports')}>
+        <button className="btn" onClick={() => navigate('/report/video')}>
           📋 과거 보고서 목록
         </button>
         <button className="btn" onClick={() => window.print()}>

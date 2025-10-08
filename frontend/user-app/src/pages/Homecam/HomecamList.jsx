@@ -3,30 +3,36 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./HomecamList.css";
 
-/**
- * 서버 페이지네이션 사용 버전
- * - 목록: GET  /homecam/camlist?page=1&date=YYYY-MM-DD(옵션)
- *   → { page, totalPages, total, videos: [...] }
- * - 삭제: DELETE /homecam/camlist/:record_no
- * - 상세: GET  /homecam/camlist/:record_no
- */
-
-// ★ .env가 비어있어도 안전하게 로컬 백엔드로 떨어지도록
+// .env가 비어있어도 로컬로 동작
 const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8080";
+const PAGE_SIZE = 8;
 
-const PAGE_SIZE = 8; // ← 페이지당 아이템 수 고정
+// 날짜 포맷: 2025년 10월 1일 AM 03:27
+function formatAMPM(dateLike) {
+  if (!dateLike) return "-";
+  const d = new Date(dateLike);
+  if (Number.isNaN(d.getTime())) return "-";
+  const y = d.getFullYear();
+  const m = d.getMonth() + 1;
+  const day = d.getDate();
+  let hh = d.getHours();
+  const mm = String(d.getMinutes()).padStart(2, "0");
+  const ampm = hh >= 12 ? "PM" : "AM";
+  hh = hh % 12 || 12;
+  return `${y}년 ${m}월 ${day}일 ${ampm} ${String(hh).padStart(2, "0")}:${mm}`;
+}
 
 export default function HomecamList() {
   const navigate = useNavigate();
 
-  const [videos, setVideos] = useState([]);         // 현재 페이지 영상 목록
+  const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [query, setQuery] = useState("");           // YYYY-MM-DD 형식 권장
-  const [page, setPage] = useState(1);              // 현재 페이지 (서버 기준)
-  const [totalPages, setTotalPages] = useState(1);  // 서버에서 내려주는 총 페이지
-  const [checked, setChecked] = useState({});       // { [record_no]: true/false }
+  const [query, setQuery] = useState("");     // YYYY-MM-DD 권장
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [checked, setChecked] = useState({}); // { [record_no]: true }
 
-  // 서버에서 목록 가져오기
+  // 목록 조회
   const fetchVideos = async (nextPage = page, date = query.trim()) => {
     try {
       setLoading(true);
@@ -40,24 +46,11 @@ export default function HomecamList() {
       const data = await res.json(); // { page, totalPages, total, videos }
 
       setVideos(Array.isArray(data.videos) ? data.videos : []);
-      // setTotalPages(data.totalPages || 1);
-      // setPage(data.page || nextPage);
-      // 서버가 totalPages를 안 주면 total로 보정
       const tp = Number.isFinite(data.totalPages)
         ? data.totalPages
         : Math.max(1, Math.ceil((data.total || 0) / PAGE_SIZE));
       setTotalPages(tp);
       setPage(Number.isFinite(data.page) ? data.page : nextPage);
-
-      // ★ 디버깅: 어떤 항목이 cam_url/snapshot_url 있는지 한눈에
-      console.table(
-        (data.videos || []).map(v => ({
-          id: v.record_no,
-          cam: !!v.cam_url,
-          snap: !!v.snapshot_url,
-          r_start: v.r_start
-        }))
-      );
     } catch (err) {
       console.error(err);
       alert("영상 목록을 불러오지 못했습니다.");
@@ -66,54 +59,53 @@ export default function HomecamList() {
     }
   };
 
-  // 최초 로드
   useEffect(() => {
     fetchVideos(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 검색 버튼: 1페이지부터 다시 조회
+  // 검색
   const onSearch = () => {
     fetchVideos(1, query.trim());
     setChecked({});
   };
 
-  // 체크박스 토글
+  // 체크박스
   const toggleCheck = (record_no) =>
     setChecked((prev) => ({ ...prev, [record_no]: !prev[record_no] }));
 
-  // 현재 페이지 전체 선택/해제
   const allCheckedOnPage =
     videos.length > 0 && videos.every((v) => checked[v.record_no]);
+
   const toggleAllOnPage = () => {
     const next = { ...checked };
     videos.forEach((v) => (next[v.record_no] = !allCheckedOnPage));
     setChecked(next);
   };
 
-  // 선택 삭제 (서버 삭제 호출 후 재조회)
+  // 선택 삭제
   const handleDeleteSelected = async () => {
     const ids = Object.entries(checked)
       .filter(([, val]) => val)
       .map(([k]) => +k);
 
     if (ids.length === 0) return alert("삭제할 영상을 선택하세요.");
-
     if (!window.confirm(`${ids.length}개 영상을 삭제할까요?`)) return;
 
     try {
       setLoading(true);
       await Promise.all(
         ids.map((id) =>
-          fetch(`${API_BASE}/homecam/camlist/${id}`, { method: "DELETE" }).then((r) => {
-            if (!r.ok) throw new Error(`삭제 실패: ${id}`);
-            return r.json();
-          })
+          fetch(`${API_BASE}/homecam/camlist/${id}`, { method: "DELETE" }).then(
+            (r) => {
+              if (!r.ok) throw new Error(`삭제 실패: ${id}`);
+              return r.json();
+            }
+          )
         )
       );
       alert("삭제 완료");
       setChecked({});
-      // 현재 페이지 다시 조회 (빈 페이지가 되면 서버가 알아서 totalPages 계산)
       fetchVideos(page, query.trim());
     } catch (err) {
       console.error(err);
@@ -127,12 +119,11 @@ export default function HomecamList() {
   const goPage = (n) => {
     if (n < 1 || n > totalPages) return;
     fetchVideos(n, query.trim());
-    // 스크롤 올리기
     const scroller = document.querySelector(".hc-content");
     if (scroller) scroller.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  // 상세로 이동 (공통)
+  // 상세
   const goDetail = (record_no) => navigate(`/homecam/camlist/${record_no}`);
 
   return (
@@ -141,11 +132,10 @@ export default function HomecamList() {
       <div className="hc-header-row">
         <h2 className="hc-title">저장된 영상</h2>
 
-        {/* 🔄 F&Q 같은 구조: input + img (돋보기), 휴지통은 바깥 */}
         <div className="hc-search-row">
           <div className="hc-search">
             <input
-              placeholder="YYYY-MM-DD 로 검색"
+              placeholder="Search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && onSearch()}
@@ -174,10 +164,10 @@ export default function HomecamList() {
         </div>
       </div>
 
-      {/* 컨텐츠 박스 */}
+      {/* 컨텐츠 */}
       <section className="hc-content">
         <div className="hc-toolbar">
-          <label className="hc-checkbox">
+          <label className="hc-checkbox" onClick={(e) => e.stopPropagation()}>
             <input
               type="checkbox"
               checked={allCheckedOnPage}
@@ -196,7 +186,7 @@ export default function HomecamList() {
                 <article
                   key={v.record_no}
                   className="hc-card"
-                  onClick={() => goDetail(v.record_no)}        // ⬅ 카드 클릭
+                  onClick={() => goDetail(v.record_no)}
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) =>
@@ -205,7 +195,7 @@ export default function HomecamList() {
                 >
                   <label
                     className="hc-card-check"
-                    onClick={(e) => e.stopPropagation()}        // 체크박스만 예외
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <input
                       type="checkbox"
@@ -215,30 +205,35 @@ export default function HomecamList() {
                     />
                   </label>
 
-                  <div className="hc-thumb">
-                    {v.snapshot_url ? (
-                      <img
-                        src={v.snapshot_url}
-                        alt="thumbnail"
-                        onClick={() => goDetail(v.record_no)}   // ⬅ 썸네일 클릭
-                      />
-                    ) : (
-                      <div className="hc-thumb-ph" />
-                    )}
+                  {/* 썸네일: 항상 플레이 아이콘만 */}
+                  <div className="hc-thumb hc-thumb--mock" onClick={() => goDetail(v.record_no)}>
+  <div className="hc-thumb-face">
+    <svg viewBox="0 0 48 48" className="hc-thumb-play" aria-hidden="true">
+      {/* 둥근 테두리 */}
+      <path
+        d="M18 14 L34 24 L18 34 Z"
+        fill="none"
+        stroke="#d9d9d9"
+        strokeWidth="4"
+        strokeLinejoin="round"
+      />
+      {/* 채움 */}
+      <path
+        d="M18 14 L34 24 L18 34 Z"
+        fill="#d9d9d9"
+      />
+    </svg>
+  </div>
+</div>
 
-                    {/* 상태 배지 (placeholder 통일 중이면 CSS에서 숨김 처리됨) */}
-                    <div className="hc-badge">{v.cam_url ? "파일있음" : "파일없음"}</div>
-                  </div>
 
-                  <hr className="hc-sep" />
-                  <time className="hc-date">
-                    {v.r_start ? new Date(v.r_start).toLocaleString() : "-"}
-                  </time>
+
+                  <time className="hc-date">{formatAMPM(v.r_start)}</time>
                 </article>
               ))}
             </div>
 
-            {/* 서버 페이지네이션 */}
+            {/* 페이지네이션 */}
             <div className="hc-paging">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
                 <button

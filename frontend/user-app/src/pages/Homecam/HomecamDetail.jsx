@@ -5,6 +5,21 @@ import HlsPlayer from "./HlsPlayer";
 
 const API_BASE = process.env.REACT_APP_API_BASE || "";
 
+/** 예: 2025년 10월 1일 AM 4:06 */
+function formatAMPMK(dateLike) {
+  if (!dateLike) return "-";
+  const d = new Date(dateLike);
+  if (Number.isNaN(d.getTime())) return "-";
+  const y = d.getFullYear();
+  const m = d.getMonth() + 1;
+  const day = d.getDate();
+  let hh = d.getHours();
+  const mm = String(d.getMinutes()).padStart(2, "0");
+  const ampm = hh >= 12 ? "PM" : "AM";
+  hh = hh % 12 || 12; // 0시는 12로 표기
+  return `${y}년 ${m}월 ${day}일 ${ampm} ${hh}:${mm}`;
+}
+
 export default function HomecamDetail() {
   const { record_no } = useParams();
   const navigate = useNavigate();
@@ -73,23 +88,11 @@ export default function HomecamDetail() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [record_no, useMock]);
 
-  // 저장 시각 표시 (한국어 스타일, 분까지만)
+  // 저장 시각 표시 (예: 2025년 10월 1일 AM 4:06)
   const savedDate = item?.r_start
-    ? new Date(item.r_start).toLocaleString("ko-KR", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-      })
+    ? formatAMPMK(item.r_start)
     : item?.createdDate
-    ? new Date(item.createdDate).toLocaleString("ko-KR", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-      })
+    ? formatAMPMK(item.createdDate)
     : "-";
 
   const isHls = !!item?.cam_url && /\.m3u8($|\?)/i.test(item.cam_url);

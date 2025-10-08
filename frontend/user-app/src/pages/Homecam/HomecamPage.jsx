@@ -4,6 +4,8 @@ import { FaStop, FaPause } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import HlsPlayer from './HlsPlayer';
 
+import { useUser } from '../../context/UserContext';    // user_no 받아오기 (251006 추가)
+
 const HLS_URL  = process.env.REACT_APP_HLS_URL  || '';
 const API_BASE = process.env.REACT_APP_API_BASE || '';
 const api = (p) =>
@@ -26,6 +28,17 @@ const HomecamPage = () => {
 
   const [currentId, setCurrentId] = useState(null);
   const navigate = useNavigate();
+
+  // 잠깐 추가 (251006)
+  const { user } = useUser();                   // 현재 로그인 한 사용자
+  //const userNo = user?.user_no || user?.id;     
+  const userNo =
+    (() => {
+      const v = user?.userNo ?? localStorage.getItem('userNo');
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    })();
+  // user_no 뽑아옴 (여기까지 잠깐 추가)
 
   // 버튼 공통 비활성화 플래그
   const isBusy = isLoading || isGenerating;
@@ -51,9 +64,16 @@ const HomecamPage = () => {
     try {
       setIsLoading(true);
 
+      // 잠깐 추가 (251006)
+      if (!userNo) {
+       alert('로그인 정보가 없습니다. 다시 로그인해 주세요.');
+       return;
+     }    // 여기까지
+
       const r_start = new Date().toISOString();
       const payload = {
-        user_no: 1, // TODO: 로그인 사용자로 대체
+        //user_no: 1, // TODO: 로그인 사용자로 대체
+        user_no: userNo, // TODO: 로그인 사용자로 대체 (251006)
         r_start,
         record_title: `홈캠 ${new Date().toLocaleString()}`,
         cam_url: HLS_URL || undefined,
@@ -63,6 +83,7 @@ const HomecamPage = () => {
       const res = await fetch(api('/homecam/save'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',         // 잠깐 추가 (251006)
         body: JSON.stringify(payload),
       });
       const data = await res.json().catch(() => ({}));
