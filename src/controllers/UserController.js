@@ -269,6 +269,7 @@ export const userLoginHandler = async (req, res, body) => {
       message: '로그인 성공',
       user_id: user.user_id,
       u_name: user.u_name,
+      user_no: user.user_no,   // ★ 잠깐 추가 (251006) - 홈캠에서 사용하기 위함
       // token을 굳이 바디로 줄 필요는 없음(원한다면 유지)
     });
   } catch (err) {

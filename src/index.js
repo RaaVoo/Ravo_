@@ -180,7 +180,6 @@ app.use(passport.initialize());
 dotenv.config();
 app.use('/record', reportRoutes);
 app.use('/voice', voiceRoutes);
-app.use('/video', reportRoutes);       // 영상보고서
 
 
 // ▶ 홈캠 관련 API 라우터 연결

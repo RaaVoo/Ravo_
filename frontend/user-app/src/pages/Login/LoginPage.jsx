@@ -6,6 +6,7 @@ import FindPwPage from './FindPwPage.jsx';
 import './LoginPage.css';
 import './FindIdPage.css';
 import './FindPwPage.css';
+import { useUser } from '../../context/UserContext';      // 전역 상태 (251006 추가)
 
 const LoginPage = () => {
     const [showFindIdPage, setShowFindIdPage] = useState(false);
@@ -14,6 +15,8 @@ const LoginPage = () => {
     // 백엔드와 연결하는 코드 1
     const [userId, setUserId] = useState('');
     const [userPw, setUserPw] = useState('');
+
+    const { updateUserNo } = useUser();     // UserContext에서 user_no 가져오기 (251006 추가)
 
     // 백엔드와 연결하는 코드 2
     const handleLogin = async () => {
@@ -32,6 +35,22 @@ const LoginPage = () => {
                 alert(`${data.u_name}님, 환영합니다!`);
                 localStorage.setItem('token', data.token);          // 토큰 저장 -> 개발자 도구 Application -> Local Storage에서 확인 가능
                 localStorage.setItem('userName', data.u_name);      // 사용자 이름 저장 -> 헤더에 나타내려고
+                //localStorage.setItem('userNo', data.user_no);       // user_no도 저장 -> 홈캠에서 사용 (잠깐 추가)
+                
+                //updateUserNo(data.user_no);   // context 업데이트 (잠깐 추가)
+
+                // 응답에서 가능한 키들을 안전하게 추출 (251006 추가)
+                const userNoFromApi =
+                    data?.user_no ?? data?.userNo ?? data?.id ?? data?.user?.user_no ?? null;
+
+                if (userNoFromApi == null) {
+                    alert('로그인 응답에 user_no가 없습니다. 백엔드 응답을 확인해주세요.');
+                    return;
+                }
+                const userNoStr = String(userNoFromApi);
+                localStorage.setItem('userNo', userNoStr);
+                updateUserNo(userNoStr);                 // 컨텍스트에도 반영 (여기까지)
+
                 window.location.href="/";
             } else {
                 alert(`${data.error}`);
@@ -49,16 +68,6 @@ const LoginPage = () => {
 
   return (
     <div className="login-container">
-        {/* 네비게이션바 */}
-        {/* <nav className="navbar">
-            <div className="logo-box"></div>
-            <span className="brand">라보야 놀자</span>
-            <div className="nav-links">
-                <Link to="/auth/login" className="nav-link">로그인</Link>
-                <Link to="/auth/signup/select" className="nav-link">회원가입</Link>
-            </div>
-        </nav> */}
-
         <div className="background-section"></div>
 
         <div className="login-box">

@@ -6,26 +6,12 @@ import './VoiceReport.css';
 import TagCloud from './TagCloud';
 import { fetchVoiceDetail } from '../../api/voice';
 import { parseEmotionSummary, parseKeywordSummary } from '../../utils/reportParsers';
+import { getEmotionWeatherKey, WEATHER_ICON, WEATHER_PRETTY_KO } from '../../utils/weather';
 
 // 색상 팔레트
 const COLORS = ['#E57373', '#FFC018', '#00BFFF', '#B39DDB', '#70DB93', '#EE82EE'];
 
 /* ========================= 유틸 함수 ========================= */
-// 감정 날씨 (이모지) 규칙
-function getEmotionWeather(data = []) {
-  const get = (names) =>
-    data.filter(d => names.includes(d.name)).reduce((s, d) => s + (Number(d.value) || 0), 0);
-
-  const joy = get(['기쁨']);
-  const sadness = get(['슬픔']);
-  const anger = get(['분노', '화남']);
-
-  if (joy >= 50) return '맑음 ☀️';
-  if (Math.abs(joy - sadness) <= 5) return '흐림 ☁️';
-  if (sadness >= 50) return '비 🌧';
-  if (anger >= 50) return '번개 ⚡';
-  return '보통 🌤';
-}
 
 // 감정 분석 줄글 요약 (긍정=기쁨 / 부정=화남·분노·슬픔·불안·우울)
 function makeEmotionSummary(childName = 'oo', data = []) {
@@ -56,7 +42,7 @@ function makeEmotionSummary(childName = 'oo', data = []) {
   else overall = '긍·부정 감정이 비슷하게 나타났어요';
 
   const valStr = (n) => `${Math.round(n)}%`;
-  const s1 = `오늘 ${childName}이는 주로 ‘${top.key}’ 감정을 많이 표현했어요${top.val ? `(약 ${valStr(top.val)})` : ''}.`;
+  const s1 = `오늘 "${childName}"(은)는 주로 ‘${top.key}’ 감정을 많이 표현했어요${top.val ? `(약 ${valStr(top.val)})` : ''}.`;
   const s2 = `오늘은 ${overall}.`;
 
   let s3 = '';
@@ -110,7 +96,7 @@ function normalizeKeywords(src) {
 }
 
 function generateKeywordSummary(name, sorted) {
-  if (!sorted.length) return `오늘 ${name}이가 사용한 대화에서 뚜렷한 키워드 경향은 확인되지 않았어요.`;
+  if (!sorted.length) return `오늘 "${name}"(이)가 사용한 대화에서 뚜렷한 키워드 경향은 확인되지 않았어요.`;
 
   const top = sorted[0].text;
   const words = sorted.map(k => k.text);
@@ -122,13 +108,13 @@ function generateKeywordSummary(name, sorted) {
   const emotionCue = words.find(w => /싫다|짜증|속상|무서워|불안/.test(w));
 
   const lines = [];
-  lines.push(`오늘 ${name}이가 가장 많이 언급한 단어는 “${top}”였어요.`);
-  if (hasFriend) lines.push(`요즘 ${name}이는 친구 관계에 많은 관심을 가지고 있는 모습이에요.`);
+  lines.push(`오늘 "${name}"(이)가 가장 많이 언급한 단어는 “${top}”였어요.`);
+  if (hasFriend) lines.push(`요즘 "${name}"(은)는 친구 관계에 많은 관심을 가지고 있는 모습이에요.`);
   if (sadPhrase) lines.push(`특히 “${sadPhrase}”라는 말을 반복적으로 사용하며 속상한 감정이 드러났어요.`);
   if (school) lines.push(`학교/학업과 관련된 단어(“${school}”)도 자주 등장했어요.`);
   if (food) lines.push(`식사·간식 관련 표현(“${food}”)도 눈에 띄었어요.`);
   if (emotionCue && !sadPhrase) lines.push(`“${emotionCue}” 같은 감정 단어가 확인되어 정서 점검이 도움이 될 수 있어요.`);
-  lines.push(`다음 대화에서는 ${name}이가 느끼는 감정을 먼저 공감하고, 구체적인 상황을 천천히 묻는 방식이 좋아요.`);
+  lines.push(`다음 대화에서는 "${name}"(이)가 느끼는 감정을 먼저 공감하고, 구체적인 상황을 천천히 묻는 방식이 좋아요.`);
 
   return lines.join(' ');
 }
@@ -258,7 +244,10 @@ const VoiceReport = () => {
   const cloudData = useMemo(() => parseKeywordSummary(report?.keyword_summary) || [], [report]);
 
   const childName = report?.child_name || 'oo';
-  const weather = getEmotionWeather(pieData);
+  const weatherKey = getEmotionWeatherKey(pieData);
+  const weatherLabel = WEATHER_PRETTY_KO[weatherKey];
+  const weatherIcon = WEATHER_ICON[weatherKey];
+
   const emotionSummary = pieData.length ? makeEmotionSummary(childName, pieData) : '';
 
   if (isLoading) return <div className="voice-report-container">로딩 중...</div>;
@@ -270,7 +259,10 @@ const VoiceReport = () => {
       {/* 헤더 */}
       <section className="voice-report-header">
         <div className="voice-report-date">{report.r_date || report.date || '-'}</div>
-        <h1 className="voice-report-title">오늘의 감정 날씨: {weather}</h1>
+        <h1 className="voice-report-title">
+          오늘의 감정 날씨: {weatherLabel}{' '}
+          {weatherIcon && <img src={weatherIcon} alt={weatherLabel} style={{ width: 50, height: 50, verticalAlign: 'middle' }} />}
+        </h1>
       </section>
 
       {/* 차트 */}

@@ -1,3 +1,8 @@
+.page-offset {
+  /* 헤더 높이 + 여백 */
+  padding-top: 100px;  /* 필요 시 숫자만 조절 */
+}
+
 .voice-report-list-container {
     max-width: 700px;
     margin: 40px auto;

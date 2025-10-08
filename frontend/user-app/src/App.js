@@ -42,7 +42,8 @@ const HLS_URL = "http://10.207.17.0:3000/stream/out.m3u8";
 function AppContent() {
   // 헤더 부분 변경되기 위함 -> 로그인 한 상태 전달을 위한 코드
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
-  const { user, updateUserName } = useUser();     // 사용자 이름 상태 받아옴 (250919)
+  // const { user, updateUserName } = useUser();     // 사용자 이름 상태 받아옴 (250919) -> 원래 코드
+  const { user, updateUserName, updateUserNo  } = useUser();     // updateUserNo 추가 (251006)
 
   // 앱 시작 시 /auth/me 호출해서 상태 동기화
   useEffect(() => {
@@ -56,6 +57,12 @@ function AppContent() {
         setIsLoggedIn(true);
         updateUserName(me.u_name || me.user_id);    // 사용자 이름 상태 업데이트
 
+        // ★ 여기 추가: user_no 저장 -> 잠깐 추가 (251006)
+        if (me.user_no != null) {
+          localStorage.setItem('userNo', String(me.user_no));
+          updateUserNo(me.user_no);
+        }   // 여기까지
+
         // localStorage에 최소한의 표식 저장 (새로고침 시 참고용)
         localStorage.setItem('token', 'cookie');
         localStorage.setItem('userName', me.u_name || me.user_id);
@@ -63,8 +70,10 @@ function AppContent() {
         // 로그인 안 된 상태
         setIsLoggedIn(false);
         updateUserName("");     // 250919 추가
+        updateUserNo("");                    // 지우기 (251006 추가)
         localStorage.removeItem('token');
         localStorage.removeItem('userName');
+        localStorage.removeItem('userNo');   // 지우기 (251006 추가)
       }
     })();
   }, []);
@@ -73,6 +82,7 @@ function AppContent() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('userName');
+    localStorage.removeItem('userNo');
     setIsLoggedIn(false);
     updateUserName("");     // 250919 추가
   }
@@ -102,7 +112,7 @@ function AppContent() {
         {/* 목록 */}
         <Route path="/report/video" element={<VideoReportList />}/>
         {/* 상세 */}
-        <Route path="/report/video/:video_no" element={<VideoReport />}/>
+        <Route path="/report/video/:record_no" element={<VideoReport />}/>
 
         {/* === 음성 보고서 === */}
         {/* 목록 */}
