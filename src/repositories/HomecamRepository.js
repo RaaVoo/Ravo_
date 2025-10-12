@@ -8,7 +8,8 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 
 // db 모듈이 CommonJS여도 안전하게 로드
-const db = require('../config/db');
+//const db = require('../config/db');
+import db from '../config/db.js';  // ✅ require → import 변경
 
 export async function insertHomecam(values) {
   const sql = `

@@ -2,7 +2,12 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-const service = require('../services/HomecamService');
+// 251012 잠깐 주석
+//const service = require('../services/HomecamService');
+
+// 251012 잠깐 추가
+import express from 'express';
+import service from '../services/HomecamService.js';
 
 /* 유틸: 서비스 함수 이름이 코드마다 다를 수 있어 안전하게 선택 */
 const pick = (...fns) => fns.find((f) => typeof f === 'function');
