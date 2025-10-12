@@ -178,19 +178,55 @@ export const deleteMultipleHomecams = async (req, res) => {
  * [GET] /homecam/camlist
  * 목록 조회 (페이지/날짜 필터)
  */
+// export const getHomecamList = async (req, res) => {
+//   try {
+//     const listFn = pick(service.getHomecamList, service.getList);
+//     if (!listFn) throw new Error('service.getHomecamList/getList 미구현');
+
+//     // const data = await listFn(req.query);
+//     // return res.json(data);
+//     const data = await listFn(req.query);   // { page, size, total, totalPages, videos }
+//     const videos = Array.isArray(data?.videos)
+//       ? data.videos
+//       : (data?.videos ? [data.videos] : []);  // ← 한 개일 때도 배열로
+//     return res.json({ ...data, videos }); 
+    
+//   } catch (err) {
+//     console.error('❌ DB Error(getHomecamList):', err);
+//     return res.status(500).json({
+//       error: '목록 조회 실패',
+//       code: err?.code,
+//       errno: err?.errno,
+//       detail: err?.sqlMessage || String(err),
+//     });
+//   }
+// };
+
+// 수정
 export const getHomecamList = async (req, res) => {
   try {
-    const listFn = pick(service.getHomecamList, service.getList);
+    // ✅ 로그인 사용자 번호 해석 (Passport/JWT 모두 대응)
+    const resolvedUserNo =
+      req.user?.user_no || req.user?.id ||
+      req.authUser?.user_no || req.authUser?.id ||
+      null;
+
+    if (!resolvedUserNo) {
+      return res.status(401).json({ error: '로그인이 필요합니다.(user_no 없음)' });
+    }
+
+    const listFn = [service.getHomecamList, service.getList].find(f => typeof f === 'function');
     if (!listFn) throw new Error('service.getHomecamList/getList 미구현');
 
-    // const data = await listFn(req.query);
-    // return res.json(data);
-    const data = await listFn(req.query);   // { page, size, total, totalPages, videos }
+    // ✅ 서버가 user_no를 주입해서 서비스로 보냄 (프론트는 user_no 안 보내도 됨)
+    const data = await listFn({ ...req.query, userNo: Number(resolvedUserNo) });
+
+    // 한 개만 와도 배열로 보장
     const videos = Array.isArray(data?.videos)
       ? data.videos
-      : (data?.videos ? [data.videos] : []);  // ← 한 개일 때도 배열로
-    return res.json({ ...data, videos }); 
-    
+      : (data?.videos ? [data.videos] : []);
+
+    return res.json({ ...data, videos });
   } catch (err) {
     console.error('❌ DB Error(getHomecamList):', err);
     return res.status(500).json({

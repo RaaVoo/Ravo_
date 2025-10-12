@@ -200,6 +200,12 @@
   display: block;
 }
 
+/* ✅ ChatBot 페이지에서는 메뉴 밑줄(active) 제거 */
+body.no-nav-underline .menu-section span.active {
+  border-bottom: none !important;
+  color: #6E6E6E !important;
+}
+
 /* 중간 폭에서 살짝 축소 */
 @media (max-width: 1200px) {
   .menu-section span { font-size: 14px; padding: 6px 8px; }

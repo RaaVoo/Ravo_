@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import "./HomecamList.css";
 
 // .env가 비어있어도 로컬로 동작
-const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8080";
+//const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8080";
+const API_BASE = process.env.REACT_APP_API_BASE || "/api";  // 상대경로
 const PAGE_SIZE = 8;
 
 // 날짜 포맷: 2025년 10월 1일 AM 03:27
@@ -41,7 +42,11 @@ export default function HomecamList() {
       qp.set("size", String(PAGE_SIZE));
       if (date) qp.set("date", date);
 
-      const res = await fetch(`${API_BASE}/homecam/camlist?${qp.toString()}`);
+      //const res = await fetch(`${API_BASE}/homecam/camlist?${qp.toString()}`);
+      const res = await fetch(`${API_BASE}/homecam/camlist?${qp.toString()}`, {
+        credentials: 'include',   // ← 세션/쿠키 동봉!
+      });
+
       if (!res.ok) throw new Error("목록 조회 실패");
       const data = await res.json(); // { page, totalPages, total, videos }
 
@@ -96,7 +101,11 @@ export default function HomecamList() {
       setLoading(true);
       await Promise.all(
         ids.map((id) =>
-          fetch(`${API_BASE}/homecam/camlist/${id}`, { method: "DELETE" }).then(
+          //fetch(`${API_BASE}/homecam/camlist/${id}`, { method: "DELETE" }).then(
+          fetch(`${API_BASE}/homecam/camlist/${id}`, {
+            method: "DELETE",
+            credentials: 'include',   // ← 여기도 필수
+        }).then(
             (r) => {
               if (!r.ok) throw new Error(`삭제 실패: ${id}`);
               return r.json();
@@ -135,7 +144,7 @@ export default function HomecamList() {
         <div className="hc-search-row">
           <div className="hc-search">
             <input
-              placeholder="Search"
+              placeholder="Search (0000-00-00)"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && onSearch()}

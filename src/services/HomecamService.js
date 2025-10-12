@@ -77,7 +77,77 @@ export async function deleteMany(record_nos, isHardDelete) {
 /* =========================
  * 목록 / 검색 / 상세
  * ========================= */
+// export async function getHomecamList(query = {}) {
+//   // 1) 입력 파싱 + 안전값
+//   const page = Number.parseInt(query.page ?? '1', 10);
+//   const size = Number.parseInt(query.size ?? '8', 10);
+//   const dateFilter = (query.date || '').trim();
+
+//   const pageSafe = Number.isFinite(page) && page > 0 ? page : 1;
+//   const sizeSafe = Number.isFinite(size) && size > 0 ? size : 8;
+//   const offset   = Math.max(0, (pageSafe - 1) * sizeSafe);
+
+//   if (!Number.isInteger(offset) || !Number.isInteger(sizeSafe)) {
+//     throw new Error('invalid offset/size');
+//   }
+
+//   // 2) WHERE + 바인딩(사용자 입력만 바인딩)
+//   let where = ` WHERE record_del != 'Y'`;
+//   const params = [];
+//   if (dateFilter) {
+//     where += ` AND DATE(r_start) = ?`;
+//     params.push(dateFilter);
+//   }
+
+//   // 3) 목록 쿼리: LIMIT/OFFSET은 정수 리터럴로 직접 삽입 (mysql2 LIMIT 바인딩 이슈 회피)
+//   const baseQuery = `
+//     SELECT *
+//       FROM homecam
+//       ${where}
+//      ORDER BY r_start DESC, record_no DESC
+//      LIMIT ${offset}, ${sizeSafe}
+//   `;
+
+//   // 실행
+//   const [rowsRaw] = await repo.getHomecamList(baseQuery, params);
+//   const rows = Array.isArray(rowsRaw) ? rowsRaw : (rowsRaw ? [rowsRaw] : []);
+
+//   // 4) 카운트
+//   const countQuery = `
+//     SELECT COUNT(*) AS total
+//       FROM homecam
+//       ${where}
+//   `;
+//   const [countRows] = await repo.getHomecamCount(countQuery, params);
+//   const total = countRows?.[0]?.total ?? 0;
+//   const totalPages = Math.max(1, Math.ceil(total / sizeSafe));
+
+//   // 5) 응답
+//   return { page: pageSafe, size: sizeSafe, total, totalPages, videos: rows };
+// }
+
+// // 하위 호환
+// export async function getList(page, pageSize, date) {
+//   return getHomecamList({ page, size: pageSize, date });
+// }
+
+// export async function searchByDate(date) {
+//   return repo.searchByDate(date);
+// }
+
+// export async function getDetail(record_no) {
+//   return repo.getHomecamDetail(record_no);
+// }
+
+// services/HomecamService.js
+
 export async function getHomecamList(query = {}) {
+  // ✅ 로그인 사용자 번호(컨트롤러에서 주입됨)
+  const userNo = Number(query.userNo);
+  if (!Number.isInteger(userNo) || userNo <= 0) {
+    throw new Error('userNo 누락 또는 형식 오류');
+  }
+
   // 1) 입력 파싱 + 안전값
   const page = Number.parseInt(query.page ?? '1', 10);
   const size = Number.parseInt(query.size ?? '8', 10);
@@ -92,14 +162,15 @@ export async function getHomecamList(query = {}) {
   }
 
   // 2) WHERE + 바인딩(사용자 입력만 바인딩)
-  let where = ` WHERE record_del != 'Y'`;
-  const params = [];
+  let where = ` WHERE record_del != 'Y' AND user_no = ?`;   // ✅ 사용자별 필터
+  const params = [userNo];
+
   if (dateFilter) {
     where += ` AND DATE(r_start) = ?`;
     params.push(dateFilter);
   }
 
-  // 3) 목록 쿼리: LIMIT/OFFSET은 정수 리터럴로 직접 삽입 (mysql2 LIMIT 바인딩 이슈 회피)
+  // 3) 목록 쿼리
   const baseQuery = `
     SELECT *
       FROM homecam
@@ -108,7 +179,6 @@ export async function getHomecamList(query = {}) {
      LIMIT ${offset}, ${sizeSafe}
   `;
 
-  // 실행
   const [rowsRaw] = await repo.getHomecamList(baseQuery, params);
   const rows = Array.isArray(rowsRaw) ? rowsRaw : (rowsRaw ? [rowsRaw] : []);
 
@@ -126,18 +196,19 @@ export async function getHomecamList(query = {}) {
   return { page: pageSafe, size: sizeSafe, total, totalPages, videos: rows };
 }
 
-// 하위 호환
-export async function getList(page, pageSize, date) {
-  return getHomecamList({ page, size: pageSize, date });
+// 하위 호환(사용 중이면 userNo도 받도록 변경)
+export async function getList(page, pageSize, date, userNo) {
+  return getHomecamList({ page, size: pageSize, date, userNo });
 }
 
+// (아래 둘은 그대로 사용해도 OK — 추후 소유자 보호가 필요하면 여기도 userNo 추가)
 export async function searchByDate(date) {
   return repo.searchByDate(date);
 }
-
 export async function getDetail(record_no) {
   return repo.getHomecamDetail(record_no);
 }
+
 
 /* ====================================================================================
  * 종료 메타 업데이트

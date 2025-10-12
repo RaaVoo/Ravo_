@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ChatBot.css';
 
 const ChatBot = () => {
+
+  useEffect(() => {
+    document.body.classList.add('no-nav-underline');
+    return () => document.body.classList.remove('no-nav-underline');
+  }, []);
+  
   const [messages, setMessages] = useState([
     {
       text: '안녕하세요! 라보야 놀자입니다. 😊\n궁금한 점을 도와드리려고 해요.\n궁금한 점을 작성해주세요!',

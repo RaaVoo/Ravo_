@@ -183,7 +183,8 @@ app.use('/voice', voiceRoutes);
 
 
 // ▶ 홈캠 관련 API 라우터 연결
-app.use('/homecam', homecamRoutes);
+//app.use('/homecam', homecamRoutes);
+app.use('/homecam', authenticateToken, homecamRoutes);
 app.use('/pi-cam', piCamTest);
 
 // 12. 회원탈퇴 관련 라우터 연결 -> 여기다가는 기본 경로만 작성해줌 (나머지는 UserRoutes.js 코드 참고)
