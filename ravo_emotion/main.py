@@ -11,6 +11,14 @@ import json
 import time
 
 
+# 영상 전용 서버 설정
+VIDEO_SERVER_BASE = "http://localhost:3000"   # 백엔드 주소/포트
+VIDEO_API_PREFIX  = "/api"                    # 백엔드가 /api 프리픽스 쓰면 유지, 아니면 "" 로
+
+def video_api(path: str) -> str:
+    """영상 전용 API 풀 URL 생성"""
+    return f"{VIDEO_SERVER_BASE}{VIDEO_API_PREFIX}{path}"
+
 
 #아이대화 백연결
 def save_message_to_api(text, emotion, mode="VOICE", user_no=1, chat_no=1):
@@ -226,14 +234,64 @@ def run_emotion_report():
     print(report.generate_parenting_tip())
 
 
+#영상 끌어오기
+def fetch_next_video_meta():
+    """분석 대기 영상 하나의 메타데이터 요청: GET /api/videos/next
+       기대 응답: { success: true, data: { id, signed_url(or url), mime, ... } }"""
+    try:
+        r = requests.get(video_api("/videos/next"), timeout=10)
+        r.raise_for_status()
+        j = r.json()
+        if j.get("success") and j.get("data"):
+            return j["data"]
+        print("❌ 대기 영상 없음 또는 실패:", r.status_code, r.text)
+    except Exception as e:
+        print("⚠️ 영상 메타 요청 예외:", e)
+    return None
+
+def download_video(file_url: str, save_path: str):
+    """서명 URL 또는 공개 URL로 동영상 다운로드"""
+    with requests.get(file_url, stream=True, timeout=60) as resp:
+        resp.raise_for_status()
+        with open(save_path, "wb") as f:
+            for chunk in resp.iter_content(1024 * 1024):
+                if chunk:
+                    f.write(chunk)
+    return save_path
+
 
 # ✅ 영상 보고서 실행 함수
 def run_behavior_report(video_path="./recorded_video.mp4"):
     from behavior_report import BehaviorReport
+
+    # (1) 경로 직접 안 주었거나 파일이 없으면 → 백엔드에서 대기 영상 하나 받아서 다운로드
+    if not video_path or not os.path.exists(video_path):
+        meta = fetch_next_video_meta()
+        if not meta:
+            print("⏳ 대기 중인 영상이 없습니다.")
+            return
+        file_url = meta.get("signed_url") or meta.get("url")
+        vid_id   = meta.get("id", "next")
+        tmp_name = f"video_{vid_id}.mp4"
+        tmp_path = os.path.join(os.getcwd(), tmp_name)
+        print(f"⬇️ 다운로드: {file_url} -> {tmp_path}")
+        video_path = download_video(file_url, tmp_path)
+
+    # (2) 분석 실행
     b_report = BehaviorReport(video_path)
     b_report.analyze()
     print("\n🎥 행동 분석 보고서:")
     print(b_report.generate_report_text())
+
+    # (선택) 분석 결과를 백엔드로 저장하고 싶으면 여기서 POST 호출 추가 가능
+    # requests.post(video_api("/reports"), json={ ... })
+
+#def run_behavior_report(video_path="./recorded_video.mp4"):
+#    from behavior_report import BehaviorReport
+#    b_report = BehaviorReport(video_path)
+#    b_report.analyze()
+#    print("\n🎥 행동 분석 보고서:")
+#    print(b_report.generate_report_text())
 
 
 # ✅ CLI 진입점 추가
