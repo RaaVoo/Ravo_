@@ -45,13 +45,13 @@ import path from "path";
 import fs from "fs";
 import cors from "cors";
 
-//import userRoutes from './routes/UserRoutes.js';     // 회원 탈퇴, 아이디 찾기 기능 관련 라우트
-//import childRoutes from './routes/ChildRoutes.js';   // 자녀추가 기능 관련 라우트
+import userRoutes from './routes/UserRoutes.js';     // 회원 탈퇴, 아이디 찾기 기능 관련 라우트
+import childRoutes from './routes/ChildRoutes.js';   // 자녀추가 기능 관련 라우트
 import GoogleAuthRoutes from './routes/GoogleAuthRoutes.js';    // 구글 계정 로그인 관련 라우트
 import cookieParser from 'cookie-parser';
 import AuthRoutes from './routes/AuthRoutes.js';
 import MypageRoutes from './routes/MypageRoutes.js'       // 마이페이지 '개인정보 수정' 관련 라우트
-
+//import userRoutes from './routes/UserRoutes.js'
 import { query } from './config/db.js';
 
 const app = express();

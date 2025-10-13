@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './ChatPage.css';
+import './Chat.css';
 
-const ChatPage = () => {
+const ChatBot = () => {
   const [messages, setMessages] = useState([
     {
       text: '안녕하세요! 라보야 놀자입니다. 😊\n궁금한 점을 도와드리려고 해요.\n궁금한 점을 작성해주세요!',
@@ -136,4 +136,4 @@ const ChatPage = () => {
   );
 };
 
-export default ChatPage;
+export default ChatBot;
