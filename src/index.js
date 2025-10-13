@@ -39,6 +39,7 @@ import userRoutes from './routes/UserRoutes.js'     // 회원 탈퇴 기능 관�
 import childRoutes from './routes/ChildRoutes.js'   // 자녀추가 기능 관련 라우트
 import { getMyPage, getMyChildrenInfo } from './controllers/mypageController.js'; //마이페이지(부모 + 자녀)
 import { chatbotSendController, chatbotGetController } from './controllers/chatbot.controller.js'; //문의챗봇
+import videoRouter from "./routes/video.route.js"; //비디오 끌고 오기
 
 
 // === [추가] 업로드 관련 의존성/설정 ===
@@ -47,8 +48,8 @@ import path from "path";
 import fs from "fs";
 import cors from "cors";
 
-import userRoutes from './routes/UserRoutes.js';     // 회원 탈퇴, 아이디 찾기 기능 관련 라우트
-import childRoutes from './routes/ChildRoutes.js';   // 자녀추가 기능 관련 라우트
+//import userRoutes from './routes/UserRoutes.js';     // 회원 탈퇴, 아이디 찾기 기능 관련 라우트
+//import childRoutes from './routes/ChildRoutes.js';   // 자녀추가 기능 관련 라우트
 import GoogleAuthRoutes from './routes/GoogleAuthRoutes.js';    // 구글 계정 로그인 관련 라우트
 import cookieParser from 'cookie-parser';
 import AuthRoutes from './routes/AuthRoutes.js';
@@ -189,6 +190,9 @@ app.post('/auth/logout', (req, res) => {
 
 // 13. 자녀 정보 수정 (여름)
 //app.put('/mypage/children/profile', authenticateToken, updateChildProfileController);
+
+app.use("/api/videos", videoRouter);
+app.use("/files", express.static("uploads")); // 로컬 파일 제공 시
 
 
 
