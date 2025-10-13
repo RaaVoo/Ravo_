@@ -1,0 +1,158 @@
+.page-offset {
+  /* 헤더 높이 + 여백 */
+  padding-top: 100px;  /* 필요 시 숫자만 조절 */
+}
+
+.voice-report-list-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 24px;
+    background-color: #fffbea;
+    border-radius: 24px;
+    box-shadow: 0 0 10px #eee;
+}
+
+.voice-report-list-container h2 {
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #666;
+}
+
+/* 툴바 전체 정렬 */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;             /* 요소 간 거리 */
+  justify-content: flex-end; /* 오른쪽 정렬이 필요 없으면 제거 */
+  margin: 8px 0 16px;
+}
+
+/* 검색 입력창 */
+.toolbar__input {
+  flex: 0 1 260px;       /* 너비: 260px, 줄어들 수 있고 커질 수 있음 */
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  outline: none;
+  background: #fff;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.04);
+  transition: border-color .15s, box-shadow .15s;
+}
+.toolbar__input:focus {
+  border-color: #a3cef1;
+  box-shadow: 0 0 0 3px rgba(163, 206, 241, .35);
+}
+
+/* 둥근 아이콘 버튼 */
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 1px 1px rgba(0,0,0,.04);
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+}
+
+.icon-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+}
+
+.icon-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0,0,0,.08);
+}
+.icon-btn:active {
+  transform: translateY(0);
+}
+
+/* 휴지통 버튼(위험 액션) */
+.icon-btn--danger {
+  background: #fff6f6;
+  border: 1px solid #ffe1e1;
+}
+.icon-btn--danger:hover {
+  box-shadow: 0 6px 14px rgba(255, 99, 99, .2);
+}
+
+/* 비활성화 상태 */
+.icon-btn:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 1px 2px rgba(0,0,0,.06);
+}
+
+/* 반응형: 좁을 땐 줄바꿈 */
+@media (max-width: 560px) {
+  .toolbar { flex-wrap: wrap; justify-content: flex-start; }
+  .toolbar__input { flex: 1 1 200px; }
+}
+
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    color: #333;
+}
+
+.report-table th,
+.report-table td {
+    border-bottom: 1px solid #eee;
+    padding: 12px 10px;
+    text-align: center;
+}
+
+.report-table th {
+    background: #fafafa;
+    font-weight: 600;
+}
+
+.pagination {
+    margin-top: 24px;
+    text-align: center;
+}
+
+.pagination button {
+    background: none;
+    border: 2px solid #7ec8f7;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    margin: 0 6px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #7ec8f7;
+    transition: all 0.3s;
+}
+
+.pagination button.active,
+.pagination button:hover {
+    background-color: #7ec8f7;
+    color: white;
+}
+
+.report-table a {
+  color: #333;               /* 글자색: 진한 회색/검정 */
+  text-decoration: none;     /* 밑줄 제거 */
+}
+
+.report-table a:visited {
+  color: #333;               /* 방문 후에도 같은 색 */
+}
+
+.report-table a:hover {
+  color: #000;               /* 마우스 올렸을 때 살짝 진하게 */
+}
+
+.report-table a:active {
+  color: #000;               /* 클릭 중에도 같은 색 */
+}
+

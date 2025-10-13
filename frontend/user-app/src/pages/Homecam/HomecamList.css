@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=LINE+Seed+Sans+KR:wght@400;700&display=swap');
+
+:root{
+  --yellow:#FDDE55;
+  --sky:#68D2E8;
+  --sky-deep:#03AED2;
+  --gray6:#6E6E6E;
+  --bg-soft: rgba(254,239,173,0.5);
+}
+
+*{ box-sizing: border-box; }
+body{ font-family: 'LINE Seed Sans KR', sans-serif; }
+
+/* ===== Page ===== */
+.hc-wrap{
+  min-height: 100vh;
+  background:#fff;
+  padding: 120px 24px 80px;
+  margin-bottom: 20px;
+}
+
+/* ===== Header ===== */
+.hc-header-row{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:24px; flex-wrap:wrap;
+  max-width: 960px;
+  margin: 8px auto 16px;
+}
+.hc-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #6E6E6E;
+}
+
+/* Search + Trash */
+.hc-search-row{
+  display:flex; align-items:center; gap:10px;
+  width:100%; max-width: 300px; margin-left: auto;
+}
+.hc-search{
+  display:flex; align-items:center;
+  border:1px solid #ccc; border-radius:40px;
+  padding:4px 10px; background-color:#fff; width:100%; gap:6px;
+}
+.hc-search input{
+  border:none; outline:none; font-size:14px;
+  flex:1; height:32px; background:transparent;
+}
+.hc-search-icon{ width:16px; height:16px; cursor:pointer; }
+.hc-search-btn{ display:none !important; }
+.hc-trash{
+  width:32px; height:32px; border:none; background:transparent; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.hc-trash img{ width:100%; height:100%; }
+
+/* ===== Content Box ===== */
+.hc-content{
+  background: var(--bg-soft);
+  border-radius: 28px;
+  padding: 24px 28px 36px;
+  max-width: 960px;
+  margin: 24px auto 0;
+}
+
+/* Toolbar */
+.hc-toolbar{ display:flex; justify-content:flex-start; margin-bottom:10px; }
+.hc-checkbox{ display:flex; align-items:center; gap:8px; color:#333; font-weight:600; }
+.hc-checkbox input{ width:18px; height:18px; }
+
+/* ===== Grid (4x2) ===== */
+.hc-grid{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px 24px;
+  justify-items: center;
+}
+
+/* Card */
+.hc-card{
+  width: 90%;
+  max-width: 200px;
+  background:#fff;
+  border-radius:30px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding:12px 12px 10px;
+  position:relative;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+/* .hc-card:hover{ transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.08); } */
+
+/* Card checkbox */
+.hc-card-check{
+  position:absolute; top:8px; left:8px; z-index:3;
+}
+.hc-card-check input{
+  appearance: auto;
+  width:18px; height:18px;
+  accent-color:#03AED2;
+  background:#fff; border:1px solid #6E6E6E;
+}
+
+/* Thumbnail (always mock with play icon) */
+.hc-thumb{
+  position:relative;
+  width:100%;
+  aspect-ratio: 4/3;
+  border-radius:20px;
+  overflow:hidden;
+  background: #f3f3f3;
+  display:flex; align-items:center; justify-content:center;
+}
+.hc-thumb--mock{ cursor:pointer; }
+.hc-thumb-face{
+  width:100%; height:100%;
+  display:flex; align-items:center; justify-content:center;
+  background: linear-gradient(180deg, #f5f5f5, #ececec);
+}
+.hc-thumb-play{
+  width:40%; height:40%;
+  fill:#c5c5c5;
+}
+
+/* Date */
+.hc-date{
+  display:block;
+  margin-top:8px;
+  text-align:center;
+  font-size:12px;
+  color:#666;
+}
+
+/* Pagination */
+.hc-paging{
+  display:flex; gap:10px; justify-content:center; margin-top:18px;
+}
+.hc-page-btn{
+  width:34px; height:34px; border-radius:50%;
+  border:2px solid #03AED2; background:#fff; color:#03AED2;
+  font-weight:700; font-size:14px; line-height:30px; text-align:center; cursor:pointer;
+}
+.hc-page-btn.active{ background:#68D2E8; color:#fff; border-color:#68D2E8; }
+
+/* Loading */
+.hc-loading{ text-align:center; padding:60px 0; color:#6E6E6E; font-size:18px; }
+
+/* Responsive */
+@media (max-width: 900px){
+  .hc-grid{ grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 680px){
+  .hc-grid{ grid-template-columns: repeat(2, 1fr); }
+  .hc-card{ max-width: 220px; }
+}
+@media (max-width: 480px){
+  .hc-grid{ grid-template-columns: 1fr; }
+  .hc-title{ font-size: 20px; }
+  .hc-page-btn{ width:32px; height:32px; line-height:28px; font-size:14px; }
+}
+
+

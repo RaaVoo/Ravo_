@@ -1,5 +1,5 @@
 // MyPage.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './MyPage.css';
 import SlideMenu from '../../components/SlideMenu';
@@ -12,7 +12,8 @@ const MyPage = ({ onLogout }) => {      // onLogout : App.js에서 로그인 상
   const [children, setChildren] = useState([]);         // 자녀 이름 불러오기 위한 상태
   
   const [weather, setWeather] = useState('sunny');    // 초기값: 맑음 (예지)
-  
+  const viewportRef = useRef(null);  // ← 한 장씩 스크롤 제어용
+
   // 아이콘 매핑 (예지)
   const weatherIconMap = {
     sunny: '/icons/sun.svg',
@@ -62,6 +63,33 @@ const MyPage = ({ onLogout }) => {      // onLogout : App.js에서 로그인 상
     navigate('/');
   };
 
+  useEffect(() => {
+  const root = viewportRef.current;
+  if (!root) return;
+
+  let locking = false;
+  const onWheel = (e) => {
+    // 수직만 처리
+    if (Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
+    e.preventDefault();
+    if (locking) return;
+    locking = true;
+
+    const dir = e.deltaY > 0 ? 1 : -1;
+    const h = root.clientHeight;                 // 슬라이드 높이 == 뷰포트 높이
+    const current = Math.round(root.scrollTop / h);
+    const maxIndex = Math.max(0, (children.length || 1) - 1);
+    const next = Math.max(0, Math.min(current + dir, maxIndex));
+
+    root.scrollTo({ top: next * h, behavior: 'smooth' });
+    setTimeout(() => (locking = false), 600);
+  };
+
+  root.addEventListener('wheel', onWheel, { passive: false });
+  return () => root.removeEventListener('wheel', onWheel);
+}, [children.length]);
+
+
   // -------------------------------
   // 테스트용: 버튼으로 날씨 순환 (예지)
   // -------------------------------
@@ -106,41 +134,25 @@ const MyPage = ({ onLogout }) => {      // onLogout : App.js에서 로그인 상
         </section>
 
         {/* 날씨 섹션 */}
-        <div className="weather-section">  
-          {/* 자녀 여러명인 경우 다 보이게 하는 코드 */}
-          <div className="children-list">
-            {children.length > 0 ? (
-              children.map((child, index) => (
-                <div className="weather-left" key={index}>
-                  {/* <div className="weather-icon">🌞</div> */}
-                  <img 
-                    src={iconSrc}
-                    alt={`${pretty} 아이콘`}
-                    className="weather-icon"
-                  />
+        <div className="weather-section">
+          {/* 자녀 여러명 → 세로 스냅 스크롤 */}
+          {/* <div className="children-viewport"> */}
+          <div className="children-viewport" ref={viewportRef}>
+            {(children.length > 0 ? children : [{ c_name: '자녀 없음', __empty: true }]).map((child, index) => (
+              <div className="child-slide" key={index}>
+                <div className="weather-left">
+                  <img src={iconSrc} alt={`${pretty} 아이콘`} className="weather-icon" />
                   <div className="weather-info">
                     <h3>{user.userName}님의</h3>
                     <h3>자녀 ‘{child.c_name}’</h3>
-                    <h3>날씨는 ‘맑음’</h3>
+                    <h3>날씨는 ‘{pretty}’</h3>
                   </div>
                 </div>
-              ))
-            ) : (
-              <div className="weather-left">
-                {/* <div className="weather-icon">🌞</div> */}
-                <img 
-                    src={iconSrc}
-                    alt={`${pretty} 아이콘`}
-                    className="weather-icon"
-                  />
-                <div className="weather-info">
-                  <h3>{user.userName}님의</h3>
-                  <h3>자녀 없음</h3>
-                  <h3>날씨는 ‘맑음’</h3>
-                </div>
               </div>
-            )}
+            ))}
           </div>
+         
+          
 
           <button className="add-child" onClick={() => navigate('/mypage/children/add')}>자녀 추가하기</button>
         </div>
