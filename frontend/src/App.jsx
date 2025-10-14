@@ -35,14 +35,17 @@
 // export default App
 
 
-import VoiceChat from './pages/VoiceChat';
+//import VoiceChat from './pages/VoiceChat';
 
-function App() {
-  return (
-    <div>
-      <VoiceChat />
-    </div>
-  );
+//function App() {
+//  return (
+//    <div>
+//     <VoiceChat />
+//    </div>
+//  );
+//}
+
+import ChatBot from "./pages/Chat/VoiceChat.jsx";
+export default function App() {
+  return <ChatBot />;
 }
-
-export default App;

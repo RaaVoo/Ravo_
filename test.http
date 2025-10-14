@@ -18,12 +18,12 @@ Content-Type: application/json
   "content": "좋은 하루가 될 것 같네요! 😊",
   "mode": "VOICE",
   "summary": "neutral",
-  "userNo": 2,
+  "userNo": 3,
   "chatNo": 1
 }
 
 ### ✅ 전체 메시지 조회
-GET http://localhost:3000/messages
+GET http://localhost:3000/api/messages
 
 ### ✅ 메시지 읽음 처리 (PATCH) -> 수정중
 PATCH http://localhost:3000/messages/1/read
@@ -314,7 +314,7 @@ Content-Type: application/json
 }
 
 ### 2. 전체 상담 메시지 조회
-GET http://localhost:3000/chatbot/send
+GET http://localhost:3000/chatbot/messages
 
 ### 3. 특정 날짜 상담 대화 조회
 GET http://localhost:3000/chatbot/send?date=2025-09-25

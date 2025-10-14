@@ -9,6 +9,57 @@ from consult_chatbot import consult_reply
 import requests  # 상단 import에 추가
 import json
 import time
+from datetime import datetime, timezone, timedelta
+POLL_INTERVAL = 0.6 
+
+#음성 대화 모드 변경
+API_BASE = "http://localhost:3000"  # 백엔드 주소에 맞춰 조정
+
+def get_manual_mode(key="global") -> bool:
+    """백엔드에서 현재 수동모드 여부 조회 (프론트 버튼으로 토글한 값)"""
+    try:
+        r = requests.get(f"{API_BASE}/chatbot/mode", params={"key": key}, timeout=3)
+        return bool(r.json().get("manual"))
+    except Exception:
+        return False  # 실패 시 자동모드로 간주(원하면 True로 바꿔도 됨)
+    
+
+def parse_dt(s: str) -> datetime:
+    s = (s or "").replace("Z", "+00:00")
+    try:
+        return datetime.fromisoformat(s)
+    except Exception:
+        try:
+            return datetime.strptime(s, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
+        except Exception:
+            return datetime.now(timezone.utc)
+
+
+def wait_for_parent_reply(since, last_child_text):
+    while True:
+        row = fetch_parent_reply_since(since, last_child_text)
+        if row: return row
+        time.sleep(POLL_INTERVAL)
+
+def fetch_parent_reply_since(since, last_child_text):
+    try:
+        r = requests.get(f"{API_BASE}/messages", timeout=3)
+        data = r.json()
+    except Exception:
+        return None
+
+    rows = data.get("data", []) if isinstance(data, dict) else []
+    rows_sorted = sorted(rows, key=lambda x: parse_dt(x.get("createdDate","")))
+    for row in rows_sorted:
+        u  = row.get("user_no")
+        ts = parse_dt(row.get("createdDate",""))
+        mc = (row.get("m_content") or "").strip()
+        # 부모 판정: AI가 아니고, "방금 저장한 아이 메시지와 내용이 다르고", 시각이 기준 이후
+        if u != 2 and mc != (last_child_text or "").strip() and ts >= since:
+            return row
+    return None
+
+
 
 
 # 영상 전용 서버 설정
@@ -167,10 +218,36 @@ def run_emotion_report():
         print("👶 인식된 텍스트:", user_text)
         emotion = report.add_turn(user_text)
         print(f"🧠 감정 분석 결과: {emotion}")
+        time.sleep(1.4) #1초 딜레이
+        save_message_to_api(user_text, emotion, user_no=1)
+
+                # 👇👇👇 추가: 모드 확인
+        # manual = get_manual_mode(key="global")
+        # if manual:
+        #     print("⏸️  수동모드: GPT 응답/음성 출력 생략, 대화는 저장만 합니다.")
+        #     speak_text(user_text) 
+        #     time.sleep(1.2) #1초 딜레이
+        #     save_message_to_api(user_text, emotion, user_no=1)
+        #     # 자동모드가 아닐 땐 reply 저장/발화 X
+        #     continue
+        # # 👆👆👆
+
+        manual = get_manual_mode(key="global")
+        if manual:
+            # 기준시각: 저장 직후 + 200ms (레이스 방지)
+            since = datetime.now(timezone.utc) + timedelta(milliseconds=200)
+            last_child_text = user_text
+
+            parent_msg = wait_for_parent_reply(since, last_child_text)
+            if parent_msg and parent_msg.get("m_content"):
+                speak_text(parent_msg["m_content"])
+            time.sleep(1.2)
+            continue
+        
         reply = chat_with_gpt(user_text, emotion)
         print(f"🤖 GPT 응답: {reply}")
         speak_text(reply)
-        save_message_to_api(user_text, emotion, user_no=1)
+        time.sleep(1) #1초 딜레이
         save_message_to_api(reply, "neutral", user_no=2)
 
     print("\n📊 전체 감정 요약:")
@@ -183,55 +260,6 @@ def run_emotion_report():
     print(report.generate_parenting_tip())
 
     report = EmotionReport()
-
-    # 📌 audio_inputs 폴더 경로를 main.py 기준으로 절대 경로로 설정
-    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    audio_dir = os.path.join(BASE_DIR, "audio_inputs")
-
-    if not os.path.exists(audio_dir):
-        print(f"❌ 디렉토리 {audio_dir} 가 존재하지 않습니다.")
-        return
-
-    # 숫자 순으로 .wav 파일 정렬
-    audio_files = sorted(
-        [f for f in os.listdir(audio_dir) if f.endswith(".wav")],
-        key=lambda x: int(os.path.splitext(x)[0])
-    )
-
-    for filename in audio_files:
-        audio_path = os.path.join(audio_dir, filename)
-        print(f"\n🎤 파일 [{filename}] 음성 인식 중...")
-
-        # 1. 음성 인식
-        user_text = transcribe_audio(audio_path)
-        print("👶 인식된 텍스트:", user_text)
-
-        # 2. 감정 분석
-        emotion = report.add_turn(user_text)
-        print(f"🧠 감정 분석 결과: {emotion}")
-
-        # 3. GPT 응답
-        reply = chat_with_gpt(user_text, emotion)
-        print(f"🤖 GPT 응답: {reply}")
-
-        # 4. TTS 응답 출력
-        speak_text(reply)
-
-        # ✅ 메시지 저장
-        save_message_to_api(user_text, emotion, user_no=1)  # 사용자의 메시지
-        save_message_to_api(reply, "neutral", user_no=2)   # GPT의 응답 (중립 감정으로 저장)
-
-    # ✅ 전체 통계 및 육아 솔루션
-    print("\n📊 전체 감정 요약:")
-    for emo, perc in report.get_emotion_summary().items():
-        print(f"- {emo}: {perc}%")
-
-    print("\n🔑 주요 키워드:")
-    for i, kw in enumerate(report.get_top_keywords(), 1):
-        print(f"{i}. {kw}")
-
-    print("\n👨‍👩‍👧 육아 솔루션 제안:")
-    print(report.generate_parenting_tip())
 
 
 #영상 끌어오기
@@ -295,42 +323,42 @@ def run_behavior_report(video_path="./recorded_video.mp4"):
 
 
 # ✅ CLI 진입점 추가
-def cli():
-    import argparse, os
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--mode", choices=["voice", "video", "consult"], required=True)
-    ap.add_argument("--video", help="분석할 mp4 경로 (video 모드 필수)")
-    # 상담 챗봇용 옵션
-    ap.add_argument("--tone", default="담백하고 예의 있는 상담 톤",
-                    help="문의 챗봇 답변 톤 힌트 (예: '친근하고 간결', '공식적이고 간결')")
-    ap.add_argument("--no-save", action="store_true",
-                    help="문의 챗봇 대화를 /messages/send 로 저장(옵션)")
-    ap.add_argument("--user-no", type=int, default=1,
-                    help="(save 사용 시) 사용자 user_no")
-    args = ap.parse_args()
+# def cli():
+#     import argparse, os
+#     ap = argparse.ArgumentParser()
+#     ap.add_argument("--mode", choices=["voice", "video", "consult"], required=True)
+#     ap.add_argument("--video", help="분석할 mp4 경로 (video 모드 필수)")
+#     # 상담 챗봇용 옵션
+#     ap.add_argument("--tone", default="담백하고 예의 있는 상담 톤",
+#                     help="문의 챗봇 답변 톤 힌트 (예: '친근하고 간결', '공식적이고 간결')")
+#     ap.add_argument("--no-save", action="store_true",
+#                     help="문의 챗봇 대화를 /messages/send 로 저장(옵션)")
+#     ap.add_argument("--user-no", type=int, default=1,
+#                     help="(save 사용 시) 사용자 user_no")
+#     args = ap.parse_args()
 
-    if args.mode == "voice":
-        run_emotion_report()
+#     if args.mode == "voice":
+#         run_emotion_report()
 
-    elif args.mode == "video":
-        if not args.video:
-            raise SystemExit("--video 경로가 필요합니다. (예: --video ./uploads/xxx.mp4)")
-        if not os.path.isabs(args.video):
-            base = os.path.dirname(os.path.abspath(__file__))
-            args.video = os.path.normpath(os.path.join(base, args.video))
-        run_behavior_report(args.video)
+#     elif args.mode == "video":
+#         if not args.video:
+#             raise SystemExit("--video 경로가 필요합니다. (예: --video ./uploads/xxx.mp4)")
+#         if not os.path.isabs(args.video):
+#             base = os.path.dirname(os.path.abspath(__file__))
+#             args.video = os.path.normpath(os.path.join(base, args.video))
+#         run_behavior_report(args.video)
 
-    else:  # consult
-        run_consult_chat(tone=args.tone, save=not args.no_save, user_no=args.user_no)
+#     else:  # consult
+#         run_consult_chat(tone=args.tone, save=not args.no_save, user_no=args.user_no)
 
 
-if __name__ == "__main__":
-    cli()
+# if __name__ == "__main__":
+#     cli()
 
 
 # # ✅ 실행
-# if __name__ == "__main__":
-# #    main()
-#     # 음성 페이지 → run_emotion_report()
+if __name__ == "__main__":
+    #main()
+    run_emotion_report()
 #     run_behavior_report("./ravo_emotion/test.mp4")
 #     pass

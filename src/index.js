@@ -1,8 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-import passport from 'passport';      // 구글 계정 로그인 관련 코드
-import './config/passport.js';        // 구글 계정 로그인 관련 코드 (구글 전략)
+//import passport from 'passport';      // 구글 계정 로그인 관련 코드
+//import './config/passport.js';        // 구글 계정 로그인 관련 코드 (구글 전략)
 import { sendMessageController } from './controllers/message.controller.js'; //메시지 전송
 import { getMessagesController } from './controllers/message.controller.js'; //메시지 조회
 import { markMessageReadController } from './controllers/message.controller.js'; //메시지 읽음 처리
@@ -53,6 +53,8 @@ import AuthRoutes from './routes/AuthRoutes.js';
 import MypageRoutes from './routes/MypageRoutes.js'       // 마이페이지 '개인정보 수정' 관련 라우트
 //import userRoutes from './routes/UserRoutes.js'
 import { query } from './config/db.js';
+
+const chatModes = new Map(); // key -> { manual: boolean, updatedAt: number } //챗봇 모드
 
 const app = express();
 
@@ -174,7 +176,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // passport 초기화 -> 구글 계정 로그인 관련 코드
-app.use(passport.initialize());
+//app.use(passport.initialize());
 
 
 //레포트 관련 라우터 연결
@@ -207,6 +209,22 @@ app.use('/auth', AuthRoutes);
 app.use('/mypage', MypageRoutes);
 
 
+// 모드 조회
+app.get('/chatbot/mode', (req, res) => {
+  const key = String(req.query.key || 'global');
+  const v = chatModes.get(key);
+  res.json({ ok: true, manual: !!(v && v.manual) });
+});
+
+// 모드 변경
+app.post('/chatbot/mode', (req, res) => {
+  const key = String(req.body.key || 'global');
+  const manual = !!req.body.manual;
+  chatModes.set(key, { manual, updatedAt: Date.now() });
+  res.json({ ok: true, manual });
+});
+
+
 app.post('/messages/send', sendMessageController); //메시지 전송
 app.get('/messages', getMessagesController); //메시지 조회
 app.patch('/messages/:message_no/read', markMessageReadController); //메시지 읽음 처리
@@ -221,7 +239,7 @@ app.delete('/messages/chatlist/:date', deleteChatByDateController); //특정 날
 //app.get('/mypage/children', authenticateToken, getMyChildrenInfo); //마이페이지 자녀 저보 조회 (여름)
 
 app.post('/chatbot/send', chatbotSendController); // 챗봇 메시지 저장(사용자/봇 공통)
-app.get('/chatbot/send', chatbotGetController);   // 챗봇 메시지 조회 (?date=YYYY-MM-DD)
+app.get('/chatbot/messages', chatbotGetController);   // 챗봇 메시지 조회 (?date=YYYY-MM-DD)
 
 
 // 1. 회원가입 기능
@@ -343,7 +361,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
 
 //서버 실행
 //const PORT = 3000;
-const PORT = 8080;
+const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
