@@ -6,18 +6,24 @@ body {
 }
 
 .chatbot-page {
+    width: 100%;
     background-color: #FEEFAD;
     min-height: 100vh;
-    padding: px 0;
+    /*padding: px 0;*/
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    padding: clamp(12px, 2vw, 32px); /* 반응형 여백 */
+    box-sizing: border-box;
+    background: #FEEFAD;   
   }
   
   .chatbot-container {
     width: 100%;
     max-width: 900px;
     padding: 40 20px;
+    display: flex;
+    justify-content: center;
   }
 
 .chatbot-container {
@@ -42,6 +48,9 @@ body {
 }
 
 .chat-header {
+    display: flex;                   /* ← 추가 */
+    align-items: center;             /* ← 추가 */
+    justify-content: space-between;
     background-color: #00bcd4;
     color: white;
     padding: 16px 32px; /* ← 왼쪽 여백 넉넉하게 */
@@ -49,6 +58,47 @@ body {
     font-size: 18px;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
+}
+
+.chat-header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 요약, 수동모드 버튼 */
+.chat-header .chat-header-buttons > button {
+  background: #fff;                /* 명시 */
+  color: #BCBCBC;                  /* 명시 */
+  padding: 6px 10px;
+  font-size: 10px;
+  line-height: 1;
+  border: none;
+  border-radius: 8px;
+  box-shadow: none;
+  min-width: 0;
+}
+
+/* 수동 버튼 전용 스타일을 더 '구체적으로' */
+.chat-header .chat-header-buttons > .manual-btn {
+  background: #fff;
+  color: #BCBCBC;
+}
+.chat-header .chat-header-buttons > .manual-btn.active {
+  background: #ff6b6b;
+  color: #fff;
+}
+
+/* 마이크 버튼(원형, 작게) */
+.chat-header .chat-header-buttons .voice-btn {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  /* border-radius: 50%; */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;  /* 아이콘 크기 */
 }
 
 .chat-body {
@@ -155,6 +205,39 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+/* ====== 요약 패널 (토글) ====== */
+.summary-panel {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 260ms ease, padding 260ms ease;
+  background: #fffdf2;              /* 상단 배경 톤(#FEEFAD)과 어울리는 연노랑 */
+  border: 1px solid #f3e7a5;
+  border-radius: 12px;
+  margin: 10px 12px 0;
+  padding: 0 12px;
+}
+.summary-panel.open {
+  max-height: 220px;                 /* 필요하면 300~360px로 */
+  padding: 12px;
+}
+.summary-panel-inner { display:flex; flex-direction:column; gap:8px; }
+
+.summary-title { color:#e8c764; font-weight:700; font-size:14px; }
+.summary-text { color:#6E6E6E; font-size:14px; line-height:1.5; }
+.summary-loading { color:#666; font-size:14px; }
+.summary-error { color:#c03; font-size:14px; }
+
+.summary-actions { margin-top:4px; }
+.summary-refresh {
+  border: 1px solid #e6e1b2; background:#faf6d6; padding:6px 10px; color: #e4cd8a; 
+  border-radius: 8px; cursor:pointer; font-size:13px;
+}
+.summary-refresh:hover { background:#fff; }
+
+/* 헤더의 요약 버튼 on 상태 */
+.summary-btn.active { background:#f7f7f7; }
+
   
 .send-icon {
     width: 40px;

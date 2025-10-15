@@ -4,7 +4,7 @@ import './Chat.css';
 const ChatBot = () => {
   const [messages, setMessages] = useState([
     {
-      text: '안녕하세요! 라보야 놀자입니다. 😊\n궁금한 점을 도와드리려고 해요.\n궁금한 점을 작성해주세요!',
+      text: '안녕하세요. 문의 내용을 입력해 주세요.',
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       sender: 'bot',
     },
@@ -13,26 +13,31 @@ const ChatBot = () => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // ⚙️ 서버 주소 (Vite 프록시 쓰면 빈 문자열로 둬도 됨)
-  // const baseURL = import.meta.env.VITE_API_BASE_URL || '';
-  const baseURL = process.env.REACT_APP_API_BASE_URL || '';
+const baseURL = "";
 
   // 🧩 (1) 페이지 처음 로드 시, 서버에서 메시지 목록 가져오기
-  useEffect(() => {
-    fetch(`${baseURL}/api/messages`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data?.success && Array.isArray(data.data)) {
-          const loadedMessages = data.data.map((msg) => ({
-            text: msg.m_content,
-            time: new Date(msg.createdDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            sender: 'user', // sender 구분 없으니까 일단 user로 처리
-          }));
-          setMessages((prev) => [prev[0], ...loadedMessages]);
-        }
-      })
-      .catch((err) => console.error('메시지 불러오기 실패:', err));
-  }, []);
+// Chat.jsx (useEffect 안)
+useEffect(() => {
+  fetch(`/chatbot/messages`)
+    .then((res) => res.json())
+    .then((data) => {
+      if (data?.success && Array.isArray(data.data)) {
+        const loadedMessages = data.data.map((msg) => ({
+          text: msg.m_content,
+          time: new Date(msg.createdDate).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          sender: msg.user_no === 2 ? "bot" : "user", // ✅ 이 한 줄만 포인트!
+        }));
+
+        setMessages((prev) => [prev[0], ...loadedMessages]);
+      }
+    })
+    .catch((err) => console.error("메시지 불러오기 실패:", err));
+}, [baseURL]);
+
+
 
   // 🧩 (2) 메시지 전송 함수 — /messages/send 사용
   const handleSend = async () => {
@@ -52,7 +57,7 @@ const ChatBot = () => {
         chatNo: 1, // 지금은 고정값, 나중에 세션 구분 추가 가능
       };
 
-      const res = await fetch(`${baseURL}/api/messages/send`, {
+      const res = await fetch(`/chatbot/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
