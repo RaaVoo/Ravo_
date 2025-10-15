@@ -178,3 +178,30 @@ export const searchChatMessagesController = async (req, res) => {
     res.status(500).json({ success: false, message: '서버 오류입니다.' });
   }
 };
+
+//요약 메시지만 조회
+export const getSummaryMessagesController = async (req, res) => {
+  try {
+    const messages = await getAllMessages();
+    const summaries = messages.filter(m => m.m_mode === 'SUMMARY');
+
+    if (!summaries.length) {
+      return res.status(404).json({
+        success: false,
+        message: '요약 메시지가 없습니다.'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      count: summaries.length,
+      data: summaries
+    });
+  } catch (error) {
+    console.error('요약 조회 오류:', error);
+    res.status(500).json({
+      success: false,
+      message: '서버 오류입니다.'
+    });
+  }
+};

@@ -11,6 +11,7 @@ import { getChatDateListController } from './controllers/message.controller.js';
 import { getChatDetailByDateController } from './controllers/message.controller.js'; //대화 상세 조회
 import { deleteChatByDateController } from './controllers/message.controller.js'; //특정 날짜 대화 삭제
 import { searchChatMessagesController } from './controllers/message.controller.js'; //대화 내용 검색
+import { getSummaryMessagesController } from "./controllers/message.controller.js"; // 요약 조회
 // User 관련 컨트롤러 함수들 불러오기
 import {
   userSignupHandler,
@@ -233,6 +234,7 @@ app.get('/messages/chatlist/search', searchChatMessagesController); //대화 내
 app.get('/messages/chatlist', getChatDateListController); //대화 목록 조회
 app.get('/messages/chatlist/:date', getChatDetailByDateController); //대화 상세 조회
 app.delete('/messages/chatlist/:date', deleteChatByDateController); //특정 날짜 대화 삭제
+app.get("/messages/summary", getSummaryMessagesController); //대화 내용 요약
 
 
 //app.get('/mypage/me', authenticateToken, getMyPage); //마이페이지 부모 정보 조회 (여름)

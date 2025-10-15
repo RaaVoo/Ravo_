@@ -4,6 +4,7 @@ import './VoiceChat.css';
 const ChatBot = () => {
   const [showSummary, setShowSummary] = useState(false);
   const [manualMode, setManualMode] = useState(true);
+
   const [messages, setMessages] = useState([
     {
       text: '아이와 대화를 시작해 보세요.',
@@ -14,6 +15,37 @@ const ChatBot = () => {
 
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+
+
+  const [summaryText, setSummaryText] = useState("");
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [summaryError, setSummaryError] = useState("");
+  const [summaryLoadedOnce, setSummaryLoadedOnce] = useState(false);
+  const loadSummary = async () => {
+  setSummaryLoading(true);
+  setSummaryError("");
+  try {
+    const res = await fetch(`/messages/summary`);
+    const data = await res.json();
+    if (!data?.success) throw new Error(data?.message || "요약 불러오기 실패");
+
+    const list = Array.isArray(data.data) ? data.data : [];
+    const last = list[list.length - 1];
+    setSummaryText(last?.m_content || "아직 저장된 요약이 없어요.");
+    setSummaryLoadedOnce(true);
+  } catch (e) {
+    setSummaryError(e.message || "네트워크 오류");
+  } finally {
+    setSummaryLoading(false);
+  }
+};
+
+// 요약 토글 열릴 때 한 번만 로드
+useEffect(() => {
+  if (showSummary && !summaryLoadedOnce) {
+    loadSummary();
+  }
+}, [showSummary]);
 
 
 const baseURL = "";
@@ -205,6 +237,27 @@ const handleSend = async () => {
                 🎤
                 </button>
               </div>
+          </div>
+
+          {/* 요약 패널 */}
+          <div className={`summary-panel ${showSummary ? 'open' : ''}`} role="region" aria-label="오늘의 대화 요약">
+            <div className="summary-panel-inner">
+              <div className="summary-title">오늘의 대화 요약</div>
+
+              {summaryError ? (
+                <p className="summary-error">⚠ {summaryError}</p>
+              ) : summaryLoading ? (
+                <p className="summary-loading">불러오는 중...</p>
+              ) : (
+                <p className="summary-text">{summaryText || "아직 저장된 요약이 없어요."}</p>
+              )}
+
+              <div className="summary-actions">
+                <button className="summary-refresh" onClick={loadSummary} disabled={summaryLoading}>
+                  {summaryLoading ? "불러오는 중..." : "새로고침"}
+                </button>
+              </div>
+            </div>
           </div>
 
           <div className="chat-body">

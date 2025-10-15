@@ -159,15 +159,25 @@ class EmotionReport:
     def __init__(self):
         self.emotion_log = []
         self.text_log = []
+        self.turn_count = 0  # 👉 대화 개수 카운트용
 
     def add_turn(self, text):
         self.text_log.append(text)
         emotion = classify_emotion(text)
         self.emotion_log.append(emotion)
+        self.turn_count += 1
+
+        # ✅ 대화가 5개 쌓일 때마다 자동으로 요약 생성 + DB 저장
+        if self.turn_count % 5 == 0:
+            print(f"\n🪄 대화 {self.turn_count}개 도달 — 자동 요약 생성 중...")
+            self.save_summary_to_db(chat_no=1)
+
         return emotion
 
     def get_emotion_summary(self):
         total = len(self.emotion_log)
+        # if total == 0:
+        #     return {}
         counts = Counter(self.emotion_log)
         return {
             emotion: round((count / total) * 100, 1)
@@ -196,6 +206,43 @@ class EmotionReport:
         부모가 어떤 방식으로 접근하면 좋을지 한국어로 따뜻하고 실용적인 육아 팁을 3~5줄로 알려주세요.
         """
         return chat_with_gpt(prompt, emotion="neutral")
+    
+        # 🆕 키워드 기반 대화 요약 생성
+    def generate_summary_for_db(self):
+        top_keywords = self.get_top_keywords(top_n=8)
+        prompt = f"""
+        아래 키워드들을 바탕으로 아이와 부모의 대화를
+        한 문장으로 요약해줘. ~한 내용. 이런 양식으로 부탁해. (30자 이내, 따뜻한 느낌)
+        키워드: {', '.join(top_keywords)}
+        """
+        summary = chat_with_gpt(prompt, emotion="neutral")
+        return summary
+
+    # 🆕 Node 백엔드로 요약 저장
+    def save_summary_to_db(self, chat_no=1):
+        summary = self.generate_summary_for_db()
+
+        payload = {
+            "chatNo": chat_no,
+            "mode": "SUMMARY",   # ✅ 구분용
+            "content": summary,  # 요약 내용
+            "userNo": 2,         # AI 봇으로 설정
+        }
+
+        try:
+            res = requests.post(
+                "http://localhost:3000/messages/send",  # ✅ Node 메시지 API
+                json=payload,
+                headers={"Content-Type": "application/json"}
+            )
+            if res.status_code == 201:
+                print(f"✅ ({self.turn_count}턴 시점) 요약 저장 완료 → {summary}")
+            else:
+                print(f"⚠️ 요약 저장 실패: {res.status_code} / {res.text}")
+        except Exception as e:
+            print(f"❌ 요약 저장 중 오류 발생: {e}")
+
+
     
     
 # ✅ 음성 보고서 실행 함수
@@ -258,6 +305,10 @@ def run_emotion_report():
         print(f"{i}. {kw}")
     print("\n👨‍👩‍👧 육아 솔루션 제안:")
     print(report.generate_parenting_tip())
+
+        # ✅ 마지막 대화까지 처리 후 전체 요약 저장 한 번 더 실행
+    print("\n💾 전체 대화 요약 저장 중...")
+    report.save_summary_to_db(chat_no=1)
 
     report = EmotionReport()
 

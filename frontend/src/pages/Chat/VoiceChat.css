@@ -205,6 +205,39 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+/* ====== 요약 패널 (토글) ====== */
+.summary-panel {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 260ms ease, padding 260ms ease;
+  background: #fffdf2;              /* 상단 배경 톤(#FEEFAD)과 어울리는 연노랑 */
+  border: 1px solid #f3e7a5;
+  border-radius: 12px;
+  margin: 10px 12px 0;
+  padding: 0 12px;
+}
+.summary-panel.open {
+  max-height: 220px;                 /* 필요하면 300~360px로 */
+  padding: 12px;
+}
+.summary-panel-inner { display:flex; flex-direction:column; gap:8px; }
+
+.summary-title { color:#e8c764; font-weight:700; font-size:14px; }
+.summary-text { color:#6E6E6E; font-size:14px; line-height:1.5; }
+.summary-loading { color:#666; font-size:14px; }
+.summary-error { color:#c03; font-size:14px; }
+
+.summary-actions { margin-top:4px; }
+.summary-refresh {
+  border: 1px solid #e6e1b2; background:#faf6d6; padding:6px 10px; color: #e4cd8a; 
+  border-radius: 8px; cursor:pointer; font-size:13px;
+}
+.summary-refresh:hover { background:#fff; }
+
+/* 헤더의 요약 버튼 on 상태 */
+.summary-btn.active { background:#f7f7f7; }
+
   
 .send-icon {
     width: 40px;

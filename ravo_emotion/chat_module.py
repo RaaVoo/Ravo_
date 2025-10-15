@@ -48,7 +48,7 @@ def chat_with_gpt(user_input: str, emotion: str = "neutral", model: str | None =
             resp = client.chat.completions.create(
                 model=use_model,
                 messages=[
-                    {"role": "system", "content": "넌 감정을 고려해서 아이에게 따뜻하게 응답하는 챗봇이야."},
+                    {"role": "system", "content": "넌 감정을 고려해서 아이에게 따뜻하게 응답하는 챗봇이야. 한 문장으로 대답해 줘."},
                     {"role": "user", "content": prompt},
                 ],
                 temperature=0.7,
@@ -61,7 +61,7 @@ def chat_with_gpt(user_input: str, emotion: str = "neutral", model: str | None =
             resp = client.ChatCompletion.create(
                 model=use_model,
                 messages=[
-                    {"role": "system", "content": "넌 감정을 고려해서 아이에게 따뜻하게 응답하는 챗봇이야."},
+                    {"role": "system", "content": "넌 감정을 고려해서 아이에게 따뜻하게 응답하는 챗봇이야. 한 문장으로 대답해 줘."},
                     {"role": "user", "content": prompt},
                 ],
                 temperature=0.7,
