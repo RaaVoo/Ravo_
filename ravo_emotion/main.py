@@ -375,41 +375,41 @@ def run_behavior_report(video_path="./recorded_video.mp4"):
 
 # ✅ CLI 진입점 추가
 # def cli():
-#     import argparse, os
-#     ap = argparse.ArgumentParser()
-#     ap.add_argument("--mode", choices=["voice", "video", "consult"], required=True)
-#     ap.add_argument("--video", help="분석할 mp4 경로 (video 모드 필수)")
-#     # 상담 챗봇용 옵션
-#     ap.add_argument("--tone", default="담백하고 예의 있는 상담 톤",
-#                     help="문의 챗봇 답변 톤 힌트 (예: '친근하고 간결', '공식적이고 간결')")
-#     ap.add_argument("--no-save", action="store_true",
-#                     help="문의 챗봇 대화를 /messages/send 로 저장(옵션)")
-#     ap.add_argument("--user-no", type=int, default=1,
-#                     help="(save 사용 시) 사용자 user_no")
-#     args = ap.parse_args()
+#      import argparse, os
+#      ap = argparse.ArgumentParser()
+#      ap.add_argument("--mode", choices=["voice", "video", "consult"], required=True)
+#      ap.add_argument("--video", help="분석할 mp4 경로 (video 모드 필수)")
+#      # 상담 챗봇용 옵션
+#      ap.add_argument("--tone", default="담백하고 예의 있는 상담 톤",
+#                      help="문의 챗봇 답변 톤 힌트 (예: '친근하고 간결', '공식적이고 간결')")
+#      ap.add_argument("--no-save", action="store_true",
+#                      help="문의 챗봇 대화를 /messages/send 로 저장(옵션)")
+#      ap.add_argument("--user-no", type=int, default=1,
+#                      help="(save 사용 시) 사용자 user_no")
+#      args = ap.parse_args()
 
-#     if args.mode == "voice":
-#         run_emotion_report()
+#      if args.mode == "voice":
+#          run_emotion_report()
 
-#     elif args.mode == "video":
-#         if not args.video:
-#             raise SystemExit("--video 경로가 필요합니다. (예: --video ./uploads/xxx.mp4)")
-#         if not os.path.isabs(args.video):
-#             base = os.path.dirname(os.path.abspath(__file__))
-#             args.video = os.path.normpath(os.path.join(base, args.video))
-#         run_behavior_report(args.video)
+#      elif args.mode == "video":
+#          if not args.video:
+#              raise SystemExit("--video 경로가 필요합니다. (예: --video ./uploads/xxx.mp4)")
+#          if not os.path.isabs(args.video):
+#              base = os.path.dirname(os.path.abspath(__file__))
+#              args.video = os.path.normpath(os.path.join(base, args.video))
+#          run_behavior_report(args.video)
 
-#     else:  # consult
-#         run_consult_chat(tone=args.tone, save=not args.no_save, user_no=args.user_no)
+#      else:  # consult
+#          run_consult_chat(tone=args.tone, save=not args.no_save, user_no=args.user_no)
 
 
 # if __name__ == "__main__":
-#     cli()
+#      cli()
 
 
-# # ✅ 실행
+# # # ✅ 실행
 if __name__ == "__main__":
-    #main()
-    run_emotion_report()
-#     run_behavior_report("./ravo_emotion/test.mp4")
-#     pass
+     #main()
+     run_emotion_report()
+# #     run_behavior_report("./ravo_emotion/test.mp4")
+# #     pass
