@@ -7,7 +7,8 @@ Content-Type: application/json
   "mode": "VOICE",
   "summary": "기쁨",
   "userNo": 1,
-  "chatNo": 1
+  "chatNo": 1,
+  "chatFlag": "CHILD"
 }
 
 ### ✅ 메시지 전송 (GPT)

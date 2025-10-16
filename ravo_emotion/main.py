@@ -13,7 +13,52 @@ from datetime import datetime, timezone, timedelta
 POLL_INTERVAL = 0.6 
 
 #음성 대화 모드 변경
-API_BASE = "http://localhost:3000"  # 백엔드 주소에 맞춰 조정
+# API_BASE = "http://localhost:3000"  # 백엔드 주소에 맞춰 조정
+
+# def get_manual_mode(key="global") -> bool:
+#     """백엔드에서 현재 수동모드 여부 조회 (프론트 버튼으로 토글한 값)"""
+#     try:
+#         r = requests.get(f"{API_BASE}/chatbot/mode", params={"key": key}, timeout=3)
+#         return bool(r.json().get("manual"))
+#     except Exception:
+#         return False  # 실패 시 자동모드로 간주(원하면 True로 바꿔도 됨)
+    
+
+# def parse_dt(s: str) -> datetime:
+#     s = (s or "").replace("Z", "+00:00")
+#     try:
+#         return datetime.fromisoformat(s)
+#     except Exception:
+#         try:
+#             return datetime.strptime(s, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
+#         except Exception:
+#             return datetime.now(timezone.utc)
+
+
+# def wait_for_parent_reply(since, last_child_text):
+#     while True:
+#         row = fetch_parent_reply_since(since, last_child_text)
+#         if row: return row
+#         time.sleep(POLL_INTERVAL)
+
+# def fetch_parent_reply_since(since, last_child_text):
+#     try:
+#         r = requests.get(f"{API_BASE}/messages", timeout=3)
+#         data = r.json()
+#     except Exception:
+#         return None
+
+#     rows = data.get("data", []) if isinstance(data, dict) else []
+#     rows_sorted = sorted(rows, key=lambda x: parse_dt(x.get("createdDate","")))
+#     for row in rows_sorted:
+#         u  = row.get("user_no")
+#         ts = parse_dt(row.get("createdDate",""))
+#         mc = (row.get("m_content") or "").strip()
+#         # 부모 판정: AI가 아니고, "방금 저장한 아이 메시지와 내용이 다르고", 시각이 기준 이후
+#         if u != 2 and mc != (last_child_text or "").strip() and ts >= since:
+#             return row
+#     return None
+API_BASE = "http://localhost:3000"  # 백엔드 주소
 
 def get_manual_mode(key="global") -> bool:
     """백엔드에서 현재 수동모드 여부 조회 (프론트 버튼으로 토글한 값)"""
@@ -22,7 +67,7 @@ def get_manual_mode(key="global") -> bool:
         return bool(r.json().get("manual"))
     except Exception:
         return False  # 실패 시 자동모드로 간주(원하면 True로 바꿔도 됨)
-    
+
 
 def parse_dt(s: str) -> datetime:
     s = (s or "").replace("Z", "+00:00")
@@ -38,10 +83,13 @@ def parse_dt(s: str) -> datetime:
 def wait_for_parent_reply(since, last_child_text):
     while True:
         row = fetch_parent_reply_since(since, last_child_text)
-        if row: return row
+        if row:
+            return row
         time.sleep(POLL_INTERVAL)
 
+
 def fetch_parent_reply_since(since, last_child_text):
+    """기준 시각 이후의 부모(PARENTS) 메시지를 찾는 함수"""
     try:
         r = requests.get(f"{API_BASE}/messages", timeout=3)
         data = r.json()
@@ -49,15 +97,19 @@ def fetch_parent_reply_since(since, last_child_text):
         return None
 
     rows = data.get("data", []) if isinstance(data, dict) else []
-    rows_sorted = sorted(rows, key=lambda x: parse_dt(x.get("createdDate","")))
+    rows_sorted = sorted(rows, key=lambda x: parse_dt(x.get("createdDate", "")))
+
     for row in rows_sorted:
-        u  = row.get("user_no")
-        ts = parse_dt(row.get("createdDate",""))
+        chat_flag = (row.get("chatFlag") or "").upper().strip()
+        ts = parse_dt(row.get("createdDate", ""))
         mc = (row.get("m_content") or "").strip()
-        # 부모 판정: AI가 아니고, "방금 저장한 아이 메시지와 내용이 다르고", 시각이 기준 이후
-        if u != 2 and mc != (last_child_text or "").strip() and ts >= since:
+
+        # ✅ 부모 메시지 판정: chat_flag == 'PARENTS' 이고, 직전 아이 메시지와 다르고, 기준 시각 이후
+        if chat_flag == "PARENTS" and mc != (last_child_text or "").strip() and ts >= since:
             return row
+
     return None
+
 
 
 
@@ -72,29 +124,62 @@ def video_api(path: str) -> str:
 
 
 #아이대화 백연결
-def save_message_to_api(text, emotion, mode="VOICE", user_no=1, chat_no=1):
+# def save_message_to_api(text, emotion, mode="VOICE", user_no=1, chat_no=1):
+#     payload = {
+#         "content": text,
+#         "mode": mode,
+#         "summary": emotion,
+#         "userNo": user_no,
+#         "chatNo": chat_no
+#     }
+#     headers = {"Content-Type": "application/json"}
+
+#     print("📤 전송 payload:", json.dumps(payload, ensure_ascii=False))
+
+    
+#     response = requests.post(
+#         "http://localhost:3000/messages/send",
+#         json=payload,
+#         headers=headers
+#     )
+    
+#     if response.status_code in [200, 201]:
+#         print("✅ 메시지 저장 성공!")
+#     else:
+#         print(f"❌ 메시지 저장 실패: {response.status_code}, {response.text}")
+def save_message_to_api(text, emotion, mode="VOICE", user_no=1, chat_no=1, chat_flag="CHILD"):
+    """
+    백엔드에 메시지를 저장하는 함수
+    chat_flag: 'CHILD' | 'PARENTS' | 'AI'
+    """
     payload = {
         "content": text,
         "mode": mode,
         "summary": emotion,
-        "userNo": user_no,
-        "chatNo": chat_no
+        "userNo": user_no,      # 항상 1 (고정)
+        "chatNo": chat_no,
+        "chatFlag": chat_flag   # ✅ 추가 — 메시지별 역할 스냅샷
     }
-    headers = {"Content-Type": "application/json"}
 
+    headers = {"Content-Type": "application/json"}
     print("📤 전송 payload:", json.dumps(payload, ensure_ascii=False))
 
-    
-    response = requests.post(
-        "http://localhost:3000/messages/send",
-        json=payload,
-        headers=headers
-    )
-    
-    if response.status_code in [200, 201]:
-        print("✅ 메시지 저장 성공!")
-    else:
-        print(f"❌ 메시지 저장 실패: {response.status_code}, {response.text}")
+    try:
+        response = requests.post(
+            "http://localhost:3000/messages/send",
+            json=payload,
+            headers=headers,
+            timeout=5
+        )
+
+        if response.status_code in [200, 201]:
+            print("✅ 메시지 저장 성공!")
+        else:
+            print(f"❌ 메시지 저장 실패: {response.status_code}, {response.text}")
+
+    except Exception as e:
+        print(f"⚠️ 서버 전송 중 오류 발생: {e}")
+
 
 
 #상담챗봇 백연결
@@ -227,6 +312,7 @@ class EmotionReport:
             "mode": "SUMMARY",   # ✅ 구분용
             "content": summary,  # 요약 내용
             "userNo": 2,         # AI 봇으로 설정
+            "chatFlag": "AI", 
         }
 
         try:
@@ -246,6 +332,61 @@ class EmotionReport:
     
     
 # ✅ 음성 보고서 실행 함수
+# def run_emotion_report():
+#     report = EmotionReport()
+#     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+#     audio_dir = os.path.join(BASE_DIR, "audio_inputs")
+
+#     if not os.path.exists(audio_dir):
+#         print(f"❌ 디렉토리 {audio_dir} 가 존재하지 않습니다.")
+#         return
+
+#     audio_files = sorted([f for f in os.listdir(audio_dir) if f.endswith(".wav")],
+#                          key=lambda x: int(os.path.splitext(x)[0]))
+
+#     for filename in audio_files:
+#         audio_path = os.path.join(audio_dir, filename)
+#         print(f"\n🎤 파일 [{filename}] 음성 인식 중...")
+#         user_text = transcribe_audio(audio_path)
+#         print("👶 인식된 텍스트:", user_text)
+#         emotion = report.add_turn(user_text)
+#         print(f"🧠 감정 분석 결과: {emotion}")
+#         time.sleep(1.4) #1초 딜레이
+#         save_message_to_api(user_text, emotion, user_no=1)
+
+#         manual = get_manual_mode(key="global")
+#         if manual:
+#             # 기준시각: 저장 직후 + 200ms (레이스 방지)
+#             since = datetime.now(timezone.utc) + timedelta(milliseconds=200)
+#             last_child_text = user_text
+
+#             parent_msg = wait_for_parent_reply(since, last_child_text)
+#             if parent_msg and parent_msg.get("m_content"):
+#                 speak_text(parent_msg["m_content"])
+#             time.sleep(1.2)
+#             continue
+        
+#         reply = chat_with_gpt(user_text, emotion)
+#         print(f"🤖 GPT 응답: {reply}")
+#         speak_text(reply)
+#         time.sleep(1) #1초 딜레이
+#         save_message_to_api(reply, "neutral", user_no=2)
+
+#     print("\n📊 전체 감정 요약:")
+#     for emo, perc in report.get_emotion_summary().items():
+#         print(f"- {emo}: {perc}%")
+#     print("\n🔑 주요 키워드:")
+#     for i, kw in enumerate(report.get_top_keywords(), 1):
+#         print(f"{i}. {kw}")
+#     print("\n👨‍👩‍👧 육아 솔루션 제안:")
+#     print(report.generate_parenting_tip())
+
+#         # ✅ 마지막 대화까지 처리 후 전체 요약 저장 한 번 더 실행
+#     print("\n💾 전체 대화 요약 저장 중...")
+#     report.save_summary_to_db(chat_no=1)
+
+#     report = EmotionReport()
+# ✅ 음성 보고서 실행 함수 (chat_flag 기반으로 수정)
 def run_emotion_report():
     report = EmotionReport()
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -255,62 +396,70 @@ def run_emotion_report():
         print(f"❌ 디렉토리 {audio_dir} 가 존재하지 않습니다.")
         return
 
-    audio_files = sorted([f for f in os.listdir(audio_dir) if f.endswith(".wav")],
-                         key=lambda x: int(os.path.splitext(x)[0]))
+    audio_files = sorted(
+        [f for f in os.listdir(audio_dir) if f.endswith(".wav")],
+        key=lambda x: int(os.path.splitext(x)[0])
+    )
 
     for filename in audio_files:
         audio_path = os.path.join(audio_dir, filename)
         print(f"\n🎤 파일 [{filename}] 음성 인식 중...")
         user_text = transcribe_audio(audio_path)
         print("👶 인식된 텍스트:", user_text)
+
         emotion = report.add_turn(user_text)
         print(f"🧠 감정 분석 결과: {emotion}")
-        time.sleep(1.4) #1초 딜레이
-        save_message_to_api(user_text, emotion, user_no=1)
 
-                # 👇👇👇 추가: 모드 확인
-        # manual = get_manual_mode(key="global")
-        # if manual:
-        #     print("⏸️  수동모드: GPT 응답/음성 출력 생략, 대화는 저장만 합니다.")
-        #     speak_text(user_text) 
-        #     time.sleep(1.2) #1초 딜레이
-        #     save_message_to_api(user_text, emotion, user_no=1)
-        #     # 자동모드가 아닐 땐 reply 저장/발화 X
-        #     continue
-        # # 👆👆👆
+        time.sleep(1.4)  # 1초 딜레이
 
+        # ✅ 아이 메시지 저장 (항상 chat_flag='CHILD')
+        save_message_to_api(user_text, emotion, chat_flag="CHILD")
+
+        # ✅ 수동모드(부모가 직접 답함) 여부 확인
         manual = get_manual_mode(key="global")
+
         if manual:
-            # 기준시각: 저장 직후 + 200ms (레이스 방지)
+            print("⏸️ 수동모드: 부모 발화를 대기 중...")
             since = datetime.now(timezone.utc) + timedelta(milliseconds=200)
             last_child_text = user_text
 
             parent_msg = wait_for_parent_reply(since, last_child_text)
             if parent_msg and parent_msg.get("m_content"):
                 speak_text(parent_msg["m_content"])
+
+                # ✅ 부모 메시지도 저장 (chat_flag='PARENTS')
+                save_message_to_api(parent_msg["m_content"], "neutral", chat_flag="PARENTS")
+
             time.sleep(1.2)
-            continue
-        
+            continue  # 자동모드 GPT 응답은 생략하고 다음 턴으로
+
+        # ✅ 자동모드: AI 응답
         reply = chat_with_gpt(user_text, emotion)
         print(f"🤖 GPT 응답: {reply}")
         speak_text(reply)
-        time.sleep(1) #1초 딜레이
-        save_message_to_api(reply, "neutral", user_no=2)
+        time.sleep(1)
 
+        # ✅ AI 응답 저장 (chat_flag='AI')
+        save_message_to_api(reply, "neutral", chat_flag="AI")
+
+    # ✅ 전체 요약 및 솔루션 출력
     print("\n📊 전체 감정 요약:")
     for emo, perc in report.get_emotion_summary().items():
         print(f"- {emo}: {perc}%")
+
     print("\n🔑 주요 키워드:")
     for i, kw in enumerate(report.get_top_keywords(), 1):
         print(f"{i}. {kw}")
+
     print("\n👨‍👩‍👧 육아 솔루션 제안:")
     print(report.generate_parenting_tip())
 
-        # ✅ 마지막 대화까지 처리 후 전체 요약 저장 한 번 더 실행
+    # ✅ 대화 요약 저장
     print("\n💾 전체 대화 요약 저장 중...")
     report.save_summary_to_db(chat_no=1)
 
     report = EmotionReport()
+
 
 
 #영상 끌어오기

@@ -1,10 +1,11 @@
 export class MessageDTO {
-  constructor({ id, content, mode, summary, userNo, chatNo }) {
+  constructor({ id, content, mode, summary, userNo, chatNo, chatFlag }) {
     this.id = id;
     this.m_content = content;
     this.m_mode = mode;
     this.m_summary = summary || null;
     this.user_no = userNo;
     this.chat_no = chatNo;
+    this.chat_flag = chatFlag || null;
   }
 }

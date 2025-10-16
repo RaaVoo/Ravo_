@@ -1,38 +1,101 @@
 import { pool } from '../config/db.js';
 
 //메시지 전송
+// export const saveMessage = async (messageDTO) => {
+//   const query = `
+//     INSERT INTO chat (
+//       createdDate,
+//       modifiedDate,
+//       m_content,
+//       m_mode,
+//       m_read,
+//       m_del,
+//       m_summary,
+//       user_no
+//     ) VALUES (NOW(), NOW(), ?, ?, 'N', 'N', ?, ?)
+//   `;
+
+//   const values = [
+//     messageDTO.m_content,
+//     messageDTO.m_mode,
+//     messageDTO.m_summary,
+//     messageDTO.user_no
+//   ];
+
+//   const [result] = await pool.execute(query, values);
+
+//   return {
+//     id: result.insertId,
+//     ...messageDTO,
+//     m_read: 'N',
+//     m_del: 'N',
+//     createdDate: new Date()
+//   };
+// };
+// 메시지 전송 (스냅샷 저장)
+// 저장 시 flag 스냅샷으로 기록 (조인/서브쿼리 X)
 export const saveMessage = async (messageDTO) => {
   const query = `
     INSERT INTO chat (
-      createdDate,
-      modifiedDate,
-      m_content,
-      m_mode,
-      m_read,
-      m_del,
+      createdDate, modifiedDate,
+      m_content, m_mode,
+      m_read, m_del,
       m_summary,
-      user_no
-    ) VALUES (NOW(), NOW(), ?, ?, 'N', 'N', ?, ?)
+      user_no,
+      chat_flag
+    ) VALUES (
+      NOW(), NOW(),
+      ?, ?, 'N', 'N',
+      ?,
+      ?,
+      ?
+    )
   `;
 
   const values = [
     messageDTO.m_content,
     messageDTO.m_mode,
     messageDTO.m_summary,
-    messageDTO.user_no
+    messageDTO.user_no,
+    messageDTO.chat_flag,
   ];
 
-  const [result] = await pool.execute(query, values);
+  // (디버그) 실제 바인딩되는 값 찍기
+  console.log("[saveMessage] values:", values);
 
+  const [result] = await pool.execute(query, values);
   return {
     id: result.insertId,
     ...messageDTO,
     m_read: 'N',
     m_del: 'N',
-    createdDate: new Date()
+    createdDate: new Date(),
+    chat_flag: messageDTO.chat_flag,
   };
 };
 
+
+
+
+
+//메시지 조회
+// export const findAllMessages = async () => {
+//   const query = `
+//     SELECT 
+//       createdDate,
+//       m_content,
+//       m_mode,
+//       m_read,
+//       m_del,
+//       m_summary,
+//       user_no
+//     FROM chat
+//     WHERE m_del = 'N'
+//   `;
+//   const [rows] = await pool.execute(query);
+//   return rows;
+// };
+// 메시지 조회
 export const findAllMessages = async () => {
   const query = `
     SELECT 
@@ -42,13 +105,16 @@ export const findAllMessages = async () => {
       m_read,
       m_del,
       m_summary,
-      user_no
+      user_no,
+      chat_flag AS chatFlag   -- 스냅샷 사용
     FROM chat
     WHERE m_del = 'N'
+    ORDER BY createdDate DESC
   `;
   const [rows] = await pool.execute(query);
   return rows;
 };
+
 
   
 
