@@ -68,6 +68,7 @@ def fetch_parent_reply_since(since, last_child_text):
 
 
 
+
 # 영상 전용 서버 설정
 VIDEO_SERVER_BASE = "http://localhost:3000"   # 백엔드 주소/포트
 VIDEO_API_PREFIX  = "/api"                    # 백엔드가 /api 프리픽스 쓰면 유지, 아니면 "" 로
@@ -346,6 +347,61 @@ class EmotionReport:
     
     
 # ✅ 음성 보고서 실행 함수
+# def run_emotion_report():
+#     report = EmotionReport()
+#     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+#     audio_dir = os.path.join(BASE_DIR, "audio_inputs")
+
+#     if not os.path.exists(audio_dir):
+#         print(f"❌ 디렉토리 {audio_dir} 가 존재하지 않습니다.")
+#         return
+
+#     audio_files = sorted([f for f in os.listdir(audio_dir) if f.endswith(".wav")],
+#                          key=lambda x: int(os.path.splitext(x)[0]))
+
+#     for filename in audio_files:
+#         audio_path = os.path.join(audio_dir, filename)
+#         print(f"\n🎤 파일 [{filename}] 음성 인식 중...")
+#         user_text = transcribe_audio(audio_path)
+#         print("👶 인식된 텍스트:", user_text)
+#         emotion = report.add_turn(user_text)
+#         print(f"🧠 감정 분석 결과: {emotion}")
+#         time.sleep(1.4) #1초 딜레이
+#         save_message_to_api(user_text, emotion, user_no=1)
+
+#         manual = get_manual_mode(key="global")
+#         if manual:
+#             # 기준시각: 저장 직후 + 200ms (레이스 방지)
+#             since = datetime.now(timezone.utc) + timedelta(milliseconds=200)
+#             last_child_text = user_text
+
+#             parent_msg = wait_for_parent_reply(since, last_child_text)
+#             if parent_msg and parent_msg.get("m_content"):
+#                 speak_text(parent_msg["m_content"])
+#             time.sleep(1.2)
+#             continue
+        
+#         reply = chat_with_gpt(user_text, emotion)
+#         print(f"🤖 GPT 응답: {reply}")
+#         speak_text(reply)
+#         time.sleep(1) #1초 딜레이
+#         save_message_to_api(reply, "neutral", user_no=2)
+
+#     print("\n📊 전체 감정 요약:")
+#     for emo, perc in report.get_emotion_summary().items():
+#         print(f"- {emo}: {perc}%")
+#     print("\n🔑 주요 키워드:")
+#     for i, kw in enumerate(report.get_top_keywords(), 1):
+#         print(f"{i}. {kw}")
+#     print("\n👨‍👩‍👧 육아 솔루션 제안:")
+#     print(report.generate_parenting_tip())
+
+#         # ✅ 마지막 대화까지 처리 후 전체 요약 저장 한 번 더 실행
+#     print("\n💾 전체 대화 요약 저장 중...")
+#     report.save_summary_to_db(chat_no=1)
+
+#     report = EmotionReport()
+# ✅ 음성 보고서 실행 함수 (chat_flag 기반으로 수정)
 def run_emotion_report():
     report = EmotionReport()
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
