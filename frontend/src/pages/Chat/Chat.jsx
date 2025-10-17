@@ -15,27 +15,51 @@ const ChatBot = () => {
 
 const baseURL = "";
 
-  // 🧩 (1) 페이지 처음 로드 시, 서버에서 메시지 목록 가져오기
-// Chat.jsx (useEffect 안)
+// 🧩 (1) 페이지 처음 로드 시, 서버에서 메시지 목록 가져오기
 useEffect(() => {
   fetch(`/chatbot/messages`)
     .then((res) => res.json())
     .then((data) => {
-      if (data?.success && Array.isArray(data.data)) {
-        const loadedMessages = data.data.map((msg) => ({
-          text: msg.m_content,
-          time: new Date(msg.createdDate).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-          sender: msg.user_no === 2 ? "bot" : "user", // ✅ 이 한 줄만 포인트!
-        }));
+      console.log("[/chatbot/messages] resp:", data); // 🔎 구조 확인
 
-        setMessages((prev) => [prev[0], ...loadedMessages]);
-      }
+      // 1) 배열 추출: data.data | data.rows | data.data.rows 전부 대응
+      const list =
+        Array.isArray(data?.data) ? data.data :
+        Array.isArray(data?.rows) ? data.rows :
+        Array.isArray(data?.data?.rows) ? data.data.rows : [];
+
+      if (!Array.isArray(list)) return;
+
+      // 2) 필드명 혼용 방어 (snake/camel)
+      const loadedMessages = list.map((msg) => {
+        const flag = msg.chat_flag ?? msg.chatFlag;          // PARENTS / AI
+        const text = msg.m_content ?? msg.content ?? "";      // 본문
+        const ts   = msg.createdDate ?? msg.created_at ?? msg.created_at_ms;
+
+        const sender = flag === "PARENTS" ? "user" : "bot";   // 오른쪽/왼쪽
+
+        return {
+          text,
+          time: ts ? new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "",
+          sender,
+        };
+      });
+
+      // 3) 정렬(선택): createdDate 오름차순
+      loadedMessages.sort((a,b)=> (a.time > b.time ? 1 : -1));
+
+      // 4) 상태 갱신: 초기 안내 메시지 유지하고 나머지 교체
+      setMessages((prev) => {
+        if (prev?.length) {
+          return [prev[0], ...loadedMessages];
+        }
+        return loadedMessages;
+      });
     })
     .catch((err) => console.error("메시지 불러오기 실패:", err));
 }, [baseURL]);
+
+
 
 
 
@@ -51,10 +75,11 @@ useEffect(() => {
     try {
       const body = {
         content: input,
-        mode: 'text',
+        mode: 'CONSULT',
         summary: '',
         userNo: 1,
         chatNo: 1, // 지금은 고정값, 나중에 세션 구분 추가 가능
+        chat_flag: 'PARENTS',
       };
 
       const res = await fetch(`/chatbot/send`, {

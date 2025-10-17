@@ -311,7 +311,8 @@ Content-Type: application/json
   "content": "상담 챗봇, 사용 방법 알려줘",
   "mode": "CONSULT",
   "summary": "neutral",
-  "userNo": 1
+  "userNo": 1,
+  "chatFlag": "AI"
 }
 
 ### 2. 전체 상담 메시지 조회

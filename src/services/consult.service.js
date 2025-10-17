@@ -7,13 +7,14 @@ import {
 import { MessageDTO } from '../dtos/message.dto.js';
 
 // 상담챗봇: 메시지 저장 (chat_no 없이)
-export const sendChatbotMessage = async ({ content, userNo, mode = 'CONSULT', summary = null }) => {
+export const sendChatbotMessage = async ({ content, userNo, mode = 'CONSULT', summary = null, chat_flag }) => {
   const dto = new MessageDTO({
     content,
     mode,
     summary,
     userNo,
     // chatNo 없음
+    chatFlag: chat_flag,
   });
   return await saveMessage(dto);
 };
