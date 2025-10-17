@@ -8,32 +8,73 @@ import { deleteMessagesByDate } from '../services/message.service.js'; //특정 
 import { searchChatMessages } from '../services/message.service.js'; //대화 내용 검색
 
 //메시지 전송
+// export const sendMessageController = async (req, res) => {
+//   try {
+//     const { content, mode, summary, userNo, chatNo } = req.body;
+
+//     // 누락된 필드 체크
+//     const missingFields = [];
+//     if (!content) missingFields.push("content");
+//     if (!mode) missingFields.push("mode");
+//     if (!userNo) missingFields.push("userNo");
+//     if (!chatNo) missingFields.push("chatNo");
+
+//     if (missingFields.length > 0) {
+//       return res.status(400).json({
+//         success: false,
+//         message: `필수 항목 누락: ${missingFields.join(", ")}`
+//       });
+//     }
+
+//     const result = await sendMessage({ content, mode, summary, userNo, chatNo });
+//     res.status(201).json({ success: true, data: result });
+
+//   } catch (error) {
+//     console.error('메시지 전송 오류:', error);
+//     res.status(500).json({ success: false, message: '서버 내부 오류입니다.' });
+//   }
+// };
 export const sendMessageController = async (req, res) => {
   try {
-    const { content, mode, summary, userNo, chatNo } = req.body;
+    let { content, mode, summary, userNo, chatNo, chatFlag } = req.body;
 
-    // 누락된 필드 체크
-    const missingFields = [];
-    if (!content) missingFields.push("content");
-    if (!mode) missingFields.push("mode");
-    if (!userNo) missingFields.push("userNo");
-    if (!chatNo) missingFields.push("chatNo");
-
-    if (missingFields.length > 0) {
-      return res.status(400).json({
-        success: false,
-        message: `필수 항목 누락: ${missingFields.join(", ")}`
-      });
+    const missing = [];
+    if (!content) missing.push("content");
+    if (!mode) missing.push("mode");
+    if (!userNo) missing.push("userNo");
+    if (!chatNo) missing.push("chatNo");
+    if (!chatFlag) missing.push("chatFlag");
+    if (missing.length) {
+      return res.status(400).json({ success:false, message:`필수 항목 누락: ${missing.join(", ")}` });
     }
 
-    const result = await sendMessage({ content, mode, summary, userNo, chatNo });
-    res.status(201).json({ success: true, data: result });
+    // ✅ 대소문자/공백 보정 + 허용셋 검증
+    chatFlag = String(chatFlag).trim().toUpperCase();
+    const ALLOWED = new Set(["AI","PARENTS","CHILD"]);
+    if (!ALLOWED.has(chatFlag)) {
+      return res.status(400).json({ success:false, message:`chatFlag 값이 유효하지 않습니다: ${chatFlag}` });
+    }
 
-  } catch (error) {
-    console.error('메시지 전송 오류:', error);
-    res.status(500).json({ success: false, message: '서버 내부 오류입니다.' });
+    // (디버그) 실제 들어온 값 로그
+    console.log("[sendMessage] flag:", chatFlag, "body:", req.body);
+
+    const dto = {
+      m_content: content,
+      m_mode: mode,
+      m_summary: summary || null,
+      user_no: userNo,
+      chat_no: chatNo,
+      chat_flag: chatFlag,
+    };
+
+    const result = await sendMessage({ content, mode, summary, userNo, chatNo, chatFlag });
+    res.status(201).json({ success:true, data: result });
+  } catch (e) {
+    console.error("메시지 전송 오류:", e);
+    res.status(500).json({ success:false, message:"서버 내부 오류입니다." });
   }
 };
+
 
 
 //메시지 조회

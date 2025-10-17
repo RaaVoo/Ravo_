@@ -8,7 +8,7 @@ import {
 // POST /chatbot/send  (저장만 수행; 봇 응답은 파이썬이 저장)
 export const chatbotSendController = async (req, res) => {
   try {
-    const { content, userNo, mode } = req.body || {};
+    const { content, userNo, mode, chat_flag } = req.body || {};
     if (!content || !userNo) {
       return res.status(400).json({ success: false, message: 'content, userNo는 필수입니다.' });
     }
@@ -17,7 +17,8 @@ export const chatbotSendController = async (req, res) => {
       content,
       userNo,
       mode: mode || 'CONSULT',
-      summary: null
+      summary: null,
+      chat_flag: chat_flag
     });
     return res.status(201).json({ success: true, data: saved });
   } catch (e) {

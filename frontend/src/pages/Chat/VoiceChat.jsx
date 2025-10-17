@@ -9,7 +9,7 @@ const ChatBot = () => {
     {
       text: '아이와 대화를 시작해 보세요.',
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      sender: 'user',
+      sender: 'bot',
     },
   ]);
 
@@ -21,17 +21,34 @@ const ChatBot = () => {
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [summaryError, setSummaryError] = useState("");
   const [summaryLoadedOnce, setSummaryLoadedOnce] = useState(false);
-  const loadSummary = async () => {
+const loadSummary = async () => {
   setSummaryLoading(true);
   setSummaryError("");
   try {
-    const res = await fetch(`/messages/summary`);
+    // 1) 캐시 무효화
+    const res = await fetch(`/messages/summary?t=${Date.now()}`, {
+      cache: "no-store",
+      headers: {
+        "Pragma": "no-cache",
+        "Cache-Control": "no-store",
+      },
+    });
     const data = await res.json();
     if (!data?.success) throw new Error(data?.message || "요약 불러오기 실패");
 
-    const list = Array.isArray(data.data) ? data.data : [];
+    // 2) 배열 안전 추출
+    const list = Array.isArray(data?.data) ? data.data : [];
+
+    // 3) createdDate 기준으로 오름차순 정렬 (가장 마지막이 최신)
+    //    서버가 DESC로 주는 경우도 대비해서 항상 정렬
+    list.sort((a, b) => new Date(a.createdDate) - new Date(b.createdDate));
+
+    // 4) 최신 1개 선택 + 필드 혼용 방어 + 따옴표 제거
     const last = list[list.length - 1];
-    setSummaryText(last?.m_content || "아직 저장된 요약이 없어요.");
+    const raw = last?.m_content ?? last?.content ?? "";
+    const unquoted = typeof raw === "string" ? raw.replace(/^"(.*)"$/, "$1") : "";
+
+    setSummaryText(unquoted || "아직 저장된 요약이 없어요.");
     setSummaryLoadedOnce(true);
   } catch (e) {
     setSummaryError(e.message || "네트워크 오류");
@@ -39,6 +56,7 @@ const ChatBot = () => {
     setSummaryLoading(false);
   }
 };
+
 
 // 요약 토글 열릴 때 한 번만 로드
 useEffect(() => {
@@ -50,16 +68,18 @@ useEffect(() => {
 
 const baseURL = "";
 
-  // 🧩 (1) 페이지 처음 로드 시, 서버에서 메시지 목록 가져오기
-// Chat.jsx (useEffect 안)
+// 🧩 (1) 페이지 처음 로드 시, 서버에서 메시지 목록 가져오기
 useEffect(() => {
   fetch(`/messages`)
     .then((res) => res.json())
     .then((data) => {
       if (data?.success && Array.isArray(data.data)) {
         const loadedMessages = data.data.map((msg) => {
-          let sender = "bot"; // 기본은 왼쪽(아이)
-          if (msg.user_no === 2 || msg.user_no === 3) sender = "user"; // AI 또는 부모는 오른쪽
+          // ✅ chat_flag 기준으로 발화자 결정
+          let sender = "bot"; // 기본: 왼쪽 (아이)
+          if (msg.chatFlag === "AI" || msg.chatFlag === "PARENTS") {
+            sender = "user"; // 오른쪽 (AI 또는 부모)
+          }
 
           return {
             text: msg.m_content,
@@ -71,10 +91,14 @@ useEffect(() => {
           };
         });
 
+        loadedMessages.sort((a,b)=> (a.time > b.time ? 1 : -1));
+
+        // ✅ 기존 메시지 배열에 합치기
         setMessages((prev) => [prev[0], ...loadedMessages]);
       }
     })
     .catch((err) => console.error("메시지 불러오기 실패:", err));
+
 
     // ✅ (2) 수동모드 상태 불러오기
   fetch('/chatbot/mode?key=global')
@@ -105,59 +129,13 @@ const handleToggleManual = async () => {
 
 
   // 🧩 (2) 메시지 전송 함수 — /messages/send 사용
-  // const handleSend = async () => {
-  //   if (input.trim() === '') return;
-  //   setLoading(true);
+const userNo = Number(localStorage.getItem('userNo') || 1); // 항상 1 (아이 계정)
 
-  //   const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  //   const userMessage = { text: input, time: now, sender: 'user' };
-  //   setMessages((prev) => [...prev, userMessage]);
-
-  //   try {
-  //     const body = {
-  //       content: input,
-  //       mode: 'text',
-  //       summary: '',
-  //       userNo: 1,
-  //       chatNo: 1, // 지금은 고정값, 나중에 세션 구분 추가 가능
-  //     };
-
-  //     const res = await fetch(`/messages/send`, {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify(body),
-  //     });
-
-  //     const data = await res.json();
-
-  //     if (data?.success) {
-  //       const botResponse = {
-  //         text: '문의가 접수되었어요. 담당자가 확인 후 답변드릴게요! 😊',
-  //         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-  //         sender: 'bot',
-  //       };
-  //       setMessages((prev) => [...prev, botResponse]);
-  //     } else {
-  //       throw new Error(data.message || '서버 오류');
-  //     }
-  //   } catch (err) {
-  //     console.error('메시지 전송 실패:', err);
-  //     setMessages((prev) => [
-  //       ...prev,
-  //       { text: '전송 실패 ㅠㅠ 잠시 후 다시 시도해주세요.', time: now, sender: 'bot' },
-  //     ]);
-  //   } finally {
-  //     setInput('');
-  //     setLoading(false);
-  //   }
-  // };
-  // VoiceChat.jsx
-const userNo = Number(localStorage.getItem('userNo') || 0); // 로그인한 부모의 user_no
-
+// 부모가 수동모드에서 메시지 보낼 때
 const handleSend = async () => {
   if (!input.trim()) return;
 
-  // 화면에 먼저 반영
+  // 화면에 먼저 반영 (오른쪽 말풍선)
   const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   setMessages(prev => [...prev, { text: input, time: now, sender: 'user' }]);
 
@@ -167,10 +145,11 @@ const handleSend = async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         content: input,
-        mode: 'VOICE',        // ✅ 음성 채팅이므로 VOICE로 고정
-        summary: '',          // 필요시 'neutral'
-        userNo: 3,               // ✅ 부모의 user_no
-        chatNo: 1
+        mode: 'VOICE',        // 음성 메시지
+        summary: '',          // 감정요약 없음
+        userNo: userNo,       // 항상 1로 고정
+        chatNo: 1,
+        chatFlag: 'PARENTS',  // ✅ 수동모드에서는 부모로 저장
       }),
     });
 
@@ -179,15 +158,14 @@ const handleSend = async () => {
       console.error('부모 메시지 저장 실패:', res.status, text);
     }
 
-    // 수동모드라면: “부모가 답했다” 신호 → (파이썬 폴링 방식이면) 별도 처리 없음
-    // 만약 listen 플래그 방식을 썼다면 여기서 '/chatbot/listen {allow:true}' 호출
-
+    // 👇 파이썬에서 수동모드로 감지 후 아이에게 읽어주는 부분은 그대로 유지
   } catch (e) {
     console.error('부모 메시지 전송 실패:', e);
   } finally {
     setInput('');
   }
 };
+
 
 
   // 엔터키로도 전송 가능
