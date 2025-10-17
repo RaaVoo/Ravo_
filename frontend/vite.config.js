@@ -13,12 +13,12 @@ export default defineConfig({
   server: {
     proxy: {
       "/messages": {
-        target: "http://localhost:3000",
+        target: "http://localhost:8080",
         changeOrigin: true,
         secure: false,
       },
        "/chatbot": {
-        target: "http://localhost:3000", // ✅ 백엔드 주소 동일
+        target: "http://localhost:8080", // ✅ 백엔드 주소 동일
         changeOrigin: true,
         secure: false,
       },

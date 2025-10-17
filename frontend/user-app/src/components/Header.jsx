@@ -112,7 +112,7 @@ const Header = ({ isLoggedIn: initialLoggedIn = false, userName: initialUserName
                     </div>
                   </div>
                 </div>
-                <span onClick={() => handleNavigate('/chat')} className={isActive('/chat') ? 'active' : ''}>대화하기</span>
+                <span onClick={() => handleNavigate('/messages')} className={isActive('/messages') ? 'active' : ''}>대화하기</span>
                 <span onClick={() => handleNavigate('/homecam')} className={isActive('/homecam') ? 'active' : ''}>홈캠</span>
               </>
             ) : (
@@ -170,7 +170,7 @@ const Header = ({ isLoggedIn: initialLoggedIn = false, userName: initialUserName
             <>
               <div className="slide-item" onClick={() => handleNavigate('/report/voice')}>음성 보고서</div>
               <div className="slide-item" onClick={() => handleNavigate('/report/video')}>영상 보고서</div>
-              <div className="slide-item" onClick={() => handleNavigate('/chat')}>대화하기</div>
+              <div className="slide-item" onClick={() => handleNavigate('/messages')}>대화하기</div>
               <div className="slide-item" onClick={() => handleNavigate('/homecam')}>홈캠</div>
               <hr />
               <div className="slide-item" onClick={() => handleNavigate('/mypage')}>마이페이지</div>

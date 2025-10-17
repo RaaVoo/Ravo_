@@ -32,6 +32,10 @@ export default function HomecamDetail() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
+  // 상단에 공통 헬퍼 하나 만들어두면 깜빡임 방지
+  const authedFetch = (url, opts = {}) =>
+    fetch(url, { credentials: 'include', ...opts });
+
   // UI 확인용 목업
   const mockItem = useMemo(
     () => ({
@@ -55,11 +59,18 @@ export default function HomecamDetail() {
       setLoading(true);
       setErrorMsg("");
 
-      const res = await fetch(`${API_BASE}/homecam/camlist/${record_no}`);
+      //const res = await fetch(`${API_BASE}/homecam/camlist/${record_no}`);
+      const res = await authedFetch(`${API_BASE}/homecam/camlist/${record_no}`);    // 잠깐 추가
       if (!res.ok) {
-        setErrorMsg("서버에서 상세 데이터를 찾지 못했어요.");
-        setItem(null);
-        return;
+        // 여기 잠깐 추가
+        if (res.status === 401) {
+          setErrorMsg("로그인이 필요합니다. 다시 로그인해 주세요.");
+          setItem(null);
+          return;
+        } // 여기까지
+        // setErrorMsg("서버에서 상세 데이터를 찾지 못했어요.");
+        // setItem(null);
+        // return;
       }
       const data = await res.json();
 

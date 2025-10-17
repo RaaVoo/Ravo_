@@ -8,12 +8,46 @@
 import * as repo from '../repositories/HomecamRepository.js';
 import RecordWorker from './RecordWorker.js';
 
+import { getPresignedUrl } from '../utils/s3-presign.js';   // 잠깐 추가 (251017) - 잘 작동 하는지 관련 문제
+
 // HLS 기본 주소 및 경로
 const HLS_BASE = (process.env.HLS_BASE || 'http://127.0.0.1:8888').replace(/\/+$/, '');
 const CAM_PATH = process.env.CAM_PATH || 'cam';
 
 // 폴백 캡처 길이 (초)
 const FALLBACK_SECONDS = Number(process.env.FALLBACK_SECONDS || 8);
+
+// 여기 잠깐 추가 (251017 새벽) - 잘 작동 하는지 관련 문제
+// URL 또는 key를 받아 S3 key만 뽑아냄
+function extractKey(maybeUrlOrKey) {
+  if (!maybeUrlOrKey) return null;
+  try {
+    const u = new URL(maybeUrlOrKey);
+    return u.pathname.replace(/^\/+/, ''); // '/homecam/...' -> 'homecam/...'
+  } catch {
+    return maybeUrlOrKey; // 이미 key 형태
+  }
+}
+
+// 1개 레코드에 대해 cam_url / snapshot_url을 프리사인으로 치환
+async function signRow(row, ttlSec = 3600) {
+  if (!row) return row;
+  const camKey  = extractKey(row.cam_url);
+  const snapKey = extractKey(row.snapshot_url);
+
+  row.cam_url      = camKey  ? await getPresignedUrl(camKey,  ttlSec) : null;
+  row.snapshot_url = snapKey ? await getPresignedUrl(snapKey, ttlSec) : null;
+  return row;
+}
+
+// 상세 조회 + 프리사인 URL로 치환해서 반환
+export async function getDetailSigned(record_no, ttlSec = 3600) {
+  const [rows] = await repo.getHomecamDetail(record_no);
+  const row = rows?.[0];
+  if (!row) return null;
+  return signRow(row, ttlSec);
+}
+// 여기까지 잠깐 추가 (251017 새벽) - 잘 작동 하는지 관련 문제
 
 // JS Date → MySQL DATETIME
 function toMySQLDateTime(val) {
@@ -301,4 +335,5 @@ export default {
   getDetail,
   updateEndMeta,
   endHomecam,
+  getDetailSigned     // 이거 잠깐 추가함
 };

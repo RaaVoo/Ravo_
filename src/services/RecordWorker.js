@@ -11,7 +11,8 @@ import { promisify } from 'node:util';
 import path from 'node:path';
 import fs from 'node:fs';
 
-
+// s3 업로드 관련 코드 추가
+import { uploadFile } from '../utils/s3.js';
 
 const execFileP = promisify(execFile);
 
@@ -19,6 +20,7 @@ const FFMPEG      = process.env.FFMPEG_PATH   || 'ffmpeg';
 const FFPROBE     = process.env.FFPROBE_PATH  || 'ffprobe';
 const MEDIA_TMP   = process.env.MEDIA_TMP     || path.join(process.cwd(), 'media-tmp');
 const PUBLIC_BASE = (process.env.PUBLIC_BASE  || 'http://localhost:8080').replace(/\/+$/, '');
+const HAS_S3     = !!(process.env.AWS_REGION && process.env.S3_BUCKET);   // s3 업로드 관련 코드 추가
 
 fs.mkdirSync(MEDIA_TMP, { recursive: true });
 
@@ -127,10 +129,38 @@ export async function stopAndUpload(record_no) {
   // 세션 정리
   sessions.delete(key);
 
+  /* 여기 잠깐 주석
   const url = `${PUBLIC_BASE}/media/${path.basename(outFile)}`;
   const thumbUrl = fs.existsSync(thumbFile) ? `${PUBLIC_BASE}/media/${path.basename(thumbFile)}` : null;
 
   return { s3Url: url, s3Thumb: thumbUrl, durationSec };
+  여기까지 */
+
+  // 아래 코드 잠깐 추가 (251017)
+  let videoUrl, thumbUrl;
+  if (HAS_S3) {
+    const baseName = path.basename(outFile);         // 예: 20251017_cam_37.mp4
+    const keyVid   = `videos/${baseName}`;
+    const keyTh    = thumbFile && fs.existsSync(thumbFile)
+                      ? `thumbs/${path.basename(thumbFile)}`
+                      : null;
+    //const { url: vUrl } = await uploadFile(outFile, keyVid, 'video/mp4');
+    const { url: vUrl } = await uploadFile(outFile, `homecam/${keyVid}`, 'video/mp4'); 
+    videoUrl = vUrl;
+    if (keyTh) {
+      const { url: tUrl } = await uploadFile(thumbFile, keyTh, 'image/jpeg');
+      thumbUrl = tUrl;
+    }
+    // (선택) 임시파일 정리
+    try { fs.unlinkSync(outFile); } catch {}
+    try { if (thumbFile) fs.unlinkSync(thumbFile); } catch {}
+  } else {
+    // S3 미설정일 때는 기존 로컬 경로
+    videoUrl = `${PUBLIC_BASE}/media/${path.basename(outFile)}`;
+    thumbUrl = fs.existsSync(thumbFile) ? `${PUBLIC_BASE}/media/${path.basename(thumbFile)}` : null;
+ }
+ return { s3Url: videoUrl, s3Thumb: thumbUrl, durationSec, s3Key: `homecam/${keyVid}` };
+ // 여기까지 잠깐 추가 (251017)
 }
 
 /** 폴백: 지금 HLS에서 N초 캡처 → 실제 길이(ffprobe) 측정 */
@@ -146,6 +176,7 @@ export async function grabNow(sourceUrl, seconds = 8, nameHint = 'grab') {
   const thumbFile = path.join(MEDIA_TMP, thumbName);
   try { await makeThumbnail(outFile, thumbFile); } catch {}
 
+  /*
   const url = `${PUBLIC_BASE}/media/${path.basename(outFile)}`;
   const thumbUrl = fs.existsSync(thumbFile) ? `${PUBLIC_BASE}/media/${path.basename(thumbFile)}` : null;
 
@@ -153,6 +184,31 @@ export async function grabNow(sourceUrl, seconds = 8, nameHint = 'grab') {
   const durationSec = await probeDurationSec(outFile);
 
   return { s3Url: url, s3Thumb: thumbUrl, durationSec };
+  */
+
+  // 아래 코드 잠깐 추가
+  let videoUrl, thumbUrl;
+  const durationSec = await probeDurationSec(outFile);
+  if (HAS_S3) {
+    const baseName = path.basename(outFile);
+    const keyVid   = `videos/${baseName}`;
+    const keyTh    = thumbFile && fs.existsSync(thumbFile)
+                        ? `thumbs/${path.basename(thumbFile)}`
+                        : null;
+    const { url: vUrl } = await uploadFile(outFile, keyVid, 'video/mp4');
+    videoUrl = vUrl;
+    if (keyTh) {
+      const { url: tUrl } = await uploadFile(thumbFile, keyTh, 'image/jpeg');
+      thumbUrl = tUrl;
+    }
+    try { fs.unlinkSync(outFile); } catch {}
+    try { if (thumbFile) fs.unlinkSync(thumbFile); } catch {}
+  } else {
+    videoUrl = `${PUBLIC_BASE}/media/${path.basename(outFile)}`;
+    thumbUrl = fs.existsSync(thumbFile) ? `${PUBLIC_BASE}/media/${path.basename(thumbFile)}` : null;
+  }
+  return { s3Url: videoUrl, s3Thumb: thumbUrl, durationSec };
+  // 여기까지
 }
 
 // 🔎 디버그: 현재 살아있는 ffmpeg 세션 목록 반환

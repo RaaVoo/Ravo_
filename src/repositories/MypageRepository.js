@@ -3,7 +3,7 @@ import { pool } from '../config/db.js';
 
 // user_no로 사용자 조회
 export const getUserById = async (user_no) => {
-  const sql = 'SELECT user_id, user_pw, u_name, u_phone, u_email, u_gender FROM User WHERE user_no = ? AND u_del = FALSE';
+  const sql = 'SELECT user_id, user_pw, u_name, u_phone, u_email, u_gender FROM user WHERE user_no = ? AND u_del = FALSE';
   //const sql = 'SELECT user_id, user_pw, u_name, u_phone, u_email, u_gender FROM Users WHERE user_no = ? AND u_del = FALSE';
   const [rows] = await pool.execute(sql, [user_no]);
   return rows[0];
@@ -12,7 +12,7 @@ export const getUserById = async (user_no) => {
 // 회원정보 업데이트(수정)
 export const updateUser = async (user_no, data) => {
   const sql = `
-    UPDATE User SET 
+    UPDATE user SET 
       u_name = ?, 
       u_phone = ?, 
       u_email = ?, 
@@ -26,7 +26,7 @@ export const updateUser = async (user_no, data) => {
 
 // email 중복 검사 (선택적)
 export const findUserByEmail = async (u_email) => {
-  const sql = 'SELECT * FROM User WHERE u_email = ? AND u_del = FALSE';
+  const sql = 'SELECT * FROM user WHERE u_email = ? AND u_del = FALSE';
   const [rows] = await pool.execute(sql, [u_email]);
   return rows[0];
 };

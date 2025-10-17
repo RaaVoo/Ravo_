@@ -97,7 +97,8 @@ const HomecamPage = () => {
 
       // (선택) 디버그 확인
       try {
-        const sRes = await fetch(api('/homecam/_debug/sessions'));
+        //const sRes = await fetch(api('/homecam/_debug/sessions'));
+        const sRes = await fetch(api('/homecam/_debug/sessions'), { credentials: 'include' });    // 세션 관련 에러
         const sJson = await sRes.json();
         const active = Array.isArray(sJson?.active) ? sJson.active.map(String) : [];
         if (!active.includes(String(id))) {
@@ -131,6 +132,7 @@ const HomecamPage = () => {
       const res = await fetch(api(`/homecam/${currentId}/status`), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',     // 세션 관련 에러 때문에 잠깐 추가 (251017)
         body: JSON.stringify({ cam_status: nextStatus }),
       });
       if (!res.ok) {
@@ -193,6 +195,7 @@ const HomecamPage = () => {
       await fetch(api(`/homecam/${currentId}/status`), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',     // 세션 관련 에러 때문에 잠깐 추가 (251017)
         body: JSON.stringify({ cam_status: 'inactive' }),
       }).catch(() => {});
 
@@ -201,6 +204,7 @@ const HomecamPage = () => {
       const res2 = await fetch(api(`/homecam/${currentId}/end`), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',     // 세션 관련 에러 때문에 잠깐 추가 (251017)
         body: JSON.stringify({ r_end }),
       });
       const d2 = await res2.json().catch(() => ({}));

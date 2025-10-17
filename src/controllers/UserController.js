@@ -478,7 +478,7 @@ export const userDeleteHandler = async (req, res) => {
 
     // 1. 사용자 정보 삭제 -> 사용자(User) 삭제 시 Child는 자동 삭제(CASCADE)
     const [result] = await db.execute(
-      'DELETE FROM User WHERE user_no = ?',
+      'DELETE FROM user WHERE user_no = ?',
       [user_no]
     );
 

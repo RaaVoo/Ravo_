@@ -28,9 +28,11 @@ import VideoReportList from './pages/Report/VideoReportList';
 import HomecamPage from './pages/Homecam/HomecamPage.jsx';
 import HomecamDetail from './pages/Homecam/HomecamDetail.jsx';
 import HomecamList from './pages/Homecam/HomecamList.jsx';
-import ChatPage from './pages/Homecam/ChatPage.jsx';
+// import ChatPage from './pages/Homecam/ChatPage.jsx';       // 여름이 대화하기 코드 페이지 합치기 전
+import VoiceChat from './pages/Chat/VoiceChat.jsx';         // 여름이 대화하기 코드 연결
 import FAQPage from './pages/Homecam/FAQPage.jsx';
-import ChatBot from './pages/Homecam/ChatBot.jsx';
+// import ChatBot from './pages/Homecam/ChatBot.jsx';
+import ChatBot from './pages/Chat/Chat.jsx';                // 여름이 1:1 문의하기 코드 연결
 import ChatButton from './components/ChatButton.jsx';
 import ScrollTopButton from './components/ScrollTopButton.jsx';
 // ✅ HLS Player import
@@ -123,8 +125,8 @@ function AppContent() {
         <Route path="/homecam" element={<HomecamPage />} />
         <Route path="/homecam/camlist" element={<HomecamList />} />
         <Route path="/homecam/camlist/:record_no" element={<HomecamDetail />} />
-        <Route path="/chatbot" element={<ChatBot />} />
-        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/chat" element={<ChatBot />} />            {/* 1:1 문의하기 페이지 (여름) */}
+        <Route path="/messages" element={<VoiceChat />} />      {/* 대화하기 페이지 (여름) */}
         <Route path="/faq" element={<FAQPage />} />
 
         {/* ✅ Pi Camera HLS 스트리밍 테스트 페이지 */}
@@ -140,8 +142,8 @@ function AppContent() {
       </Routes>
       {/* ✅ 전역 플로팅 채팅 버튼 */}
       <ChatButton
-        to="/chatbot"
-        hideOnPaths={['/chatbot']}
+        to="/chat"
+        hideOnPaths={['/chat']}
         bottom={32}
         right={32}
         size={64}

@@ -2,10 +2,10 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const ChatButton = ({
-  to = '/chatbot',                     // 이동할 경로
+  to = '/chat',                     // 이동할 경로
   icon="/images/chatbot.svg",        // 버튼 아이콘 경로
   ariaLabel = '1:1 문의하기로 이동',    // 접근성 라벨
-  hideOnPaths = ['/chatbot'],          // 숨길 경로
+  hideOnPaths = ['/chat'],          // 숨길 경로
   bottom = 24,                         // 아래 여백(px)
   right = 24,                          // 오른쪽 여백(px)
   size = 100,                           // 버튼 크기(px)

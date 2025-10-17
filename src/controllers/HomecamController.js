@@ -289,6 +289,26 @@ export const getHomecamDetail = async (req, res) => {
   }
 };
 
+// 여기 잠깐 추가 (251017)
+async function getHomecamDetailSigned(req, res) {
+  try {
+    const recordNo = Number(req.params.record_no);
+    if (!Number.isInteger(recordNo) || recordNo <= 0) {
+      return res.status(400).json({ message: 'invalid record_no' });
+    }
+
+    // 1시간(3600초) 유효한 프리사인 URL 생성
+    const row = await service.getDetailSigned(recordNo, 3600);
+    if (!row) return res.status(404).json({ message: 'not found' });
+
+    return res.json(row);
+  } catch (e) {
+    console.error('[getHomecamDetailSigned] error:', e);
+    return res.status(500).json({ message: e.message || 'server error' });
+  }
+}
+// 여기까지 (251017)
+
 // ✅ default export로 라우트에서 쉽게 import 가능
 export default {
   saveHomecam,
@@ -299,4 +319,5 @@ export default {
   getHomecamList,
   searchHomecam,
   getHomecamDetail,
+  getHomecamDetailSigned      // 잠깐 추가 (251017)
 };

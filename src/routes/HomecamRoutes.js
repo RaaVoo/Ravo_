@@ -34,7 +34,8 @@ router.get('/camlist', homecamController.getHomecamList);
 router.get('/camlist/search', homecamController.searchHomecam);
 
 //  GET: 홈캠 단일 상세 조회 (record_no 기반)
-router.get('/camlist/:record_no', homecamController.getHomecamDetail);
+//router.get('/camlist/:record_no', homecamController.getHomecamDetail);        // 원래 코드
+router.get('/camlist/:record_no', homecamController.getHomecamDetailSigned);    // 잠깐 바꾼 코드
 
 //  DELETE: 홈캠 단일 삭제 (소프트 딜리트: record_del='Y')
 router.delete('/camlist/:record_no', homecamController.deleteHomecam);

@@ -89,8 +89,8 @@ const Header = ({
                   </div>
                 </div>
                 <span
-                  onClick={() => handleNavigate('/chat')}
-                  className={isActiveExact('/chat') ? 'active' : ''}
+                  onClick={() => handleNavigate('/messages')}
+                  className={isActiveExact('/messages') ? 'active' : ''}
                 >
                   대화하기
                 </span>
@@ -156,7 +156,7 @@ const Header = ({
             <>
               <div className="slide-item" onClick={() => handleNavigate('/report/voice')}>음성 보고서</div>
               <div className="slide-item" onClick={() => handleNavigate('/report/video')}>영상 보고서</div>
-              <div className="slide-item" onClick={() => handleNavigate('/chat')}>대화하기</div>
+              <div className="slide-item" onClick={() => handleNavigate('/messages')}>대화하기</div>
               <div className="slide-item" onClick={() => handleNavigate('/homecam')}>홈캠</div>
               <hr />
               <div className="slide-item" onClick={() => handleNavigate('/mypage')}>마이페이지</div>

@@ -1,8 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-//import passport from 'passport';      // 구글 계정 로그인 관련 코드
-//import './config/passport.js';        // 구글 계정 로그인 관련 코드 (구글 전략)
+import passport from 'passport';      // 구글 계정 로그인 관련 코드
+import './config/passport.js';        // 구글 계정 로그인 관련 코드 (구글 전략)
 import { sendMessageController } from './controllers/message.controller.js'; //메시지 전송
 import { getMessagesController } from './controllers/message.controller.js'; //메시지 조회
 import { markMessageReadController } from './controllers/message.controller.js'; //메시지 읽음 처리
@@ -177,7 +177,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // passport 초기화 -> 구글 계정 로그인 관련 코드
-//app.use(passport.initialize());
+app.use(passport.initialize());
 
 
 //레포트 관련 라우터 연결
@@ -363,8 +363,7 @@ app.post("/upload", upload.single("file"), (req, res) => {
 
 //서버 실행
 //const PORT = 3000;
-const PORT = 3000;
+const PORT = 8080;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
